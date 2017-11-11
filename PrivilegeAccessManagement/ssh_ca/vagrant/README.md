@@ -19,6 +19,7 @@ This functionality has been documented and used by a number of organizations:
 - [Uber SSH Certificate Authority](https://medium.com/uber-security-privacy/introducing-the-uber-ssh-certificate-authority-4f840839c5cc) also released a related [PAM module](https://github.com/uber/pam-ussh) 
 - [Facebook's use of OpenSSH CA](https://code.facebook.com/posts/365787980419535/scalable-and-secure-access-with-ssh/)
 - [Netflix' BLESS project](https://github.com/Netflix/bless)
+- [Lyft](https://eng.lyft.com/blessing-your-ssh-at-lyft-a1b38f81629d) made use of the BLESS project and open sourced a [client side integration tool](https://github.com/lyft/python-blessclient)
 - [Red Hat Enterprise Linux documentation](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-ssh-configuration) on OpenSSH CA authentication
 - [SSH protocol documentation](http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD)
 - [Another well documented page related to SSH CA authentication](https://blog.habets.se/2011/07/OpenSSH-certificates.html)  

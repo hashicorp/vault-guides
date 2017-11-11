@@ -6,7 +6,8 @@
 -	Discussion list: [Google Groups](https://groups.google.com/group/vault-tool)
 
 <img width="300" alt="Vault Logo" src="https://cloud.githubusercontent.com/assets/416727/24112835/03b57de4-0d58-11e7-81f5-9056cac5b427.png">
-----
+
+----  
 # Vault-Guides
 This repository aims to assist individuals in learning how to install, configure, and administer HashiCorp Vault.
 

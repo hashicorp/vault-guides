@@ -1,23 +1,10 @@
-$base = <<BASE
-sudo yum install -q -y wget vim-enhanced unzip ca-certificates
-sudo curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq
-sudo chmod +x /usr/local/bin/jq
-BASE
 
-$vault_install = <<VAULT_INST
-VAULT=0.8.3
-VAULT_ZIP=/vagrant/bin/vault_${VAULT}_linux_amd64.zip
-if [ ! -f $VAULT_ZIP ]; then
-  mkdir -p /vagrant/bin
-  wget https://releases.hashicorp.com/vault/${VAULT}/vault_${VAULT}_linux_amd64.zip --quiet -O $VAULT_ZIP
-fi
-cd /tmp
-unzip -q $VAULT_ZIP >/dev/null
-sudo chmod +x vault
-sudo mv vault /usr/local/bin
-sudo chmod 0755 /usr/local/bin/vault
-sudo chown root:root /usr/local/bin/vault
-VAULT_INST
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# vault variable defaults
+vault_version = ENV['VAULT_VERSION'] || "0.8.3"
+vault_download_url = ENV['VAULT_ENT_URL'] || "https://releases.hashicorp.com/vault/#{vault_version}/vault_#{vault_version}_linux_amd64.zip"
 
 $vault_env = <<VAULT_ENV
 sudo cat << EOF > /etc/profile.d/vault.sh
@@ -50,9 +37,12 @@ Vagrant.configure("2") do |config|
   config.vm.define "vault" do |vault|
     vault.vm.network :private_network, ip: "192.168.50.100"
     vault.vm.box = "bento/centos-7.3"
+    vault.vm.box_version = "2.3.8"
     vault.vm.hostname = "vault"
-    vault.vm.provision "shell", inline: $base
-    vault.vm.provision "shell", inline: $vault_install
+    vault.vm.provision "shell", path: "../../../shared/scripts/base.sh"
+    vault.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
+    vault.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
+    env: { "VERSION" => vault_version,"URL" => vault_download_url }
     vault.vm.provision "shell", inline: $vault_env
     vault.vm.provision "shell", inline: $vault_run
     vault.vm.provision "shell", inline: $hosts_file
@@ -61,10 +51,14 @@ Vagrant.configure("2") do |config|
   config.vm.define "client" do |client|
     client.vm.network :private_network, ip: "192.168.50.101"
     client.vm.box = "bento/centos-7.3"
+    client.vm.box_version = "2.3.8"
     client.vm.hostname = "client"
-    client.vm.provision "shell", inline: $base
-    client.vm.provision "shell", inline: $vault_install
+    client.vm.provision "shell", path: "../../../shared/scripts/base.sh"
+    client.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
+    client.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
+    env: { "VERSION" => vault_version,"URL" => vault_download_url }
     client.vm.provision "shell", inline: $vault_env
     client.vm.provision "shell", inline: $hosts_file
   end
 end
+

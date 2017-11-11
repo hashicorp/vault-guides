@@ -1,0 +1,16 @@
+[Unit]
+Description=Consul Snapshot Agent
+Requires=consul-online.target
+After=consul-online.target
+
+[Service]
+Restart=on-failure
+PermissionsStartOnly=true
+ExecStart=/usr/bin/consul snapshot agent -config-dir /etc/consul-snapshot.d
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+User=consulsnapshot
+Group=consulsnapshot
+
+[Install]
+WantedBy=multi-user.target

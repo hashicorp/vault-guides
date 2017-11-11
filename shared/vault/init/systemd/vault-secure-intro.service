@@ -1,0 +1,15 @@
+[Unit]
+Description=Vault Secure Introduction
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/bin/vault-secure-intro -config /etc/vault-si/vault-si.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+User=vault-si
+Group=vault-si
+
+[Install]
+WantedBy=multi-user.target

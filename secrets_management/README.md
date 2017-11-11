@@ -1,0 +1,1 @@
+Guides related to secrets management with Vault stored here. Static secrets, dynamic secrets, consul-template and so forth.

@@ -1,0 +1,14 @@
+[Unit]
+Description=Force Leave Missing Nomad Peers
+Requires=network-online.target nomad-online.target
+After=network-online.target nomad-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=true
+ExecStart=/usr/bin/nomad-force-leave-missing-peers-aws-ec2.sh
+User=nomad
+Group=nomad
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,9 @@
+{
+  "snapshot_agent": {
+    "aws_storage": {
+      "s3_region": "{{ s3_region }}",
+      "s3_bucket": "{{ s3_bucket }}",
+      "s3_key_prefix": "consul-snapshot"
+    }
+  }
+}

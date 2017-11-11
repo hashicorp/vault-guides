@@ -1,0 +1,11 @@
+[Unit]
+Description=Vault Introduction Complete
+Requires=vault-secure-intro.service
+After=vault-secure-intro.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/vault-token-ready.sh
+
+[Install]
+WantedBy=vault-ready.target multi-user.target

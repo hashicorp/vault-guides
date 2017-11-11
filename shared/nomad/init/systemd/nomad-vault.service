@@ -1,0 +1,17 @@
+[Unit]
+Description=Nomad Agent
+Requires=consul-online.target vault-token-ready.target
+After=consul-online.target vault-token-ready.target
+
+[Service]
+EnvironmentFile=/secrets/nomad-server-token
+PermissionsStartOnly=true
+Restart=on-failure
+ExecStart=/usr/bin/nomad agent -config /etc/nomad
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target

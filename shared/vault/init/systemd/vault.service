@@ -1,0 +1,15 @@
+[Unit]
+Description=Vault Agent
+Requires=consul-online.target
+After=consul-online.target
+
+[Service]
+Restart=on-failure
+ExecStart=/usr/local/bin/vault server -config /etc/vault.d
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+User=vault
+Group=vault
+
+[Install]
+WantedBy=multi-user.target

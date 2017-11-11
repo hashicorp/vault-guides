@@ -1,0 +1,19 @@
+{
+  "snapshot_agent": {
+    "snapshot": {
+      "interval": "30m",
+      "retain": 15,
+      "stale": false,
+      "service": "consul-snapshot",
+      "deregister_after": "72h",
+      "lock_key": "consul-snapshot/lock",
+      "max_failures": 3
+    },
+    "local_storage": {
+      "path": "/opt/consul-snapshot/data"
+    },
+    "log": {
+      "level": "INFO"
+    }
+  }
+}

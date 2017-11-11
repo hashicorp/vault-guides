@@ -1,0 +1,81 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# base box selection
+base_box = ENV['BASE_BOX'] || "bento/centos-7.3"
+base_box_version = ENV['BASE_BOX_VERSION'] || "2.3.8"
+
+# consul variable defaults
+consul_version = ENV['CONSUL_VERSION'] || "1.0.0"
+consul_download_url = ENV['CONSUL_DOWNLOAD_URL'] || "https://releases.hashicorp.com/consul/#{consul_version}/consul_#{consul_version}_linux_amd64.zip"
+consul_server = ENV['CONSUL_SERVER'] || "true"
+
+# vault variable defaults
+vault_version = ENV['VAULT_VERSION'] || "0.8.3"
+vault_download_url = ENV['VAULT_ENT_URL'] || "https://releases.hashicorp.com/vault/#{vault_version}/vault_#{vault_version}_linux_amd64.zip"
+
+# nomad variable defaults
+nomad_version = ENV['NOMAD_VERSION'] || "0.7.0"
+nomad_download_url = ENV['NOMAD_DOWNLOAD_URL'] || "https://releases.hashicorp.com/nomad/#{nomad_version}/nomad_#{nomad_version}_linux_amd64.zip"
+
+
+$script = <<SCRIPT
+# Set hostname's IP to make advertisement work
+sudo sed -i -e "s/.*nomad.*/$(ip route get 1 | awk '{print $NF;exit}') nomad/" /etc/hosts
+SCRIPT
+
+Vagrant.configure("2") do |config|
+  # use vagrant insecure public key
+  # important: comment this out to restrict access
+  config.ssh.insert_key = false
+
+  # use base_box set at the top of this file
+  config.vm.box = base_box
+  config.vm.box_version = base_box_version
+  config.vm.hostname = "hashistack"
+  config.vm.provision "shell", inline: $script, privileged: false
+
+  # copy the consul and nomad directories to the vm
+  config.vm.provision "file", source: "../../../shared/consul", destination: "/tmp"
+  config.vm.provision "file", source: "../../../shared/vault", destination: "/tmp"
+  config.vm.provision "file", source: "../../../shared/nomad", destination: "/tmp"
+
+  # bootstrap the vm
+  config.vm.provision "shell", path: "../../../shared/scripts/base.sh"
+  config.vm.provision "shell", path: "../../../shared/scripts/base-aws.sh"
+  config.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "consul"
+  config.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "nomad"
+  config.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
+
+  # install consul
+  config.vm.provision "shell", path: "../../../shared/consul/scripts/install-consul.sh",
+    env: { "VERSION" => consul_version, "URL" => consul_download_url,"SERVER" => consul_server }
+  config.vm.provision "shell", path: "../../../shared/consul/scripts/install-consul-systemd.sh"
+
+  # install vault
+  config.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
+    env: { "VERSION" => vault_version,"URL" => vault_download_url }
+  config.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault-systemd.sh"
+
+  # install nomad
+  config.vm.provision "shell", path: "../../../shared/nomad/scripts/install-nomad.sh",
+    env: { "VERSION" => nomad_version,"URL" => nomad_download_url }
+  config.vm.provision "shell", path: "../../../shared/nomad/scripts/install-nomad-systemd.sh"
+
+  # Increase memory for Parallels Desktop
+  config.vm.provider "parallels" do |p, o|
+    p.memory = "1024"
+  end
+
+  # Increase memory for Virtualbox
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+
+  # Increase memory for VMware
+  ["vmware_fusion", "vmware_workstation"].each do |p|
+    config.vm.provider p do |v|
+      v.vmx["memsize"] = "1024"
+    end
+  end
+end

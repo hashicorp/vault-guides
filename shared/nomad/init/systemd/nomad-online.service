@@ -1,0 +1,13 @@
+[Unit]
+Description=Nomad Online
+Requires=nomad.service
+After=nomad.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nomad-online.sh
+User=nomad
+Group=nomad
+
+[Install]
+WantedBy=nomad-online.target multi-user.target

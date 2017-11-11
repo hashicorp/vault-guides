@@ -1,18 +1,37 @@
-# vault-examples
-Example usage of HashiCorp Vault secrets management. Examples within this repository illustrate installation, configuration and usage in various environments.  These may include use cases installing Vault in cloud services via Terraform, or within virtual environments using Vagrant, or running Vault in a local development mode.  
+----
+-	Website: https://www.vaultproject.io
+-  GitHub repository: https://github.com/hashicorp/vault
+-	IRC: `#vault-tool` on Freenode
+-	Announcement list: [Google Groups](https://groups.google.com/group/hashicorp-announce)
+-	Discussion list: [Google Groups](https://groups.google.com/group/vault-tool)
+
+<img width="300" alt="Vault Logo" src="https://cloud.githubusercontent.com/assets/416727/24112835/03b57de4-0d58-11e7-81f5-9056cac5b427.png">
+----
+# Vault-Guides
+This repository aims to assist individuals in learning how to install, configure, and administer HashiCorp Vault.
+
+These may include use cases installing Vault in cloud services via Terraform, or within virtual environments using Vagrant, or running Vault in a local development mode.  
 
 
-## getting_started  
-This directory contains guides and examples for getting started with Vault. Installation, initialization, unsealing, and so forth.
+## GettingStarted
+This area will contain tutorials for people just starting out with Vault.
 
-## Eaas
-This directory contains example usage of the Vault Transit backend.
+Topics such as installation, initialization, unsealing, basic operations will be covered in this area. 
 
-## secrets_management
-This directory contains example use cases involving secrets management.
+The official Vault site also has a [Getting Started](https://www.vaultproject.io/intro/getting-started/install.html) section that provides a good first step towards using Vault. This section will contain similar tutorials.
 
-## privilege_access_management
+## EaaS (Encryption as a Service) 
+This directory contains example usage of the [Vault Transit backend](https://www.vaultproject.io/docs/secrets/transit/index.html).
+
+## SecretsManagement
+This directory contains example use cases involving [secrets management](https://www.vaultproject.io/docs/secrets/index.html). Secure secret storage of static secrets and sensitive information. Implementation of Dynamic Secrets.
+
+## PrivilegeAccessManagement
 This directory contains examples of privilege access management.
 
 ## shared
-This directory contains common snippets, scripts used by multiple example use cases.
+This directory contains common scripts and configuration files used to provision environments used for the guides in this repository.
+
+
+### Contributing
+We welcome contributions and feedback!  For guide submissions, please see [the contributions guide](CONTRIBUTING.md)

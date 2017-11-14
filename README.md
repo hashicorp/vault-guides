@@ -14,24 +14,23 @@ This repository aims to assist individuals in learning how to install, configure
 These may include use cases installing Vault in cloud services via Terraform, or within virtual environments using Vagrant, or running Vault in a local development mode.  
 
 
-## GettingStarted
-This area will contain tutorials for people just starting out with Vault.
+## provision
+This area will contain instructions to provision Vault and Consul as a first step to start using these tools.
 
-Topics such as installation, initialization, unsealing, basic operations will be covered in this area. 
+## encryption
+This directory contains example usage of the [Vault Transit backend](https://www.vaultproject.io/docs/secrets/transit/index.html). Also referred to as 'Encryption as a Service' as it allows organizations to provide a centrally managed encryption service for their infrastructure.
 
-The official Vault site also has a [Getting Started](https://www.vaultproject.io/intro/getting-started/install.html) section that provides a good first step towards using Vault. This section will contain similar tutorials.
-
-## EaaS (Encryption as a Service) 
-This directory contains example usage of the [Vault Transit backend](https://www.vaultproject.io/docs/secrets/transit/index.html).
-
-## SecretsManagement
+## secrets
 This directory contains example use cases involving [secrets management](https://www.vaultproject.io/docs/secrets/index.html). Secure secret storage of static secrets and sensitive information. Implementation of Dynamic Secrets.
 
-## PrivilegeAccessManagement
-This directory contains examples of privilege access management.
+## identity
+This directory contains examples of privilege access management, identity, access control.
 
 ## shared
 This directory contains common scripts and configuration files used to provision environments used for the guides in this repository.
+
+## assets
+This directory contains graphics and other material for the repository.
 
 
 ### Contributing

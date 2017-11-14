@@ -1,4 +1,4 @@
-# Getting Started
+# Provision
 
 For many of the guides within this repository, we rely heavily upon Vagrant and Terraform.  
 

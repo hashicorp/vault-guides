@@ -102,7 +102,6 @@ listener "tcp" {
   tls_disable = 1
 }
 seal "awskms" {
-  aws_region = "${aws_region}"
   kms_key_id = "${kms_key}"
 }
 ui=true

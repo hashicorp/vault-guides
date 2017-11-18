@@ -1,2 +1,0 @@
-* aws_instance.vault: Error launching source instance: InvalidParameterCombination: Virtualization type 'hvm' is required for instances of type 't2.micro'. Ensure that you are using an AMI with virtualization type 'hvm'. For more information, see http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html
-	status code: 400, request id: 328b7c83-965e-42bc-962c-67cca0d3b9ac

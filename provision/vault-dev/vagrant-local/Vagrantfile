@@ -1,0 +1,126 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Networking
+private_ip = ENV['PRIVATE_IP'] || "192.168.50.152"
+consul_host_port = ENV['CONSUL_HOST_PORT'] || 8500
+vault_host_port = ENV['VAULT_HOST_PORT'] || 8200
+
+# Base box selection
+base_box = ENV['BASE_BOX'] || "bento/ubuntu-16.04"
+
+# Consul variables
+consul_version = ENV['CONSUL_VERSION'] || "0.9.2"
+consul_ent_url = ENV['CONSUL_ENT_URL']
+consul_group = "consul"
+consul_user = "consul"
+consul_comment = "Consul"
+consul_home = "/srv/consul"
+
+# Vault variables
+vault_version = ENV['VAULT_VERSION'] || "0.8.1"
+vault_ent_url = ENV['VAULT_ENT_URL']
+vault_group = "vault"
+vault_user = "vault"
+vault_comment = "Vault"
+vault_home = "/srv/vault"
+
+# Tests & cleanup
+run_tests = ENV['RUN_TESTS']
+cleanup = ENV['CLEANUP']
+
+Vagrant.configure("2") do |config|
+  # Use vagrant insecure public key, comment this out to restrict access
+  config.ssh.insert_key = false
+
+  # Setup networking
+  config.vm.network :private_network, ip: private_ip
+  config.vm.network :forwarded_port, guest: 8500, host: consul_host_port, auto_correct: true
+  config.vm.network :forwarded_port, guest: 8200, host: vault_host_port, auto_correct: true
+  config.vm.network "private_network", type: "dhcp"
+
+  # Use base_box set at the top of this file
+  config.vm.box = base_box
+  config.vm.hostname = "vault"
+
+  # Copy the shared directories to the vm
+  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/download-guides-configuration.sh | sudo bash"
+
+  # Bootstrap the vm
+  config.vm.provision "shell", inline: "bash /tmp/shared/scripts/base.sh"
+
+  # Setup Consul user
+  config.vm.provision "shell", inline: "bash /tmp/shared/scripts/setup-user.sh",
+    env: {
+      "GROUP" => consul_group,
+      "USER" => consul_user,
+      "COMMENT" => consul_comment,
+      "HOME" => consul_home,
+    }
+
+  # Install Consul
+  config.vm.provision "shell", inline: "bash /tmp/consul/scripts/install-consul.sh",
+    env: {
+      "VERSION" => consul_version,
+      "URL" => consul_ent_url,
+      "USER" => consul_user,
+      "GROUP" => consul_group,
+    }
+
+  config.vm.provision "shell", inline: "bash /tmp/consul/scripts/install-consul-systemd.sh"
+
+  # Setup Vault user
+  config.vm.provision "shell", inline: "bash /tmp/shared/scripts/setup-user.sh",
+    env: {
+      "GROUP" => vault_group,
+      "USER" => vault_user,
+      "COMMENT" => vault_comment,
+      "HOME" => vault_home,
+    }
+
+  # Install Vault
+  config.vm.provision "shell", inline: "bash /tmp/vault/scripts/install-vault.sh",
+    env: {
+      "VERSION" => vault_version,
+      "URL" => vault_ent_url,
+      "USER" => vault_user,
+      "GROUP" => vault_group,
+    }
+
+  config.vm.provision "shell", inline: "bash /tmp/vault/scripts/install-vault-systemd.sh"
+
+  # Setup tests
+  config.vm.provision "shell", inline: "cd /tmp/shared/scripts && bash /tmp/shared/scripts/setup-testing.sh"
+
+  # Run tests if `RUN_TESTS` env var is provided
+  if (run_tests)
+    config.vm.provision "shell", inline: "cd /tmp && rake vault:spec"
+  end
+
+  # Cleanup if `CLEANUP` env var is provided
+  if (cleanup)
+    config.vm.provision "shell", inline: "bash /tmp/shared/scripts/cleanup.sh"
+  end
+
+  # Increase memory for Parallels Desktop
+  config.vm.provider "parallels" do |p, o|
+    p.memory = "1024"
+  end
+
+  # Increase memory for Virtualbox
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+
+  # Increase memory for VMware
+  ["vmware_fusion", "vmware_workstation"].each do |p|
+    config.vm.provider p do |v|
+      v.vmx["memsize"] = "1024"
+    end
+  end
+
+   config.vm.post_up_message = "
+Consul: http://#{private_ip}:#{consul_host_port}/
+Vault: http://#{private_ip}:#{vault_host_port}/
+Vault Root Token: #{vault_home}/.vault-token"
+end

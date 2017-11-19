@@ -1,0 +1,1 @@
+name = "vault-aws-simple"

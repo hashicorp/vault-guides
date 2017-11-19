@@ -61,4 +61,3 @@ Vagrant.configure("2") do |config|
     client.vm.provision "shell", inline: $hosts_file
   end
 end
-

@@ -62,8 +62,11 @@ data "template_file" "format_ssh" {
   }
 }
 
-output "ssh_info" {
-  value = "${data.template_file.format_ssh.rendered}"
+output "connections" {
+  value = <<VAULT
+Connect to Vault via SSH   ssh ubuntu@${aws_instance.vault.public_ip} -i private.key
+Vault Enterprise web interface  http://${aws_instance.vault.public_ip}:8200/ui
+VAULT
 }
 
 resource "aws_security_group" "vault" {

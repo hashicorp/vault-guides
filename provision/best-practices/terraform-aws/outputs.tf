@@ -14,6 +14,14 @@ To SSH into a Bastion host using this private key, run one of the below commands
 
   ${join("\n  ", formatlist("ssh -A -i %s %s@%s", module.ssh_keypair_aws_override.private_key_filename, module.network_aws.bastion_username, module.network_aws.bastion_ips_public))}
 
+Once on the Bastion host, you can use Consul's DNS functionality to seemlessly SSH into other Consul nodes.
+
+  ssh -A ${module.consul_aws.consul_username}@consul.service.consul
+
+You'll have to SSH into one of the Vault nodes for the first time using the static IP found in `consul members` as Vault is not initialized and won't be considered a healthy service within Consul. However, once initialized, you can SSH into Vault using Consul's DNS functionality as well.
+
+  ssh -A ${module.vault_aws.vault_username}@vault.service.consul # Vault must be initialized for this to work
+
 To force the generation of a new key, the private key instance can be "tainted" using the below command.
 
   terraform taint -module=ssh_keypair_aws_override.tls_private_key tls_private_key.main

@@ -15,9 +15,25 @@ To SSH into a Vault host using this private key, run the below command after rep
   ${format("ssh -A -i %s %s@HOST", module.ssh_keypair_aws.private_key_filename, module.vault_aws.vault_username)}
 
 Because this is a development environment, the Vault nodes are in a public subnet with SSH access open from the outside. WARNING - DO NOT DO THIS IN PRODUCTION!
+
+Below are output variables that are currently commented out to reduce clutter. If you need the value of a certain output variable, such as "private_key_pem", just uncomment in outputs.tf.
+
+ - "vpc_cidr_block"
+ - "vpc_id"
+ - "subnet_public_ids"
+ - "subnet_private_ids"
+ - "private_key_name"
+ - "private_key_filename"
+ - "private_key_pem"
+ - "public_key_pem"
+ - "public_key_openssh"
+ - "ssh_key_name"
+ - "vault_asg_id"
+ - "vault_sg_id"
 README
 }
 
+/*
 output "vpc_cidr_block" {
   value = "${module.network_aws.vpc_cidr_block}"
 }
@@ -65,3 +81,4 @@ output "vault_asg_id" {
 output "vault_sg_id" {
   value = "${module.vault_aws.vault_sg_id}"
 }
+*/

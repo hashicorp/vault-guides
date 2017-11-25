@@ -1,5 +1,7 @@
 # General
-variable "name" { }
+variable "name"         { }
+variable "provider"     { default = "aws" }
+variable "local_ip_url" { default = "http://169.254.169.254/latest/meta-data/local-ipv4" }
 
 # Network module
 variable "vpc_cidr"                { }

@@ -1,5 +1,7 @@
 *.DS_Store
 *.vagrant
 *.tfstate
+*.tfstate.backup
+*.tfstate.lock.info
 *.terraform/
-
+*.pem

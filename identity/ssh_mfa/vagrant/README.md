@@ -18,6 +18,9 @@ This guide demonstrates the following:
 ### Okta Authentication and Multi-Factor Authentication
 
 ### Vault SSH Certificate Authority
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_ca_setup.png)
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_ca_usage.png)
+
 
 ### Vault SSH One-Time Password
 

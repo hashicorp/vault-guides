@@ -30,8 +30,8 @@ vagrant up
 ## Usage Steps
 Once Vagrant has provisioned the environment, you can login to the Web UI with your Okta credentials, and approve the login from your phone.
 
-![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/Vault_okta_login.png)
-![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/Vault_okta_mfa_push.png)
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/Vault_okta_login.png | width=100)
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/Vault_okta_mfa_push.png | width=100)
 
 
 Afterwards, we can obtain our SSH credentials from the web interface for connectivity purposes.

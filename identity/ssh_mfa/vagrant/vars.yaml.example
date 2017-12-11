@@ -1,0 +1,17 @@
+---
+vagrant_box: 'bento/ubuntu-16.04'
+vagrant_box_version: '201710.25.0'
+
+vault_helper_version: '0.1.3'
+
+aws_region: 'us-east-1'
+aws_access_key: 'GREWE4AXBMUYOWE4AXXBMUYO'
+aws_secret_key: 'JyJyh20rDUW1vD4KmksPb2hUwhzFiQM967UMgx4a'
+aws_s3_bucket: 'vault-cred-test'
+
+okta_username: 'arthurfonzarelli@happydays.com'
+okta_org: 'dev-79922331'
+okta_api_token: 'M15EtsCGAZO5r1kooXG3fZhVBBo91l00WVV7OxO_ID'
+okta_base_url: 'oktapreview.com'
+
+vault_download_url: 'http://s3.region.amazonaws.com/your-bucket/your-vault-enterprise-binary.zip

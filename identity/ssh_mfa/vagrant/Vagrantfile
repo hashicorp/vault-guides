@@ -57,8 +57,6 @@ chmod 600 /home/vagrant/.ssh/id_rsa-cert.pub
 sudo systemctl restart sshd
 VAULT_CLIENT_SSH
 
-
-
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "512"]
@@ -67,21 +65,21 @@ Vagrant.configure("2") do |config|
     vb.customize ["modifyvm", :id, "--chipset", "ich9"]
     vb.customize ["modifyvm", :id, "--ioapic", "on"]
   end
-  config.vm.define "vault" do |vault|
-    vault.vm.network :private_network, ip: "192.168.50.100"
-    vault.vm.network :forwarded_port, guest: 8200, host: 8200
-    vault.vm.box = conf['vagrant_box']
-    vault.vm.box_version = conf['vagrant_box_version']
-    vault.vm.hostname = "vault"
-    vault.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    vault.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    vault.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
+  config.vm.box = conf['vagrant_box']
+  config.vm.box_version = conf['vagrant_box_version']
+  config.vm.provision "shell", path: "../../../shared/scripts/base.sh"
+  config.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault" 
+  config.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
       env: { 
           "VERSION" => vault_version,
           "URL"     => vault_download_url 
       }
-    vault.vm.provision "shell", inline: $vault_env
-    vault.vm.provision "shell", inline: $hosts_file
+  config.vm.provision "shell", inline: $vault_env
+  config.vm.provision "shell", inline: $hosts_file
+  config.vm.define "vault" do |vault|
+    vault.vm.network :private_network, ip: "192.168.50.100"
+    vault.vm.network :forwarded_port, guest: 8200, host: 8200
+    vault.vm.hostname = "vault"
     vault.vm.provision "shell", inline: $vault_run, run: "always"
     vault.vm.provision "shell", path: "scripts/vault_config.sh", run: "always"
     vault.vm.provision "shell", path: "scripts/vault_okta.sh", run: "always",
@@ -102,52 +100,19 @@ Vagrant.configure("2") do |config|
   end
   config.vm.define "client" do |client|
     client.vm.network :private_network, ip: "192.168.50.101"
-    client.vm.box = conf['vagrant_box']
-    client.vm.box_version = conf['vagrant_box_version']
     client.vm.hostname = "client"
-    client.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    client.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    client.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
-      env: { 
-          "VERSION" => vault_version,
-          "URL"     => vault_download_url 
-      }
-    client.vm.provision "shell", inline: $vault_env
-    client.vm.provision "shell", inline: $hosts_file
     client.vm.provision "shell", inline: $vault_client_ssh, privileged: false, run: "always"
     client.vm.provision "shell", inline: "apt-get install -y sshpass"
   end
   config.vm.define "otp" do |otp|
     otp.vm.network :private_network, ip: "192.168.50.102"
-    otp.vm.box = conf['vagrant_box']
-    otp.vm.box_version = conf['vagrant_box_version']
     otp.vm.hostname = "otp"
-    otp.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    otp.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    otp.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
-      env: { 
-          "VERSION" => vault_version,
-          "URL"     => vault_download_url 
-      }
     otp.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault-helper.sh"
-    otp.vm.provision "shell", inline: $vault_env
-    otp.vm.provision "shell", inline: $hosts_file
     otp.vm.provision "shell", path: "scripts/server_endpoint_otp.sh"
   end
   config.vm.define "ca" do |ca|
     ca.vm.network :private_network, ip: "192.168.50.103"
-    ca.vm.box = conf['vagrant_box']
-    ca.vm.box_version = conf['vagrant_box_version']
     ca.vm.hostname = "ca"
-    ca.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    ca.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    ca.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
-      env: { 
-          "VERSION" => vault_version,
-          "URL"     => vault_download_url 
-      }
-    ca.vm.provision "shell", inline: $vault_env
-    ca.vm.provision "shell", inline: $hosts_file
     ca.vm.provision "shell", path: "scripts/server_endpoint_ssh_ca.sh", run: "always"
   end
 end

@@ -3,6 +3,7 @@ This guide demonstrates the following:
 - Sentinel enforcement of Okta multi-factor authentication
 - SSH certificate authority access management based on Okta MFA
 - SSH one-time password access management based on Okta MFA
+- AWS secret backend allowing for short-lived AWS credentials
 
 ## Prerequisites
 1. Vagrant installed
@@ -10,8 +11,8 @@ This guide demonstrates the following:
 1. Okta account configured  
    a. Create developer account  
    b. Create 'okta' group and add developer user account to the group  
-   c. Configure multi-factor authentication with Okta Push mobile app
-  
+   c. Configure multi-factor authentication with Okta Push mobile app. 
+1. Copy `vars.yaml.example` to `vars.yaml` and update details to match your environment
 
 ## Overview 
 ### Okta Authentication and Multi-Factor Authentication
@@ -19,6 +20,9 @@ This guide demonstrates the following:
 ### Vault SSH Certificate Authority
 
 ### Vault SSH One-Time Password
+
+### AWS Secret Backend
+
 
 ## Provision steps
 Within this working directory, execute the following

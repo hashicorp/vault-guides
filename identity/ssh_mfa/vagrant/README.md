@@ -79,10 +79,9 @@ Are you sure you want to continue connecting (yes/no)?
 1. Navigate to Secrets, then ssh, then `otp_key_role`
 1. Click on the `opt_key_role`
 1. Populate it with username 'vagrant' and host '192.168.50.102'. 
-![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_generate_creds_input.png)
+<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_generate_creds_input.png" alt="otp generate creds" width="300">
 1. Click 'Generate' and then you can click 'Copy Credentials' for ease of use.  
-
-![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_generate_creds_output.png)
+<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_generate_creds_output.png" alt="copy creds" width="300">
 
 On the commandline issue the following command to login to our example client
 

@@ -35,7 +35,8 @@ alt="user settings" width="300">
 
 
 ### Vault SSH One-Time Password
-
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_setup.png)
+![](https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_ssh_otp_usage.png)
 ### AWS Secret Backend
 
 

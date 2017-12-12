@@ -13,7 +13,8 @@ This guide demonstrates the following:
    b. Create 'okta' group and add developer user account to the group  
    c. Configure multi-factor authentication with Okta Push mobile app.
      - Navigate to MFA settings page
--<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_setup.png" 
+
+<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_setup.png" 
 alt="MFA page" width="300">
     - enable push notifications for Okta verify phone app
 -<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_settings.png" 

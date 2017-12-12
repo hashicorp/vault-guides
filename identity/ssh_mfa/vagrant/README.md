@@ -16,7 +16,7 @@ This guide demonstrates the following:
      1. <img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_setup.png" alt="MFA page" width="300">
      1. enable push notifications for Okta verify phone app
      1. <img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_settings.png" alt="MFA settings" width="300">
-     1. Go to user settings
+     1. In the developer account, go to user settings
      1. <img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_user_settings.png" 
 alt="user settings" width="300"> 
      1. Select "Setup" for extra verification

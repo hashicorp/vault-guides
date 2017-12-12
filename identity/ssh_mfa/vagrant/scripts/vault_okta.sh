@@ -49,7 +49,8 @@ vault write auth/okta/config \
   organization="${OKTA_ORG}" \
   base_url="${OKTA_BASE_URL}" \
   api_token="${OKTA_API_TOKEN}"
-#vault write auth/okta/users/${OKTA_USERNAME} policies=okta
+
+vault write auth/okta/users/${OKTA_USERNAME} policies=okta
 
 logger "Attach okta policies to okta group"
 vault write auth/okta/groups/okta policies=okta

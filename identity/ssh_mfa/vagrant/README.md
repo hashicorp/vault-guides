@@ -13,19 +13,19 @@ This guide demonstrates the following:
    b. Create 'okta' group and add developer user account to the group  
    c. Configure multi-factor authentication with Okta Push mobile app.
      - Navigate to MFA settings page
-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_setup.png" 
+-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_setup.png" 
 alt="MFA page" width="300">
     - enable push notifications for Okta verify phone app
-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_settings.png" 
+-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/MFA_settings.png" 
 alt="MFA settings" width="300">
     - Go to user settings
-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_user_settings.png" 
+-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_user_settings.png" 
 alt="user settings" width="300"> 
     - Select "Setup" for extra verification
-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_extra_verification.png" 
+-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_extra_verification.png" 
 alt="extra verification" width="300"> 
     - Generate QR code, download Okta Verify mobile app and scan.
-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_qr_code.png" 
+-<img src="https://raw.githubusercontent.com/hashicorp/vault-guides/okta_config/assets/okta_qr_code.png" 
 alt="QR code" width="300"> 
    d. create API key: https://developer.okta.com/docs/api/getting_started/getting_a_token.html
 

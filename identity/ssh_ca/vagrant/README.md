@@ -23,6 +23,7 @@ This functionality has been documented and used by a number of organizations:
 - [Red Hat Enterprise Linux documentation](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/s1-ssh-configuration) on OpenSSH CA authentication
 - [SSH protocol documentation](http://cvsweb.openbsd.org/cgi-bin/cvsweb/src/usr.bin/ssh/PROTOCOL.certkeys?rev=HEAD)
 - [Another well documented page related to SSH CA authentication](https://blog.habets.se/2011/07/OpenSSH-certificates.html)  
+- [Another documented page with SSH CA details](https://www.lorier.net/docs/ssh-ca.html)
 
 ## Estimated Time to Complete
 This exercise should only take 10-15 minutes to complete for a user familiar with Linux, SSH, on a system that has Vagrant and VirtualBox configured.

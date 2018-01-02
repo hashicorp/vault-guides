@@ -11,7 +11,6 @@ variable "vpc_cidrs_private"       { type = "list" }
 variable "bastion_release_version" { }
 variable "bastion_consul_version"  { }
 variable "bastion_vault_version"   { }
-variable "bastion_nomad_version"   { }
 variable "bastion_os"              { }
 variable "bastion_os_version"      { }
 variable "bastion_count"           { }

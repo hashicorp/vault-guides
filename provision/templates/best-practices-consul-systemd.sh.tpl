@@ -16,7 +16,7 @@ sudo update-ca-trust force-enable
 # TODO: Remove
 echo "Configure Consul TLS certificate in /etc/pki/ca-trust/source/anchors/consul.crt"
 cat <<EOF | sudo tee /etc/pki/ca-trust/source/anchors/consul.crt
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 echo "Configure Consul TLS certificate in /etc/pki/tls/certs/consul.crt"
@@ -32,7 +32,7 @@ echo "Configure Consul TLS certificate in /etc/pki/tls/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/pki/tls/certs/ca-bundle.crt
 
 # Consul
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 # TODO: Remove
@@ -40,7 +40,7 @@ echo "Configure Consul TLS certificate in /etc/ssl/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/ssl/certs/ca-bundle.crt
 
 # Consul
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 echo "Update CA trust"
@@ -59,7 +59,7 @@ ${consul_key_pem}
 EOF
 
 echo "Configure Consul server"
-cat <<CONFIG >/etc/consul.d/consul-server.json
+cat <<CONFIG | sudo tee /etc/consul.d/consul-server.json
 {
   "datacenter": "${name}",
   "advertise_addr": "$${local_ipv4}",
@@ -71,8 +71,8 @@ cat <<CONFIG >/etc/consul.d/consul-server.json
   "bootstrap_expect": ${bootstrap_expect},
   "leave_on_terminate": true,
   "retry_join": ["provider=${provider} tag_key=Consul-Auto-Join tag_value=${name}"],
-  "encrypt": "${serf_encrypt_key}",
-  "key_file": "/etc/pki/tls/private/consul.crt",
+  "encrypt": "${serf_encrypt}",
+  "key_file": "/etc/pki/tls/private/consul.key",
   "cert_file": "/etc/pki/tls/certs/consul.crt",
   "ca_file": "/etc/pki/tls/certs/ca-bundle.crt",
   "ports": { "https": 8080 }
@@ -80,14 +80,14 @@ cat <<CONFIG >/etc/consul.d/consul-server.json
 CONFIG
 
 echo "Update configuration file permissions"
-chown -R consul:consul /etc/consul.d
-chmod -R 0644 /etc/consul.d/*
-chmod 0755 /etc/pki/tls/private/consul.key /etc/pki/tls/certs/consul.crt
+sudo chown -R consul:consul /etc/consul.d
+sudo chmod -R 0644 /etc/consul.d/*
+sudo chmod 0755 /etc/pki/tls/private/consul.key /etc/pki/tls/certs/consul.crt
 
 echo "Don't start Consul in -dev mode"
 echo '' | sudo tee /etc/consul.d/consul.conf
 
 echo "Restart Consul"
-systemctl restart consul
+sudo systemctl restart consul
 
 echo "[---quick-start-consul-systemd.sh Complete---]"

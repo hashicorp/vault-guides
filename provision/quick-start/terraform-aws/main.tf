@@ -27,6 +27,15 @@ data "template_file" "consul_install" {
   }
 }
 
+data "template_file" "vault_install" {
+  template = "${file("${path.module}/../../templates/install-vault-systemd.sh.tpl")}"
+
+  vars = {
+    vault_version = "${var.vault_version}"
+    vault_url     = "${var.vault_url}"
+  }
+}
+
 data "template_file" "bastion_quick_start" {
   template = "${file("${path.module}/../../templates/quick-start-bastion-systemd.sh.tpl")}"
 
@@ -46,6 +55,7 @@ module "network_aws" {
   image_id      = "${data.aws_ami.base.id}"
   user_data     = <<EOF
 ${data.template_file.consul_install.rendered}
+${data.template_file.vault_install.rendered}
 ${data.template_file.bastion_quick_start.rendered}
 EOF
 }
@@ -69,20 +79,11 @@ module "consul_aws" {
   vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.consul_image_id != "" ? var.consul_image_id : data.aws_ami.base.id}"
-  ssh_key_name = "${module.network_aws.ssh_key_name}"
+  ssh_key_name = "${element(split(",", module.network_aws.ssh_key_name), 0)}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode
 ${data.template_file.consul_quick_start.rendered} # Configure Consul quick start
 EOF
-}
-
-data "template_file" "vault_install" {
-  template = "${file("${path.module}/../../templates/install-vault-systemd.sh.tpl")}"
-
-  vars = {
-    vault_version = "${var.vault_version}"
-    vault_url     = "${var.vault_url}"
-  }
 }
 
 data "template_file" "vault_quick_start" {
@@ -96,14 +97,15 @@ data "template_file" "vault_quick_start" {
 }
 
 module "vault_aws" {
-  source = "git@github.com:hashicorp-modules/vault-aws.git?ref=f-refactor"
+  # source = "git@github.com:hashicorp-modules/vault-aws.git?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/vault-aws"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
   vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.vault_image_id != "" ? var.vault_image_id : data.aws_ami.base.id}"
-  ssh_key_name = "${module.network_aws.ssh_key_name}"
+  ssh_key_name = "${element(split(",", module.network_aws.ssh_key_name), 0)}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode
 ${data.template_file.vault_install.rendered} # Runtime install Vault in -dev mode

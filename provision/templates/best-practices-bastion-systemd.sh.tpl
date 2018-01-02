@@ -16,7 +16,7 @@ sudo update-ca-trust force-enable
 # TODO: Remove
 echo "Configure Consul TLS certificate in /etc/pki/ca-trust/source/anchors/consul.crt"
 cat <<EOF | sudo tee /etc/pki/ca-trust/source/anchors/consul.crt
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 echo "Configure Consul TLS certificate in /etc/pki/tls/certs/consul.crt"
@@ -32,7 +32,7 @@ echo "Configure Consul TLS certificate in /etc/pki/tls/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/pki/tls/certs/ca-bundle.crt
 
 # Consul
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 # TODO: Remove
@@ -40,7 +40,7 @@ echo "Configure Consul TLS certificate in /etc/ssl/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/ssl/certs/ca-bundle.crt
 
 # Consul
-${consul_crt_pem}
+${consul_ca_pem}
 EOF
 
 echo "Update CA trust"
@@ -59,7 +59,7 @@ ${consul_key_pem}
 EOF
 
 echo "Configure Bastion Consul client"
-cat <<CONFIG >/etc/consul.d/consul-client.json
+cat <<CONFIG | sudo tee /etc/consul.d/consul-client.json
 {
   "datacenter": "${name}",
   "advertise_addr": "$${local_ipv4}",
@@ -68,8 +68,8 @@ cat <<CONFIG >/etc/consul.d/consul-client.json
   "log_level": "INFO",
   "ui": true,
   "retry_join": ["provider=${provider} tag_key=Consul-Auto-Join tag_value=${name}"],
-  "encrypt": "${serf_encrypt_key}",
-  "key_file": "/etc/pki/tls/private/consul.crt",
+  "encrypt": "${serf_encrypt}",
+  "key_file": "/etc/pki/tls/private/consul.key",
   "cert_file": "/etc/pki/tls/certs/consul.crt",
   "ca_file": "/etc/pki/tls/certs/ca-bundle.crt",
   "ports": { "https": 8080 }
@@ -77,20 +77,20 @@ cat <<CONFIG >/etc/consul.d/consul-client.json
 CONFIG
 
 echo "Update Consul configuration file permissions"
-chown -R consul:consul /etc/consul.d
-chmod -R 0644 /etc/consul.d/*
-chmod 0755 /etc/pki/tls/private/consul.key /etc/pki/tls/certs/consul.crt
+sudo chown -R consul:consul /etc/consul.d
+sudo chmod -R 0644 /etc/consul.d/*
+sudo chmod 0755 /etc/pki/tls/private/consul.key /etc/pki/tls/certs/consul.crt
 
 echo "Don't start Consul in -dev mode"
 echo '' | sudo tee /etc/consul.d/consul.conf
 
 echo "Restart Consul"
-systemctl restart consul
+sudo systemctl restart consul
 
 # TODO: Remove
 echo "Configure Vault TLS certificate in /etc/pki/ca-trust/source/anchors/vault.crt"
 cat <<EOF | sudo tee /etc/pki/ca-trust/source/anchors/vault.crt
-${vault_crt_pem}
+${vault_ca_pem}
 EOF
 
 echo "Configure Vault TLS certificate in /etc/pki/tls/certs/vault.crt"
@@ -106,7 +106,7 @@ echo "Configure Vault TLS certificate in /etc/pki/tls/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/pki/tls/certs/ca-bundle.crt
 
 # Vault
-${vault_crt_pem}
+${vault_ca_pem}
 EOF
 
 # TODO: Remove
@@ -114,7 +114,7 @@ echo "Configure Vault TLS certificate in /etc/ssl/certs/ca-bundle.crt"
 cat <<EOF | sudo tee -a /etc/ssl/certs/ca-bundle.crt
 
 # Vault
-${vault_crt_pem}
+${vault_ca_pem}
 EOF
 
 echo "Update CA trust"
@@ -128,6 +128,6 @@ echo "Configure VAULT_ADDR environment variable to point Vault server to remote 
 echo 'export VAULT_ADDR="https://vault.service.consul:8200"' | sudo tee /etc/profile.d/vault.sh
 
 echo "Stop Vault now that the CLI is pointing to a live Vault cluster"
-systemctl stop vault
+sudo systemctl stop vault
 
 echo "[---best-practices-bastion-systemd.sh Complete---]"

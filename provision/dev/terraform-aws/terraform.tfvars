@@ -5,7 +5,6 @@ nat_count         = "1"
 bastion_count     = "0"
 vault_public_ip   = "true"
 vault_count       = "1"
-# os                = "Ubuntu" # Base OS type, defaults to RHEL
 # ami_owner         = "099720109477" # Base image owner, defaults to RHEL
 # ami_name          = "*ubuntu-xenial-16.04-amd64-server-*" # Base image name, defaults to RHEL
 # vault_version     = "0.9.0" # Vault Version for runtime install, defaults to 0.9.0

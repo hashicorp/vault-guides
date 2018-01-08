@@ -14,6 +14,25 @@ To SSH into a Vault host using this private key, run the below command after rep
 
   ${join("\n  ", formatlist("ssh -A -i %s %s@HOST", module.ssh_keypair_aws.private_key_filename, module.vault_aws.vault_username))}
 
+You can now interact with Vault using any of the CLI (https://www.vaultproject.io/docs/commands/index.html) or API (https://www.vaultproject.io/api/index.html) commands.
+
+  # The Root token for your Vault -dev instance is set to `root` and the `VAULT_TOKEN` environment variable has already been set for you
+  $ echo $VAULT_TOKEN
+
+  # Use the CLI to write and read a generic secret
+  $ vault write secret/foo bar=baz
+  $ vault read secret/foo
+
+  # Use the API to write and read a generic secret
+  $ curl \
+      -H "X-Vault-Token: $VAULT_TOKEN" \
+      -X POST \
+      -d '{"bar":"baz"}' \
+      http://127.0.0.1:8200/v1/secret/foo | jq '.'
+  $ curl \
+      -H "X-Vault-Token: $VAULT_TOKEN" \
+      http://127.0.0.1:8200/v1/secret/foo | jq '.'
+
 Because this is a development environment, the Vault nodes are in a public subnet with SSH access open from the outside. WARNING - DO NOT DO THIS IN PRODUCTION!
 
 Below are output variables that are currently commented out to reduce clutter. If you need the value of a certain output variable, such as "private_key_pem", just uncomment in outputs.tf.
@@ -33,6 +52,7 @@ Below are output variables that are currently commented out to reduce clutter. I
 README
 }
 
+/*
 output "vpc_cidr_block" {
   value = "${module.network_aws.vpc_cidr_block}"
 }
@@ -80,3 +100,4 @@ output "vault_asg_id" {
 output "vault_sg_id" {
   value = "${module.vault_aws.vault_sg_id}"
 }
+*/

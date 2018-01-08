@@ -2,14 +2,12 @@
 
 echo "[---Begin quick-start-consul-systemd.sh---]"
 
-echo "Update resolv.conf"
-sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
-
 echo "Set variables"
 LOCAL_IPV4=$(curl -s ${local_ip_url})
+CONSUL_CONFIG_FILE=/etc/consul.d/consul-server.json
 
 echo "Configure Consul server"
-cat <<CONFIG | sudo tee /etc/consul.d/consul-server.json
+cat <<CONFIG | sudo tee $CONSUL_CONFIG_FILE
 {
   "datacenter": "${name}",
   "advertise_addr": "$LOCAL_IPV4",
@@ -18,18 +16,18 @@ cat <<CONFIG | sudo tee /etc/consul.d/consul-server.json
   "log_level": "INFO",
   "ui": true,
   "server": true,
-  "bootstrap_expect": ${bootstrap_expect},
+  "bootstrap_expect": ${consul_bootstrap},
   "leave_on_terminate": true,
   "retry_join": ["provider=${provider} tag_key=Consul-Auto-Join tag_value=${name}"]
 }
 CONFIG
 
-echo "Update configuration file permissions"
-sudo chown -R consul:consul /etc/consul.d
-sudo chmod -R 0644 /etc/consul.d/*
+echo "Update Consul configuration file permissions"
+sudo chown consul:consul $CONSUL_CONFIG_FILE
 
 echo "Don't start Consul in -dev mode"
-echo '' | sudo tee /etc/consul.d/consul.conf
+cat <<SWITCHES | sudo tee /etc/consul.d/consul.conf
+SWITCHES
 
 echo "Restart Consul"
 sudo systemctl restart consul

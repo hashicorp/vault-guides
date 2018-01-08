@@ -67,7 +67,7 @@ data "template_file" "consul_quick_start" {
     name             = "${var.name}"
     provider         = "${var.provider}"
     local_ip_url     = "${var.local_ip_url}"
-    bootstrap_expect = "${length(module.network_aws.subnet_private_ids)}"
+    consul_bootstrap = "${length(module.network_aws.subnet_private_ids)}"
   }
 }
 

@@ -6,86 +6,60 @@ echo "Update resolv.conf"
 sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
 
 echo "Set variables"
-local_ipv4=$(curl -s ${local_ip_url})
+LOCAL_IPV4=$(curl -s ${local_ip_url})
+CONSUL_TLS_FILE=/opt/consul/tls
+CONSUL_CACERT_FILE="$CONSUL_TLS_FILE/ca.crt"
+CONSUL_CLIENT_CERT_FILE="$CONSUL_TLS_FILE/consul.crt"
+CONSUL_CLIENT_KEY_FILE="$CONSUL_TLS_FILE/consul.key"
+CONSUL_CONFIG_FILE=/etc/consul.d/consul-server.json
 
-echo "Install ca-certificates"
-sudo yum -y check-update
-sudo yum install -q -y ca-certificates
-sudo update-ca-trust force-enable
+echo "Create TLS dir for Consul certs"
+sudo mkdir -pm 0755 $CONSUL_TLS_FILE
 
-# TODO: Remove
-echo "Configure Consul TLS certificate in /etc/pki/ca-trust/source/anchors/consul.crt"
-cat <<EOF | sudo tee /etc/pki/ca-trust/source/anchors/consul.crt
-${consul_ca_pem}
+echo "Write Consul CA certificate to $CONSUL_CACERT_FILE"
+cat <<EOF | sudo tee $CONSUL_CACERT_FILE
+${consul_ca_crt}
 EOF
 
-echo "Configure Consul TLS certificate in /etc/pki/tls/certs/consul.crt"
-cat <<EOF | sudo tee /etc/pki/tls/certs/consul.crt
-${consul_crt_pem}
+echo "Write Consul certificate to $CONSUL_CLIENT_CERT_FILE"
+cat <<EOF | sudo tee $CONSUL_CLIENT_CERT_FILE
+${consul_leaf_crt}
 EOF
 
-# TODO: Remove
-cd /etc/pki/tls/certs
-sudo ln -sv /etc/pki/tls/certs/consul.crt $(openssl x509 -in /etc/pki/tls/certs/consul.crt -noout -hash).0
-
-echo "Configure Consul TLS certificate in /etc/pki/tls/certs/ca-bundle.crt"
-cat <<EOF | sudo tee -a /etc/pki/tls/certs/ca-bundle.crt
-
-# Consul
-${consul_ca_pem}
-EOF
-
-# TODO: Remove
-echo "Configure Consul TLS certificate in /etc/ssl/certs/ca-bundle.crt"
-cat <<EOF | sudo tee -a /etc/ssl/certs/ca-bundle.crt
-
-# Consul
-${consul_ca_pem}
-EOF
-
-echo "Update CA trust"
-sudo update-ca-trust enable
-sudo update-ca-trust extract
-
-echo "Configure Consul TLS certificate"
-
-# TODO: Remove
-cat <<EOF | sudo tee /etc/pki/tls/private/consul.crt
-${consul_crt_pem}
-EOF
-
-cat <<EOF | sudo tee /etc/pki/tls/private/consul.key
-${consul_key_pem}
+echo "Write Consul certificate key to $CONSUL_CLIENT_KEY_FILE"
+cat <<EOF | sudo tee $CONSUL_CLIENT_KEY_FILE
+${consul_leaf_key}
 EOF
 
 echo "Configure Consul server"
-cat <<CONFIG | sudo tee /etc/consul.d/consul-server.json
+cat <<CONFIG | sudo tee $CONSUL_CONFIG_FILE
 {
   "datacenter": "${name}",
-  "advertise_addr": "$${local_ipv4}",
+  "advertise_addr": "$LOCAL_IPV4",
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
   "log_level": "INFO",
   "ui": true,
   "server": true,
-  "bootstrap_expect": ${bootstrap_expect},
+  "bootstrap_expect": ${consul_bootstrap},
   "leave_on_terminate": true,
   "retry_join": ["provider=${provider} tag_key=Consul-Auto-Join tag_value=${name}"],
-  "encrypt": "${serf_encrypt}",
-  "key_file": "/etc/pki/tls/private/consul.key",
-  "cert_file": "/etc/pki/tls/certs/consul.crt",
-  "ca_file": "/etc/pki/tls/certs/ca-bundle.crt",
+  "encrypt": "${consul_encrypt}",
+  "ca_file": "$CONSUL_CACERT_FILE",
+  "cert_file": "$CONSUL_CLIENT_CERT_FILE",
+  "key_file": "$CONSUL_CLIENT_KEY_FILE",
+  "verify_incoming": true,
+  "verify_outgoing": true,
   "ports": { "https": 8080 }
 }
 CONFIG
 
-echo "Update configuration file permissions"
-sudo chown -R consul:consul /etc/consul.d
-sudo chmod -R 0644 /etc/consul.d/*
-sudo chmod 0755 /etc/pki/tls/private/consul.key /etc/pki/tls/certs/consul.crt
+echo "Update Consul configuration & certificates file owner"
+sudo chown -R consul:consul $CONSUL_CONFIG_FILE $CONSUL_TLS_FILE
 
 echo "Don't start Consul in -dev mode"
-echo '' | sudo tee /etc/consul.d/consul.conf
+cat <<SWITCHES | sudo tee /etc/consul.d/consul.conf
+SWITCHES
 
 echo "Restart Consul"
 sudo systemctl restart consul

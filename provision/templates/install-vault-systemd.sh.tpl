@@ -23,4 +23,8 @@ bash /tmp/vault/scripts/install-vault.sh
 echo "Install Vault Systemd"
 bash /tmp/vault/scripts/install-vault-systemd.sh
 
+echo "Cleanup install files"
+sudo rm -rf /tmp/*
+sudo rm -rf /tmp/.git*
+
 echo "[---install-vault-systemd.sh Complete---]"

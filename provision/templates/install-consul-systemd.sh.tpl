@@ -23,4 +23,8 @@ bash /tmp/consul/scripts/install-consul.sh
 echo "Install Consul Systemd"
 bash /tmp/consul/scripts/install-consul-systemd.sh
 
+echo "Cleanup install files"
+sudo rm -rf /tmp/*
+sudo rm -rf /tmp/.git*
+
 echo "[---install-consul-systemd.sh Complete---]"

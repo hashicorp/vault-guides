@@ -1,0 +1,310 @@
+# Local replication
+Vault is a lightweight binary that runs as a single process. This allows multiple Vault processes to easily run on a single machine, which is useful for testing/validation of Vault capabilities, as well as for development purposes. In this example, we will run several Vault processes to validate Vault replication capabilities and operations.
+
+Note: Requires Vault Enterprise binary in your local OS flavor. Instructions assume bash and common shell operations.
+
+# Bash alias setup
+
+Store the following in your .bash_profile/.bashrc or whatever
+
+NOTE: the commands in here are specific to Vault version >= 0.8
+
+```
+alias vrd='VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8200 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8200 -dev-ha -dev-transactional'
+alias vrd2="VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8202 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8202 -dev-ha -dev-transactional"
+alias vrd3="VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8204 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8204 -dev-ha -dev-transactional"
+
+vault2 () {
+  VAULT_ADDR=http://127.0.0.1:8202 vault $@
+}
+
+vault3 () {
+  VAULT_ADDR=http://127.0.0.1:8204 vault $@
+}
+
+```
+
+Spin it up locally on laptop in three separate terminals
+```sh
+vrd
+vrd2
+vrd3
+```
+
+Vault UI links:  
+http://127.0.0.1:8200  
+http://127.0.0.1:8202  
+http://127.0.0.1:8204  
+
+Ensure you have the following environment variables configured
+
+```sh
+export VAULT_ADDR='http://127.0.0.1:8200'
+export VAULT_SKIP_VERIFY=true
+```
+
+Model is as follows
+```
++---------------------------------+                    +------------------------------------+
+| vault port:8200                 |                    | vault2 port: 8202                  |
+| Performance primary replication |    +----------->   | Performance secondary replication  |
+| DR primary replication          |                    | (vault -> vault2)                  |
+|                                 |                    |                                    |
++---------------------------------+                    +------------------------------------+
+
+               +
+               |
+               v
+
++---------------------------------+
+| vault3 port:8204                |
+| DR secondary replication        |
+| (vault -> vault3)               |
+|                                 |
++---------------------------------+
+```
+
+setup primary replication (vault->vault2)
+```sh
+vault auth root
+vault write -f sys/replication/performance/primary/enable
+PRIMARY_PERF_TOKEN=$(vault write -format=json sys/replication/performance/primary/secondary-token id=vault2 \
+  | jq --raw-output '.wrap_info .token' )
+sleep 10
+vault2 auth root
+vault2 write sys/replication/performance/secondary/enable token=${PRIMARY_PERF_TOKEN}
+
+```
+
+setup DR replication (vault -> vault3)
+```sh
+vault auth root
+vault write -f /sys/replication/dr/primary/enable
+PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
+sleep 10
+vault3 auth root
+vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+
+```
+
+generate DR operation token (used to promote DR secondary)
+```sh
+## Generate one time password (otp) 
+DR_OTP=$(vault3 generate-root -genotp | awk '{print $2}')
+
+## Initiate DR token generation, create nonce
+NONCE=$(vault3 generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
+
+## Generate the encoded token using the unseal key from DR primary 
+## as well as the nonce generated from prior execution.
+##
+## Note that production clusters would normally require several executions 
+## to correlate with the Shamir sharing threshold number of keys
+PRIMARY_UNSEAL_KEY=<< PASTE UNSEAL KEY HERE >>
+ENCODED_TOKEN=$(vault3 generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep "Encoded" | awk '{print $3}')
+DR_OPERATION_TOKEN=$(vault generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN} | grep "Root token:" | awk '{print $3}')
+```
+
+
+create admin  user
+```sh
+vault auth root
+# setup vault admin user
+vault auth-enable userpass
+# create vault user policy
+echo '
+path "*" {
+    capabilities = ["create", "read", "update", "delete", "list", "sudo"]
+}' | vault policy-write vault-admin -
+
+vault write auth/userpass/users/vault password=vault policies=vault-admin
+
+```
+
+create regular user and write some data
+```sh
+vault auth root
+vault write auth/userpass/users/drtest password=drtest policies=user
+
+echo '
+path "supersecret/*" {
+  capabilities = ["list", "read"]
+}' | vault policy-write user -
+vault mount -path=supersecret generic
+vault write supersecret/drtest username=harold password=baines
+```
+
+Perform a failover test
+```sh
+
+# auth to vault with regular user
+vault auth -method=userpass username=drtest password=drtest
+
+vault read supersecret/drtest
+# save the ephemeral token for verification
+cp ~/.vault-token ~/.vault-token-DRTEST
+diff ~/.vault-token ~/.vault-token-DRTEST
+
+### STOP primary vault instance  - in dev mode this blows away all cluster information
+### pkill -fl 8200
+
+# OPTION 1 - Disable replication
+# disable replication on primary
+vault auth root
+vault write -f /sys/replication/dr/primary/disable
+vault write -f /sys/replication/performance/primary/disable
+
+# OPTION 2 - Demotion of replication role 
+# demote primary to secondary
+vault write -f /sys/replication/performance/primary/demote
+
+## demoting dr primary to secondary puts it in cold standby
+# vault write -f /sys/replication/dr/primary/demote
+
+
+# check performance secondary for access to secrets etc
+vault2 auth -method=userpass username=drtest password=drtest
+vault2 read supersecret/drtest
+
+# note that the .vault-token has changed
+diff ~/.vault-token ~/.vault-token-DRTEST
+
+## Promote DR secondary to primary
+vault3 write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
+
+# check status
+vault3 read -format=json sys/replication/status
+
+# let's check our token status
+cp ~/.vault-token-DRTEST ~/.vault-token
+vault3 read supersecret/drtest
+
+# vault3 read supersecret/drtest
+## Key             	Value
+## ---             	-----
+## refresh_interval	768h0m0s
+## password        	baines
+## username        	harold
+
+## SUCCESS!
+
+```
+
+The environment looks like the following at this step:
+
+```
++---------------------------------+                    +------------------------------------+
+| vault port:8200                 |                    | vault2 port:8202                   |
+| Replication disabled            |                    | Performance secondary replication  |
+| (or demoted)                    |                    | vault3 --> vault2                  |
+|                                 |                    |                                    |
++---------------------------------+                    +------------------------------------+
+
+                                                                          ^
+                                                                          |
+                                                                          |
+                                                                          |
++---------------------------------+                                       |
+| vault3 port:8204                |                                       |
+| DR primary replication          |  +------------------------------------+
+| Performance primary replication |
+| vault3 --> vault2               |
++---------------------------------+
+```
+
+
+FAILBACK - Option 1  - relevant for Vault 0.8-0.9
+Note that this is not an idea situation today, as we must first sync DR replication set back to vault, then perform another failover such that vault is the perf primary/dr primary.
+```
+# Disable replication on vault (if not already done)
+vault write -f /sys/replication/dr/primary/disable
+vault write -f /sys/replication/performance/primary/disable
+
+# enable vault as DR secondary to vault3
+vault3 auth root
+vault3 write -f /sys/replication/dr/primary/enable
+PRIMARY_DR_TOKEN=$(vault3 write -format=json /sys/replication/dr/primary/secondary-token id=vault | jq --raw-output '.wrap_info .token' )
+sleep 10
+vault auth root
+vault write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+sleep 10  
+```
+
+FAILBACK - Option 2 - relevant for Vault >= 0.9.1
+This scenario assumes the primary was demoted
+```
+# Promote original Vault instance back to disaster recovery primary
+vault write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
+vault write -f /sys/replication/dr/primary/enable
+NEW_PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
+vault3 write -f /sys/replication/dr/primary/demote
+vault3 write /sys/replication/dr/secondary/update-primary primary_api_addr=127.0.0.1:8200 token=${NEW_PRIMARY_DR_TOKEN}
+
+# Promote original Vault instance back to performance primary
+vault write -f /sys/replication/performance/secondary/promote
+vault2 write -f /sys/replication/performance/primary/demote
+NEW_PRIMARY_PERF_TOKEN=$(vault write -format=json sys/replication/performance/primary/secondary-token id=vault2 \
+  | jq --raw-output '.wrap_info .token' )
+vault2 write /sys/replication/performance/secondary/update-primary primary_api_addr=127.0.0.1:8200 token=${NEW_PRIMARY_PERF_TOKEN}
+
+
+```
+
+
+
+The environment looks like the following at this step:
+
+```
++---------------------------------+                    +------------------------------------+
+| vault                           |                    | vault2 port: 8202.                 |
+| DR secondary replication        |                    | Performance secondary replication  |
+| vault3->vault                   |                    | vault3 --> vault2                  |
+|                                 |                    |                                    |
++---------------------------------+                    +------------------------------------+
+
+              ^                                                           ^
+              |                                                           |
+              |                                                           |
+              +                                                           |
++---------------------------------+                                       |
+| vault3 port:8204                |                                       |
+| DR primary replication          |  +------------------------------------+
+| Performance primary replication |
+| vault3 --> vault2               |
++---------------------------------+
+```
+
+
+
+```
+# now we fail vault3 and enable vault as the primary
+vault3 write -f /sys/replication/dr/primary/disable
+vault3 write -f /sys/replication/performance/primary/disable
+
+# now setup vault as DR primary to vault3
+vault auth root
+vault write -f /sys/replication/dr/secondary/promote key=<<PASTE KEY HERE FROM VAULT here>>
+
+vault auth root
+vault write -f /sys/replication/dr/primary/disable
+vault write -f /sys/replication/dr/primary/enable
+PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
+sleep 10
+vault3 auth root
+vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+sleep 10  
+```
+
+
+check status on all 3
+```
+vault read -format=json sys/replication/status
+vault2 read -format=json sys/replication/status
+vault3 read -format=json sys/replication/status
+```
+
+Clean up
+```
+# CTRL-C any running vrd sessions
+rm -f ~/.vault-token*
+```

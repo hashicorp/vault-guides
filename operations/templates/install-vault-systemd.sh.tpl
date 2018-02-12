@@ -21,7 +21,6 @@ echo "Install Vault Systemd"
 curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/vault/scripts/install-vault-systemd.sh | bash
 
 echo "Cleanup install files"
-sudo rm -rf /tmp/*
-sudo rm -rf /tmp/.git*
+curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/cleanup.sh | bash
 
 echo "[---install-vault-systemd.sh Complete---]"

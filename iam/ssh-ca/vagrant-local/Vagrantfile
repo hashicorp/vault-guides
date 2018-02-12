@@ -4,7 +4,6 @@
 
 # vault variable defaults
 vault_version = ENV['VAULT_VERSION'] || "0.9.5"
-vault_download_url = ENV['VAULT_ENT_URL'] || "https://releases.hashicorp.com/vault/#{vault_version}/vault_#{vault_version}_linux_amd64.zip"
 
 $vault_env = <<VAULT_ENV
 sudo cat << EOF > /etc/profile.d/vault.sh
@@ -39,10 +38,21 @@ Vagrant.configure("2") do |config|
     vault.vm.box = "bento/centos-7.3"
     vault.vm.box_version = "2.3.8"
     vault.vm.hostname = "vault"
-    vault.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    vault.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    vault.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
-    env: { "VERSION" => vault_version,"URL" => vault_download_url }
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/base.sh | bash"
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/setup-user.sh | bash",
+      env: {
+        "GROUP" => vault_group,
+        "USER" => vault_user,
+        "COMMENT" => vault_comment,
+        "HOME" => vault_home,
+      }
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/vault/scripts/install-vault.sh | bash",
+      env: {
+        "VERSION" => vault_version,
+        "URL" => vault_ent_url,
+        "USER" => vault_user,
+        "GROUP" => vault_group,
+      }
     vault.vm.provision "shell", inline: $vault_env
     vault.vm.provision "shell", inline: $vault_run
     vault.vm.provision "shell", inline: $hosts_file
@@ -53,10 +63,21 @@ Vagrant.configure("2") do |config|
     client.vm.box = "bento/centos-7.3"
     client.vm.box_version = "2.3.8"
     client.vm.hostname = "client"
-    client.vm.provision "shell", path: "../../../shared/scripts/base.sh"
-    client.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault"
-    client.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
-    env: { "VERSION" => vault_version,"URL" => vault_download_url }
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/base.sh | bash"
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/shared/scripts/setup-user.sh | bash",
+      env: {
+        "GROUP" => vault_group,
+        "USER" => vault_user,
+        "COMMENT" => vault_comment,
+        "HOME" => vault_home,
+      }
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/f-refactor/vault/scripts/install-vault.sh | bash",
+      env: {
+        "VERSION" => vault_version,
+        "URL" => vault_ent_url,
+        "USER" => vault_user,
+        "GROUP" => vault_group,
+      }
     client.vm.provision "shell", inline: $vault_env
     client.vm.provision "shell", inline: $hosts_file
   end

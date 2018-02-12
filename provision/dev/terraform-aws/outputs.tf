@@ -20,18 +20,18 @@ You can now interact with Vault using any of the CLI (https://www.vaultproject.i
   $ echo $VAULT_TOKEN
 
   # Use the CLI to write and read a generic secret
-  $ vault write secret/foo bar=baz
-  $ vault read secret/foo
+  $ vault write secret/cli bar=baz
+  $ vault read secret/cli
 
   # Use the API to write and read a generic secret
   $ curl \
       -H "X-Vault-Token: $VAULT_TOKEN" \
       -X POST \
       -d '{"bar":"baz"}' \
-      http://127.0.0.1:8200/v1/secret/foo | jq '.'
+      http://127.0.0.1:8200/v1/secret/api | jq '.'
   $ curl \
       -H "X-Vault-Token: $VAULT_TOKEN" \
-      http://127.0.0.1:8200/v1/secret/foo | jq '.'
+      http://127.0.0.1:8200/v1/secret/api | jq '.'
 
 Because this is a development environment, the Vault nodes are in a public subnet with SSH access open from the outside. WARNING - DO NOT DO THIS IN PRODUCTION!
 

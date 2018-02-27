@@ -45,6 +45,7 @@ Code: 400. Errors:
 
 * server is not yet initialized
 
+# Active a primary node
 # vault init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
 Recovery Key 1: oOxAQfxcZitjqZfF3984De8rUckPeahQDUvmJ1A4JrQ=
 Initial Root Token: 54c4dbe3-d45b-79d9-18d0-602831a6a991

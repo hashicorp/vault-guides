@@ -20,18 +20,7 @@ data "aws_iam_policy_document" "vault-kms-unseal" {
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:DescribeKey",
-      "autoscaling:DescribeAutoScalingGroups",
-      "autoscaling:DescribeAutoScalingInstances",
-      "ec2:DescribeAvailabilityZones",
-      "ec2:DescribeInstanceAttribute",
-      "ec2:DescribeInstanceStatus",
-      "ec2:DescribeInstances",
-      "ec2:DescribeSubnets",
-      "ec2:DescribeVpcs",
-      "ec2:DescribeTags",
-      "iam:GetInstanceProfile",
-      "iam:GetUser",
-      "iam:GetRole"
+      "ec2:DescribeInstances"
     ]
   }
 }

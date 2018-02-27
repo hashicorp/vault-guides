@@ -80,8 +80,8 @@ token_policies: [root]
 
 
 # cat /etc/vault.d/vault.hcl
-storage "file" {
-  path = "/opt/vault"
+storage "consul" {
+ address = "127.0.0.1:8500"
 }
 listener "tcp" {
   address     = "0.0.0.0:8200"

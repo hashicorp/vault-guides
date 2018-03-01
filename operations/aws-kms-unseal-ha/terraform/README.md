@@ -1,6 +1,6 @@
 # Vault Autounseal using AWS KMS
 
-In this guide, we'll show an example of how to use Terraform to provision an instance that can utilize an encryption key from AWS Key Management Services to unseal Vault.
+In this guide, we'll show an example of how to use Terraform to provision a cluster that can utilize an encryption key from AWS Key Management Services to unseal Vault.
 
 ## Overview
 Vault unseal operation either requires either a number of people who each possess a shard of a key, split by Shamir's Secret sharing algorithm, or protection of the master key via an HSM or cloud key management services (Google CKMS or AWS KMS). 
@@ -35,6 +35,22 @@ terraform apply
 
 Outputs will contain instructions to connect to the server via SSH
 
+```
+Apply complete! Resources: 17 added, 0 changed, 0 destroyed.
+
+Outputs:
+
+connections = Connect to Node1 via SSH   ssh ubuntu@52.3.231.19 -i private.key
+Vault Enterprise web interface  http://52.3.231.19:8200/ui
+
+Connect to Node2 via SSH   ssh ubuntu@35.170.54.27 -i private.key
+Vault Enterprise web interface  http://35.170.54.27:8200/ui
+
+Connect to Node3 via SSH   ssh ubuntu@34.200.221.65 -i private.key
+Vault Enterprise web interface  http://34.200.221.65:8200/ui```
+```
+
+Login to one of the instances
 
 ```
 # vault status
@@ -94,8 +110,25 @@ seal "awskms" {
 ui=true
 ```
 
+Login to a different node and check the status of Vault
 
+```
+$ vault status
+Key                      Value
+---                      -----
+Recovery Seal Type       shamir
+Sealed                   false
+Total Recovery Shares    1
+Threshold                1
+Version                  0.9.4+ent
+Cluster Name             vault-cluster-2cc9b9df
+Cluster ID               253cc159-044e-a884-e9d0-398caa116733
+HA Enabled               true
+HA Cluster               https://192.168.100.22:8201
+HA Mode                  standby
+Active Node Address:     http://192.168.100.22:8200```
 
+```
 
 Once complete perform the following to clean up
 

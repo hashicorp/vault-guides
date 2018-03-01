@@ -76,16 +76,20 @@ root@ip-192-168-100-100:~# vault status
 Error checking seal status: Get http://127.0.0.1:8200/v1/sys/seal-status: dial tcp 127.0.0.1:8200: getsockopt: connection refused
 
 # systemctl start vault
-root@ip-192-168-100-100:~# vault status
-Type: shamir
-Sealed: false
-Key Shares: 1
-Key Threshold: 1
-Unseal Progress: 0
-Unseal Nonce:
-Version: 0.9.0+prem.hsm
-Cluster Name: vault-cluster-01cf6f33
-Cluster ID: fb787d8a-b882-fee8-b461-445320cde311
+$ vault status
+Key                      Value
+---                      -----
+Recovery Seal Type       shamir
+Sealed                   false
+Total Recovery Shares    1
+Threshold                1
+Version                  0.9.4+ent
+Cluster Name             vault-cluster-17200d37
+Cluster ID               81c09b45-0ff3-a1c6-65c6-4df2964b261e
+HA Enabled               true
+HA Cluster               https://192.168.100.166:8201
+HA Mode                  standby
+Active Node Address:     http://192.168.100.166:82001
 
 High-Availability Enabled: false
 
@@ -110,7 +114,7 @@ seal "awskms" {
 ui=true
 ```
 
-Login to a different node and check the status of Vault
+Login to a different node and check the status of Vault (One of them should now be active)
 
 ```
 $ vault status
@@ -121,13 +125,11 @@ Sealed                   false
 Total Recovery Shares    1
 Threshold                1
 Version                  0.9.4+ent
-Cluster Name             vault-cluster-2cc9b9df
-Cluster ID               253cc159-044e-a884-e9d0-398caa116733
+Cluster Name             vault-cluster-17200d37
+Cluster ID               81c09b45-0ff3-a1c6-65c6-4df2964b261e
 HA Enabled               true
-HA Cluster               https://192.168.100.22:8201
-HA Mode                  standby
-Active Node Address:     http://192.168.100.22:8200```
-
+HA Cluster               https://192.168.100.166:8201
+HA Mode                  active
 ```
 
 Once complete perform the following to clean up

@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
+set -x
+
+logger() {
+  DT=$(date '+%Y/%m/%d %H:%M:%S')
+  echo "$DT $0: $1"
+}
 
 
-# Authenticate to Vault
-vault auth password
+vault login password
 
+logger "Configuring Vault SSH CA backend"
 # Mount a backend's instance for signing host keys
 vault secrets enable -path ssh-host-signer ssh
 
@@ -12,19 +18,15 @@ vault secrets enable -path ssh-client-signer ssh
 
 # Configure the host CA certificate
 vault write -f -format=json ssh-host-signer/config/ca | jq -r '.data.public_key' > /home/vagrant/host_CA_certificate_raw
-
 echo "@cert-authority *.example.com $(cat /home/vagrant/host_CA_certificate_raw)" > /vagrant/CA_certificate
-cat /vagrant/CA_certificate >> /home/vagrant/.ssh/known_hosts
 
 # Configure the client CA certificate
-vault write -f -format=json ssh-client-signer/config/ca | jq -r '.data.public_key' >>  /home/vagrant/trusted-user-ca-keys.pem
-
-sudo mv /home/vagrant/trusted-user-ca-keys.pem /etc/ssh/trusted-user-ca-keys.pem
-echo "TrustedUserCAKeys /etc/ssh/trusted-user-ca-keys.pem" | sudo tee --append /etc/ssh/sshd_config
-echo "HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub" | sudo tee --append /etc/ssh/sshd_config
+vault write -f -format=json ssh-client-signer/config/ca | jq -r '.data.public_key' > /home/vagrant/trusted-user-ca-keys.pem
+cp /home/vagrant/trusted-user-ca-keys.pem /vagrant/trusted-user-ca-keys.pem
 
 # Allow host certificate to have longer TTLs
 vault secrets tune -max-lease-ttl=87600h ssh-host-signer
+
 
 # Create a role to sign host keys
 vault write ssh-host-signer/roles/hostrole ttl=87600h \
@@ -46,26 +48,17 @@ vault write ssh-host-signer/roles/hostrole ttl=87600h \
     "key_id_format": "vault-{{role_name}}-{{token_display_name}}-{{public_key_hash}}",
     "default_user": "vagrant",
     "ttl": "30m0s"
-  }' >> /home/vagrant/clientrole.json
+  }' > /home/vagrant/clientrole.json
 
 # Create a role to sign client keys
 vault write ssh-client-signer/roles/clientrole @/home/vagrant/clientrole.json
 
-# Sign the host key
-cat /etc/ssh/ssh_host_rsa_key.pub | vault write -format=json \
-  ssh-host-signer/sign/hostrole public_key=- \
-  cert_type=host | jq -r ".data.signed_key" | sudo tee /etc/ssh/ssh_host_rsa_key-cert.pub
 
-# Restart sshd
+logger "Configuring Vault SSH OTP backend"
+vault secrets enable ssh
+vault write ssh/roles/otp_key_role \
+  key_type=otp \
+  default_user=vagrant \
+  cidr_list=192.168.50.102/32
+
 sudo systemctl restart sshd
-
-echo '
-path "sys/mounts" {
-  capabilities = ["list","read"]
-}
-path "ssh-client-signer/sign/clientrole" {
-  capabilities = ["create", "update"]
-}' | vault policy write user -
-
-vault auth enable userpass
-vault write auth/userpass/users/johnsmith password=test policies=user

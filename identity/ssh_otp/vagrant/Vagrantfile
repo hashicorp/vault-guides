@@ -1,0 +1,101 @@
+# encoding: utf-8
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# variables
+vault_version = ENV['VAULT_VERSION'] || "0.9.5"
+vault_download_url = ENV['VAULT_ENT_URL'] || "https://releases.hashicorp.com/vault/#{vault_version}/vault_#{vault_version}_linux_amd64.zip"
+
+$vault_env = <<VAULT_ENV
+sudo cat << EOF > /etc/profile.d/vault.sh
+export VAULT_ADDR="http://192.168.50.100:8200"
+export VAULT_SKIP_VERIFY=true
+EOF
+VAULT_ENV
+
+$vault_run = <<VAULT_RUN
+nohup /usr/local/bin/vault server -dev \
+  -dev-root-token-id="password" \
+  -dev-listen-address="0.0.0.0:8200" 0<&- &>/dev/null &
+VAULT_RUN
+
+$hosts_file = <<HOSTS_FILE
+sudo cat << EOF >> /etc/hosts
+192.168.50.100  vault vault.example.com
+192.168.50.101  client client.example.com
+192.168.50.102  otp otp.example.com
+192.168.50.103  ca ca.example.com
+EOF
+HOSTS_FILE
+
+
+
+
+$vault_client_ssh = <<VAULT_CLIENT_SSH
+#Auth
+vault auth password
+
+# Create ssh key pair
+ssh-keygen -f /home/vagrant/.ssh/id_rsa -t rsa -N ''
+
+# Trust CA certificate in known_hosts
+cat /vagrant/CA_certificate > /home/vagrant/.ssh/known_hosts
+
+#Sign the key
+rm -f /home/vagrant/.ssh/id_rsa-cert.pub
+
+cat /home/vagrant/.ssh/id_rsa.pub | \
+  vault write -format=json ssh-client-signer/sign/clientrole public_key=- \
+  | jq -r '.data.signed_key' > /home/vagrant/.ssh/id_rsa-cert.pub
+
+#Key perms
+chmod 600 /home/vagrant/.ssh/id_rsa-cert.pub
+
+sudo systemctl restart sshd
+VAULT_CLIENT_SSH
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "512"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.customize ["modifyvm", :id, "--chipset", "ich9"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+  config.vm.box =  "bento/ubuntu-16.04"
+  config.vm.box_version = "201710.25.0" 
+  config.vm.provision "shell", path: "../../../shared/scripts/base.sh"
+  config.vm.provision "shell", path: "../../../shared/scripts/setup-user.sh", args: "vault" 
+  config.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault.sh",
+      env: { 
+          "VERSION" => vault_version,
+          "URL"     => vault_download_url 
+      }
+  config.vm.provision "shell", inline: $vault_env
+  config.vm.provision "shell", inline: $hosts_file
+  config.vm.define "vault" do |vault|
+    vault.vm.network :private_network, ip: "192.168.50.100"
+    vault.vm.network :forwarded_port, guest: 8200, host: 8200
+    vault.vm.hostname = "vault"
+    vault.vm.provision "shell", inline: $vault_run, run: "always"
+    vault.vm.provision "shell", path: "scripts/vault_config.sh", run: "always"
+    vault.vm.provision "shell", path: "scripts/vault_ssh.sh", run: "always"
+  end
+  config.vm.define "client" do |client|
+    client.vm.network :private_network, ip: "192.168.50.101"
+    client.vm.hostname = "client"
+    client.vm.provision "shell", inline: $vault_client_ssh, privileged: false, run: "always"
+    client.vm.provision "shell", inline: "apt-get install -y sshpass"
+  end
+  config.vm.define "otp" do |otp|
+    otp.vm.network :private_network, ip: "192.168.50.102"
+    otp.vm.hostname = "otp"
+    otp.vm.provision "shell", path: "../../../shared/vault/scripts/install-vault-helper.sh"
+    otp.vm.provision "shell", path: "scripts/server_endpoint_otp.sh"
+  end
+  config.vm.define "ca" do |ca|
+    ca.vm.network :private_network, ip: "192.168.50.103"
+    ca.vm.hostname = "ca"
+    ca.vm.provision "shell", path: "scripts/server_endpoint_ssh_ca.sh", run: "always"
+  end
+end

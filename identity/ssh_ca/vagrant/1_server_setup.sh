@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+
 # Authenticate to Vault
 vault auth password
 
@@ -68,7 +69,3 @@ path "ssh-client-signer/sign/clientrole" {
 
 vault auth enable userpass
 vault write auth/userpass/users/johnsmith password=test policies=user
-
-
-
-

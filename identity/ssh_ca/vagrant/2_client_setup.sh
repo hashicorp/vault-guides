@@ -8,7 +8,7 @@ cat /vagrant/CA_certificate >> /home/vagrant/.ssh/known_hosts
 rm -f /vagrant/CA_certificate
 
 # Authenticate to Vault
-vault auth -method=userpass username=johnsmith password=test
+vault login -method=userpass username=johnsmith password=test
 
 cat /home/vagrant/.ssh/id_rsa.pub | \
   vault write -format=json ssh-client-signer/sign/clientrole public_key=- \

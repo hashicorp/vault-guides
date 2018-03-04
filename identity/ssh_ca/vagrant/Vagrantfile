@@ -3,7 +3,7 @@
 # vi: set ft=ruby :
 
 # vault variable defaults
-vault_version = ENV['VAULT_VERSION'] || "0.8.3"
+vault_version = ENV['VAULT_VERSION'] || "0.9.5"
 vault_download_url = ENV['VAULT_ENT_URL'] || "https://releases.hashicorp.com/vault/#{vault_version}/vault_#{vault_version}_linux_amd64.zip"
 
 $vault_env = <<VAULT_ENV

@@ -58,11 +58,11 @@ Repeat steps 1.) and 3.) to unseal the other "standby" Vault servers as well to 
 
 Now that Vault is unsealed, you can seemlessly SSH back into unsealed Vault servers using Consul DNS (rather than using the command in Step 1). The nodes returned will be both active and standby Vault servers as long as they're unsealed.
 
-  ssh -A ${module.vault_aws.vault_username}@vault.service.consul
+  $ ssh -A ${module.vault_aws.vault_username}@vault.service.consul
 
 To SSH into Consul server nodes, you can also leverage Consul's DNS functionality.
 
-  ssh -A ${module.consul_aws.consul_username}@consul.service.consul
+  $ ssh -A ${module.consul_aws.consul_username}@consul.service.consul
 
 To force the generation of a new key, the private key instance can be "tainted" using the below command.
 

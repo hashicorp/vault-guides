@@ -7,14 +7,14 @@ sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
 
 echo "Set variables"
 LOCAL_IPV4=$(curl -s ${local_ip_url})
-CONSUL_TLS_FILE=/opt/consul/tls
-CONSUL_CACERT_FILE="$CONSUL_TLS_FILE/ca.crt"
-CONSUL_CLIENT_CERT_FILE="$CONSUL_TLS_FILE/consul.crt"
-CONSUL_CLIENT_KEY_FILE="$CONSUL_TLS_FILE/consul.key"
+CONSUL_TLS_PATH=/opt/consul/tls
+CONSUL_CACERT_FILE="$CONSUL_TLS_PATH/ca.crt"
+CONSUL_CLIENT_CERT_FILE="$CONSUL_TLS_PATH/consul.crt"
+CONSUL_CLIENT_KEY_FILE="$CONSUL_TLS_PATH/consul.key"
 CONSUL_CONFIG_FILE=/etc/consul.d/consul-server.json
 
 echo "Create TLS dir for Consul certs"
-sudo mkdir -pm 0755 $CONSUL_TLS_FILE
+sudo mkdir -pm 0755 $CONSUL_TLS_PATH
 
 echo "Write Consul CA certificate to $CONSUL_CACERT_FILE"
 cat <<EOF | sudo tee $CONSUL_CACERT_FILE
@@ -55,7 +55,7 @@ cat <<CONFIG | sudo tee $CONSUL_CONFIG_FILE
 CONFIG
 
 echo "Update Consul configuration & certificates file owner"
-sudo chown -R consul:consul $CONSUL_CONFIG_FILE $CONSUL_TLS_FILE
+sudo chown -R consul:consul $CONSUL_CONFIG_FILE $CONSUL_TLS_PATH
 
 echo "Don't start Consul in -dev mode"
 cat <<SWITCHES | sudo tee /etc/consul.d/consul.conf

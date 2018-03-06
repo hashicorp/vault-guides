@@ -7,18 +7,18 @@ sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
 
 echo "Set variables"
 LOCAL_IPV4=$(curl -s ${local_ip_url})
-CONSUL_TLS_FILE=/opt/consul/tls
-CONSUL_CACERT_FILE="$CONSUL_TLS_FILE/ca.crt"
-CONSUL_CLIENT_CERT_FILE="$CONSUL_TLS_FILE/consul.crt"
-CONSUL_CLIENT_KEY_FILE="$CONSUL_TLS_FILE/consul.key"
+CONSUL_TLS_PATH=/opt/consul/tls
+CONSUL_CACERT_FILE="$CONSUL_TLS_PATH/ca.crt"
+CONSUL_CLIENT_CERT_FILE="$CONSUL_TLS_PATH/consul.crt"
+CONSUL_CLIENT_KEY_FILE="$CONSUL_TLS_PATH/consul.key"
 CONSUL_CONFIG_FILE=/etc/consul.d/consul-client.json
-VAULT_TLS_FILE=/opt/vault/tls
-VAULT_CACERT_FILE="$VAULT_TLS_FILE/ca.crt"
-VAULT_CLIENT_CERT_FILE="$VAULT_TLS_FILE/vault.crt"
-VAULT_CLIENT_KEY_FILE="$VAULT_TLS_FILE/vault.key"
+VAULT_TLS_PATH=/opt/vault/tls
+VAULT_CACERT_FILE="$VAULT_TLS_PATH/ca.crt"
+VAULT_CLIENT_CERT_FILE="$VAULT_TLS_PATH/vault.crt"
+VAULT_CLIENT_KEY_FILE="$VAULT_TLS_PATH/vault.key"
 
 echo "Create TLS dir for Consul certs"
-sudo mkdir -pm 0755 $CONSUL_TLS_FILE
+sudo mkdir -pm 0755 $CONSUL_TLS_PATH
 
 echo "Write Consul CA certificate to $CONSUL_CACERT_FILE"
 cat <<EOF | sudo tee $CONSUL_CACERT_FILE
@@ -56,7 +56,7 @@ cat <<CONFIG | sudo tee $CONSUL_CONFIG_FILE
 CONFIG
 
 echo "Update Consul configuration & certificates file owner"
-sudo chown -R consul:consul $CONSUL_CONFIG_FILE $CONSUL_TLS_FILE
+sudo chown -R consul:consul $CONSUL_CONFIG_FILE $CONSUL_TLS_PATH
 
 echo "Don't start Consul in -dev mode"
 cat <<SWITCHES | sudo tee /etc/consul.d/consul.conf
@@ -66,7 +66,7 @@ echo "Restart Consul"
 sudo systemctl restart consul
 
 echo "Create tls dir for Vault certs"
-sudo mkdir -pm 0755 $VAULT_TLS_FILE
+sudo mkdir -pm 0755 $VAULT_TLS_PATH
 
 echo "Write Vault CA certificate to $VAULT_CACERT_FILE"
 cat <<EOF | sudo tee $VAULT_CACERT_FILE
@@ -84,7 +84,7 @@ ${vault_leaf_key}
 EOF
 
 echo "Update Vault certificates file owner"
-sudo chown -R vault:vault $VAULT_TLS_FILE
+sudo chown -R vault:vault $VAULT_TLS_PATH
 
 echo "Configure Vault environment variables to point Vault client CLI to remote Vault cluster & set TLS certs on login"
 cat <<ENVVARS | sudo tee /etc/profile.d/vault.sh

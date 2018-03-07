@@ -6,6 +6,7 @@ variable vpc_id {}
 variable instance_type {}
 variable subnet_id {}
 variable key_name {}
+variable ec2_pem {}
 
 //--------------------------------------------------------------------
 // Chef Variables

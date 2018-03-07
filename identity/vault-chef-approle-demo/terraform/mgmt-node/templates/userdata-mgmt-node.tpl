@@ -176,8 +176,8 @@ sudo chown -R vault:vault /etc/vault.d /etc/ssl/vault /opt/vault
 sudo chmod -R 0644 /etc/vault.d/*
 
 sudo tee -a /etc/environment <<EOF
-export VAULT_ADDR=http://127.0.0.1:8200
-export VAULT_SKIP_VERIFY=true
+VAULT_ADDR=http://127.0.0.1:8200
+VAULT_SKIP_VERIFY=true
 EOF
 
 source /etc/environment
@@ -187,10 +187,6 @@ sudo setcap cap_ipc_lock=+ep /usr/local/bin/vault
 
 ##--------------------------------------------------------------------
 ## Install Vault Systemd Service
-
-# Description=Vault Agent
-# Requires=network-online.target
-# After=network-online.target
 
 read -d '' VAULT_SERVICE <<EOF
 [Unit]
@@ -255,12 +251,6 @@ sudo chef-server-ctl reconfigure
 sudo chef-manage-ctl reconfigure --accept-license
 
 ##--------------------------------------------------------------------
-## Clone the Project Git Repo
-
-cd /home/ubuntu
-git clone https://github.com/tdsacilowski/vault-chef-approle-demo.git
-
-##--------------------------------------------------------------------
 ## Finish Chef App Config, Knife Config, Etc
 
 cd /home/ubuntu/vault-chef-approle-demo/chef/
@@ -285,7 +275,7 @@ cd /home/ubuntu/vault-chef-approle-demo/chef/
 knife ssl fetch
 knife ssl check
 
-cd /home/ubuntu/vault-chef-approle-demo/chef/cookbooks
+cd /home/ubuntu/vault-chef-approle-demo/chef/
 knife cookbook upload vault_chef_approle_demo
 
 ##--------------------------------------------------------------------

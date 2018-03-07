@@ -21,6 +21,9 @@ subnet_id = "subnet-123456"
 # SSH key name to access EC2 instances
 key_name = "my-key-name"
 
+# File path to EC2 SSH key (for Chef provisioner connection)
+ec2_pem = "/path/to/EC2/private_key.pem"
+
 //--------------------------------------------------------------------
 // Chef Server Vars
 

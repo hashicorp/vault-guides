@@ -42,11 +42,12 @@ resource "aws_instance" "chef-node" {
       private_key = "${file(var.ec2_pem)}"
     }
 
-    node_name      = "chef-node-test"
-    client_options = ["log_level :debug"]
-    server_url     = "${var.chef_server_address}"
-    user_name      = "demo-admin"
-    user_key       = "${data.aws_s3_bucket_object.chef_bootstrap_pem.body}"
+    node_name = "chef-node-test"
+
+    //client_options = ["log_level :debug"]
+    server_url = "${var.chef_server_address}"
+    user_name  = "demo-admin"
+    user_key   = "${data.aws_s3_bucket_object.chef_bootstrap_pem.body}"
 
     run_list                = ["recipe[vault_chef_approle_demo]"]
     recreate_client         = true

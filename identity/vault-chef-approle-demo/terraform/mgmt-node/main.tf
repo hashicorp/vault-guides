@@ -21,6 +21,41 @@ resource "aws_instance" "vault" {
     Name = "${var.environment_name}-vault-server"
   }
 
+  provisioner "remote-exec" {
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file(var.ec2_pem)}"
+    }
+
+    inline = [
+      "mkdir /home/ubuntu/vault-chef-approle-demo",
+      "chown -R ubuntu:ubuntu /home/ubuntu/vault-chef-approle-demo",
+    ]
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file(var.ec2_pem)}"
+    }
+
+    source      = "../../chef"
+    destination = "/home/ubuntu/vault-chef-approle-demo"
+  }
+
+  provisioner "file" {
+    connection {
+      type        = "ssh"
+      user        = "ubuntu"
+      private_key = "${file(var.ec2_pem)}"
+    }
+
+    source      = "../../vault"
+    destination = "/home/ubuntu/vault-chef-approle-demo"
+  }
+
   user_data = "${data.template_file.vault.rendered}"
 }
 

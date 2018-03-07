@@ -35,20 +35,19 @@ end
 # Configure address for Vault Gem
 Vault.address = ENV['VAULT_ADDR']
 
-# Get SecretID retrieval token from data bag
-vault_token_data = data_bag_item('secretid-token', 'approle-secretid-token')
-var_vault_token = vault_token_data['auth']['client_token']
+# Get AppRole RoleID from our environment variables (delivered via Terraform)
+var_role_id = ENV['APPROLE_ROLEID']
 
-# Configure token for Vault Gem (to retrieve SecretID)
-Vault.token = var_vault_token
+# Get Vault token from data bag (used to retrieve the SecretID)
+vault_token_data = data_bag_item('secretid-token', 'approle-secretid-token')
+
+# Set Vault token (used to retrieve the SecretID)
+Vault.token = vault_token_data['auth']['client_token']
 
 # Get AppRole SecretID from Vault
 var_secret_id = Vault.approle.create_secret_id('app-1').data[:secret_id]
 
-# Get AppRole RoleID from ENV (delivered via Terraform)
-var_role_id = ENV['APPROLE_ROLEID']
-
-# Bring RoleID and SecretID together for AppRole authentication
+# Combine RoleID and SecretID together for AppRole authentication
 secret = Vault.auth.approle( var_role_id, var_secret_id )
 
 # Save the AppRole authentication token so we can output it in our template
@@ -60,12 +59,10 @@ var_secrets = Vault.logical.read("secret/app-1")
 # Output our info
 template '/var/www/html/index.html' do
   source 'index.html.erb'
-  variables lazy {
-    {
-      role_id: var_role_id,
-      secret_id: var_secret_id,
-      approle_token: var_approle_token,
-      app_1_secrets: var_secrets.data
-    }
-  }
+  variables(
+    :role_id => var_role_id,
+    :secret_id => var_secret_id,
+    :approle_token => var_approle_token,
+    :app_1_secrets => var_secrets.data
+  )
 end

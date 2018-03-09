@@ -1,5 +1,15 @@
+# Compiled files
+*.tfstate
+*.tfstate.*
+
+# Module directory
+.terraform/
+
+# Terraform Variables
+*.tfvars
+
+# SSH Keys
+*.pem
+
 *.DS_Store
 *.vagrant
-*.tfstate
-*.terraform/
-

@@ -51,7 +51,7 @@ _If using [Terraform Enterprise](https://www.terraform.io/docs/enterprise/gettin
 
 Using Terraform Open Source:
 
-1. After cloning this repo, `cd` into the `identity/vault-chef-approle-demo/terraform/mgmt-node` directory.
+1. After cloning this repo, `cd` into the `identity/vault-chef-approle/terraform-aws/mgmt-node` directory.
 
 2. Make sure to update the `terraform.tfvars.example` file accordingly and rename to `terraform.tfvars`.
 
@@ -65,7 +65,7 @@ Once the user-data script has completed, you'll see the following subfolders in 
 
 - `/home/ubuntu/vault-chef-approle-demo/chef`: root of our Chef app; this is where our `knife` configuration is located [`.chef/knife.rb`]
 
-- `/home/ubuntu/vault-chef-approle-demo/vault`: root of our Vault configurations; there's a `provision.sh` script in the `scripts/` subfolder to automate the setup of Vault, or you can follow along in the rest of this README to configure Vault manually
+- `/home/ubuntu/vault-chef-approle-demo/scripts`: there's a `vault-approle-setup.sh` script located here to help automate the setup of Vault, or you can follow along in the rest of this README to configure Vault manually
 
 ### Step 2: Initialize and Unseal Vault
 
@@ -76,7 +76,7 @@ export VAULT_ADDR=http://127.0.0.1:8200
 export VAULT_SKIP_VERIFY=true
 ```
 
-To set up Vault manually, continue below. Otherwise, run the `/home/ubuntu/demo_setup.sh` script to get up and running, and skip to the step....
+To set up Vault manually, continue below. Otherwise, run the `/home/ubuntu/demo_setup.sh` script to get up and running, and skip to "Phase 2 [Provision our Chef Node to Show AppRole Login]"
 
 1. Before we can do anything in Vault, we need to initialize and unseal it. We'll take a bit of a shortcut here... **_DON'T DO THIS IN PRODUCTION!!!_**
 
@@ -86,12 +86,12 @@ curl \
 --request PUT \
 --data '{"secret_shares": 1, "secret_threshold": 1}' \
 ${VAULT_ADDR}/v1/sys/init | tee \
->(jq -r .root_token > /home/ubuntu/vault-chef-approle-demo/vault/root-token) \
->(jq -r .keys[0] > /home/ubuntu/vault-chef-approle-demo/vault/unseal-key)
+>(jq -r .root_token > /home/ubuntu/vault-chef-approle-demo/root-token) \
+>(jq -r .keys[0] > /home/ubuntu/vault-chef-approle-demo/unseal-key)
 
-vault operator unseal $(cat /home/ubuntu/vault-chef-approle-demo/vault/unseal-key)
+vault operator unseal $(cat /home/ubuntu/vault-chef-approle-demo/unseal-key)
 
-export VAULT_TOKEN=$(cat /home/ubuntu/vault-chef-approle-demo/vault/root-token)
+export VAULT_TOKEN=$(cat /home/ubuntu/vault-chef-approle-demo/root-token)
 ```
 
 ### Step 3: AppRole Setup
@@ -425,7 +425,7 @@ At this point, just about all the pieces are in place. Remember, these setup ste
 
 To complete the demo, we'll now run our `chef-node` Terraform configuration to see how everything talks to each other. First, some final setup...
 
-1. Open another terminal window/tab (on your host machine, not the `mgmt-node`) and `cd` into the `identity/vault-chef-approle-demo/terraform/chef-node` directory.
+1. Open another terminal window/tab (on your host machine, not the `mgmt-node`) and `cd` into the `identity/vault-chef-approle/terraform-aws/chef-node` directory.
 
 2. Update the `terraform.tfvars.example` file accordingly and rename to `terraform.tfvars`:
     * Update the `vault_address` and `chef_server_address` variables with the IP address of our `mgmt-node` from above.

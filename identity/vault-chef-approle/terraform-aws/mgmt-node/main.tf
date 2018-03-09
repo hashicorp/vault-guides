@@ -52,7 +52,7 @@ resource "aws_instance" "vault" {
       private_key = "${file(var.ec2_pem)}"
     }
 
-    source      = "../../vault"
+    source      = "../../scripts"
     destination = "/home/ubuntu/vault-chef-approle-demo"
   }
 

@@ -292,18 +292,18 @@ curl \
     --request PUT \
     --data '{"secret_shares": 1, "secret_threshold": 1}' \
     $${VAULT_ADDR}/v1/sys/init | tee \
-    >(jq -r .root_token > /home/ubuntu/vault-chef-approle-demo/vault/root-token) \
-    >(jq -r .keys[0] > /home/ubuntu/vault-chef-approle-demo/vault/unseal-key)
+    >(jq -r .root_token > /home/ubuntu/vault-chef-approle-demo/root-token) \
+    >(jq -r .keys[0] > /home/ubuntu/vault-chef-approle-demo/unseal-key)
 
-vault operator unseal $(cat /home/ubuntu/vault-chef-approle-demo/vault/unseal-key)
-export VAULT_TOKEN=$(cat /home/ubuntu/vault-chef-approle-demo/vault/root-token)
+vault operator unseal $(cat /home/ubuntu/vault-chef-approle-demo/unseal-key)
+export VAULT_TOKEN=$(cat /home/ubuntu/vault-chef-approle-demo/root-token)
 
-cd /home/ubuntu/vault-chef-approle-demo/vault/
-chmod +x scripts/provision.sh
-/home/ubuntu/vault-chef-approle-demo/vault/scripts/provision.sh
+cd /home/ubuntu/vault-chef-approle-demo/
+chmod +x scripts/vault-approle-setup.sh
+/home/ubuntu/vault-chef-approle-demo/scripts/vault-approle-setup.sh
 
 cd /home/ubuntu/vault-chef-approle-demo/chef/
-cat /home/ubuntu/vault-chef-approle-demo/vault/secretid-token.json | jq --arg id approle-secretid-token '. + {id: $id}' > secretid-token.json
+cat /home/ubuntu/vault-chef-approle-demo/secretid-token.json | jq --arg id approle-secretid-token '. + {id: $id}' > secretid-token.json
 knife data bag create secretid-token
 knife data bag from file secretid-token secretid-token.json
 knife data bag list

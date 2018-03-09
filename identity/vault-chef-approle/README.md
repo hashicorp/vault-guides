@@ -28,9 +28,9 @@ It aims to provide a simple, end-to-end example of how to use Vault's [AppRole a
 
 This project contains the following assets:
 - Chef cookbook [`/chef`]: A sample cookbook with a recipe that installs Nginx and demonstrates Vault Ruby Gem functionality used to interact with Vault APIs.
-- Terraform configurations [`/terraform`]:
-    - `/terraform/mgmt-node`: Configuration to set up a management server running both Vault and Chef Server, for demo purposes.
-    - `/terraform/chef-node`: Configuration to set up a Chef node and bootstrap it with the Chef Server, passing in Vault's AppRole RoleID and the appropriate Chef run-list.
+- Terraform configurations [`/terraform-aws`]:
+    - `/terraform-aws/mgmt-node`: Configuration to set up a management server running both Vault and Chef Server, for demo purposes.
+    - `/terraform-aws/chef-node`: Configuration to set up a Chef node and bootstrap it with the Chef Server, passing in Vault's AppRole RoleID and the appropriate Chef run-list.
 - Vault configuration [`/vault`]: Data/scripts used to configure the appropriate mounts and policies in Vault for this demo.
 
 Provisioning for this project happens in 2 phases:

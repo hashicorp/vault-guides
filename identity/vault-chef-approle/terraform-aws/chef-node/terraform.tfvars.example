@@ -15,14 +15,14 @@ subnet_id = "subnet-123456"
 # EC2 SSH key name to attach to instance
 key_name = "my-key-name"
 
+# File path to EC2 SSH key (for Chef provisioner connection)
+ec2_pem = "/path/to/EC2/private_key.pem"
+
+# Chef Server IP address (public if you want to access from outside your VPC)
+chef_server_address = "https://10.0.0.0/organizations/demo-org"
+
 # Vault Server IP address (public if you want to access from outside your VPC)
 vault_address = "http://10.0.0.0:8200"
 
 # Token that Terraform will use to retrieve AppRole RoleID from Vault
 vault_token = ""
-
-# Chef Server IP address (public if you want to access from outside your VPC)
-chef_server_address = "https://10.0.0.0/organizations/demo-org"
-
-# File path to EC2 SSH key (for Chef provisioner connection)
-ec2_pem = "/path/to/EC2/private_key.pem"

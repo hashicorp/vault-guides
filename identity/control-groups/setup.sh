@@ -11,12 +11,13 @@ vault write EU_GDPR_data/UK foo=bar
 vault write secret/foo bar=baz
 
 vault auth enable userpass
-USERPASS_ACCESSOR=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request GET http://127.0.0.1:8200/v1/sys/auth | jq -r '.data."userpass/".accessor') 
+USERPASS_ACCESSOR=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+  --request GET http://127.0.0.1:8200/v1/sys/auth | jq -r '.data."userpass/".accessor') 
 
 
 
 ##################
-#SETUP PROCESSERS
+#SETUP PROCESS0RS
 ##################
 echo '
 path "EU_GDPR_data/*" {
@@ -44,7 +45,9 @@ echo '
   "policies": ["gdpr"]
 }' > andrewk-entity.json
 
-ANDREWK_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @andrewk-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
+ANDREWK_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+   --request POST \
+   --data @andrewk-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
 
 #Create entity alias for Andrew to the userpass backend
 echo "{
@@ -53,7 +56,9 @@ echo "{
   \"mount_accessor\": \"$USERPASS_ACCESSOR\"
 }" > andrewk-userpass-entity-alias.json
 
-ANDREWK_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @andrewk-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
+ANDREWK_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+   --request POST \
+   --data @andrewk-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
 
 echo "{
   \"name\": \"processors\",
@@ -89,7 +94,9 @@ echo '
   "policies": ["controllers"]
 }' > briang-entity.json
 
-BRIANG_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @briang-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
+BRIANG_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+  --request POST \
+  --data @briang-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
 
 #Create entity alias for Brian to the userpass backend
 echo "{
@@ -98,7 +105,9 @@ echo "{
   \"mount_accessor\": \"$USERPASS_ACCESSOR\"
 }" > briang-userpass-entity-alias.json
 
-BRIANG_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @briang-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
+BRIANG_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+  --request POST \
+  --data @briang-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
 
 #Create Nico entity
 echo '
@@ -110,7 +119,9 @@ echo '
   "policies": ["controllers"]
 }' > nico-entity.json
 
-NICO_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @nico-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
+NICO_ENTITY_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+  --request POST \
+  --data @nico-entity.json  http://127.0.0.1:8200/v1/identity/entity | jq -r '.data.id')
 
 #Create entity alias for Nico to the userpass backend
 echo "{
@@ -119,7 +130,9 @@ echo "{
   \"mount_accessor\": \"$USERPASS_ACCESSOR\"
 }" > nico-userpass-entity-alias.json
 
-NICO_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" --request POST --data @nico-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
+NICO_ENTITY_ALIAS_ID=$(curl -H "X-Vault-Token: ${ROOT_TOKEN}" \
+  --request POST \
+  --data @nico-userpass-entity-alias.json  http://127.0.0.1:8200/v1/identity/entity-alias | jq -r '.data.id')
 
 echo "{
   \"name\": \"controllers\",

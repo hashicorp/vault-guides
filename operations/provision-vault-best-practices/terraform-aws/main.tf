@@ -56,7 +56,8 @@ data "template_file" "bastion_user_data" {
 }
 
 module "network_aws" {
-  source = "git@github.com:hashicorp-modules/network-aws.git?ref=f-refactor"
+  # source = "git@github.com:hashicorp-modules/network-aws.git?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/network-aws"
 
   name              = "${var.name}"
   vpc_cidr          = "${var.vpc_cidr}"
@@ -74,6 +75,7 @@ module "network_aws" {
   user_data         = "${data.template_file.bastion_user_data.rendered}" # Override user_data
   ssh_key_name      = "${element(module.ssh_keypair_aws_override.name, 0)}"
   ssh_key_override  = "true"
+  tags              = "${var.network_tags}"
 }
 
 data "template_file" "consul_user_data" {
@@ -92,7 +94,8 @@ data "template_file" "consul_user_data" {
 }
 
 module "consul_aws" {
-  source = "git@github.com:hashicorp-modules/consul-aws.git?ref=f-refactor"
+  # source = "git@github.com:hashicorp-modules/consul-aws.git?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/consul-aws"
 
   name             = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id           = "${module.network_aws.vpc_id}"
@@ -107,6 +110,7 @@ module "consul_aws" {
   instance_type    = "${var.consul_instance_type}"
   user_data        = "${data.template_file.consul_user_data.rendered}" # Custom user_data
   ssh_key_name     = "${element(module.ssh_keypair_aws_override.name, 0)}"
+  tags             = "${var.consul_tags}"
 }
 
 data "template_file" "vault_user_data" {
@@ -143,4 +147,5 @@ module "vault_aws" {
   instance_type    = "${var.vault_instance_type}"
   user_data        = "${data.template_file.vault_user_data.rendered}" # Custom user_data
   ssh_key_name     = "${element(module.ssh_keypair_aws_override.name, 0)}"
+  tags             = "${var.vault_tags}"
 }

@@ -29,3 +29,16 @@ vault_os              = "RHEL" # OS (e.g. RHEL, Ubuntu)
 vault_os_version      = "7.3" # OS Version (e.g. 7.3 for RHEL, 16.04 for Ubuntu)
 vault_count           = "3" # Number of Vault nodes to provision across public subnets, defaults to public subnet count.
 vault_instance_type   = "t2.small"
+
+# Example tags
+network_tags = {"owner" = "hashicorp", "TTL" = "24"}
+
+consul_tags = [
+  {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
+  {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+]
+
+vault_tags = [
+  {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
+  {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+]

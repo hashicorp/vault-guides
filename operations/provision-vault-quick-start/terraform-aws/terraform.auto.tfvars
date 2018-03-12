@@ -10,3 +10,16 @@ name = "vault-quick-start"
 # vault_version  = "0.8.1" # Vault Version for runtime install, defaults to 0.8.1
 # vault_url      = "" # Vault Enterprise download URL for runtime install, defaults to Vault OSS
 # vault_image_id = "" # AMI ID override, defaults to base RHEL AMI
+
+# Example tags
+# network_tags = {"owner" = "hashicorp", "TTL" = "24"}
+#
+# consul_tags = [
+#   {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
+#   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+# ]
+#
+# vault_tags = [
+#   {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
+#   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+# ]

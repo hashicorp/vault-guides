@@ -10,3 +10,13 @@ variable "ami_name"          { default = "*RHEL-7.3_HVM_GA-*" } # Base RHEL name
 variable "vault_version"     { default = "0.9.0" }
 variable "vault_url"         { default = "" }
 variable "vault_image_id"    { default = "" }
+
+variable "network_tags" {
+  type    = "map"
+  default = { }
+}
+
+variable "vault_tags" {
+  type    = "list"
+  default = [ ]
+}

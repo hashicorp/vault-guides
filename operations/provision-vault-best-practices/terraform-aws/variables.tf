@@ -31,3 +31,18 @@ variable "vault_os"              { }
 variable "vault_os_version"      { }
 variable "vault_count"           { }
 variable "vault_instance_type"   { }
+
+variable "network_tags" {
+  type    = "map"
+  default = { }
+}
+
+variable "consul_tags" {
+  type    = "list"
+  default = [ ]
+}
+
+variable "vault_tags" {
+  type    = "list"
+  default = [ ]
+}

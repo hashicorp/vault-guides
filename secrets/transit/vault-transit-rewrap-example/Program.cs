@@ -27,6 +27,8 @@ namespace RewrapExample
                 client = new VaultClient(vaultUri, token, transitKeyName);
             }
 
+            InitDBAsync().GetAwaiter().GetResult();
+
             // seed the database with random user records if necessary
             if (null != shouldSeed) {
                 SeedDB(numRecords).GetAwaiter().GetResult();

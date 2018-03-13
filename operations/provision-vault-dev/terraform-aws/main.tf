@@ -3,8 +3,8 @@ module "ssh_keypair_aws" {
 }
 
 module "network_aws" {
-  # source = "git@github.com:hashicorp-modules/network-aws.git?ref=f-refactor"
-  source = "../../../../../hashicorp-modules/network-aws"
+  source = "git@github.com:hashicorp-modules/network-aws.git?ref=f-refactor"
+  # source = "../../../../../hashicorp-modules/network-aws"
 
   name              = "${var.name}"
   vpc_cidrs_public  = "${var.vpc_cidrs_public}"
@@ -44,8 +44,8 @@ data "template_file" "vault_user_data" {
 }
 
 module "vault_aws" {
-  # source = "git@github.com:hashicorp-modules/vault-aws.git?ref=f-refactor"
-  source = "../../../../../hashicorp-modules/vault-aws"
+  source = "git@github.com:hashicorp-modules/vault-aws.git?ref=f-refactor"
+  # source = "../../../../../hashicorp-modules/vault-aws"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"

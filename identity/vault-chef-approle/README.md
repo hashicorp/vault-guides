@@ -33,6 +33,12 @@ This project contains the following assets:
     - `/terraform-aws/chef-node`: Configuration to set up a Chef node and bootstrap it with the Chef Server, passing in Vault's AppRole RoleID and the appropriate Chef run-list.
 - Vault configuration [`/vault`]: Data/scripts used to configure the appropriate mounts and policies in Vault for this demo.
 
+Prerequisites:
+
+The following resources are assumed to already exist for the use of this demo:
+- An S3 bucket
+- Admin IAM permissions (to be able to create additional IAM policies, instance profiles)
+
 Provisioning for this project happens in 2 phases:
 
 1. Vault + Chef Server, AppRole setup

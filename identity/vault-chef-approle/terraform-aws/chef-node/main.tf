@@ -101,7 +101,7 @@ resource "aws_security_group" "chef-node" {
 // Data Sources
 
 data "aws_s3_bucket_object" "chef_bootstrap_pem" {
-  bucket = "teddy-hc-se-demos"
+  bucket = "${var.s3_bucket_name}"
   key    = "demo-admin-private-key.pem"
 }
 

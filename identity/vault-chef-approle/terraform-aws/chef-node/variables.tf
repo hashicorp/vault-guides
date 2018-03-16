@@ -4,6 +4,7 @@ variable vpc_id {}
 variable instance_type {}
 variable subnet_id {}
 variable key_name {}
+variable s3_bucket_name {}
 variable vault_address {}
 variable vault_token {}
 variable chef_server_address {}

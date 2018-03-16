@@ -22,7 +22,7 @@ This demo is **_NOT SUITABLE FOR PRODUCTION USE!!_**
 
 ## Summary
 
-This project is a working implementation of the concepts discussed in the _"Delivering Secret Zero: Vault AppRole with Terraform and Chef" (link TBD)_ webinar.
+This project is a working implementation of the concepts discussed in the [_"Delivering Secret Zero: Vault AppRole with Terraform and Chef"_](https://www.hashicorp.com/resources/delivering-secret-zero-vault-approle-terraform-chef) webinar.
 
 It aims to provide a simple, end-to-end example of how to use Vault's [AppRole authentication method](https://www.vaultproject.io/docs/auth/approle.html), along with Terraform & Chef, to address the challenge of _secure introduction_ of an initial token to a target server/application.
 
@@ -55,7 +55,7 @@ Using Terraform Open Source:
 
 2. Make sure to update the `terraform.tfvars.example` file accordingly and rename to `terraform.tfvars`.
 
-3. Perform a `terraform plan` to verify your changes and the resources that will be created. If all looks good, then perform a `terraform apply` to provision the resources.
+3. Perform a `terraform init` to pull down the necessary provider resources. Then `terraform plan` to verify your changes and the resources that will be created. If all looks good, then perform a `terraform apply` to provision the resources.
     - The Terraform output will display the public IP address to SSH into your server.
 
 4. Initial setup of the Chef Server takes several minutes. Once you can SSH into your mgmt server, run `tail -f /var/log/tf-user-data.log` to see when the initial configuration is complete. When you see `.../var/lib/cloud/instance/scripts/part-001: Complete`, you'll know that initial setup is complete. 
@@ -95,6 +95,15 @@ export VAULT_TOKEN=$(cat /home/ubuntu/vault-chef-approle-demo/root-token)
 ```
 
 ### Step 3: AppRole Setup
+
+In the next few steps, we'll be creating a number of policies and tokens within Vault. Below is a table that summarizes them:
+
+| Policy | Description | Token Attachment |
+| ------ | ----------- | ---------------- |
+| `app-1-secret-read`| Sets the policy for the final token that will be delivered via the AppRole login | None. This will be delivered to the client upon AppRole login |
+| `app-1-approle-roleid-get` | Sets the policy for the token that we'll give to Terraform to deliver the RoleID (only) | `roleid-token` |
+| `terraform-token-create`   | The Terraform Vault provider doesn't use the token supplied to it directly. This is to prevent the token from being exposed in Terraform's state file. Instead, the Token given to Terraform needs to have the capability to create child tokens with short TTLs. See [here] (https://www.terraform.io/docs/providers/vault/index.html#token) for more info | `roleid-token` |
+| `app-1-approle-secretid-create` | Sets the policy for the token that we'll store in the Chef Data Bag. This will only be able to pull our AppRole's SecretID | `secretid-token` |
 
 These setup steps will only need to be performed upon initial creation of an AppRole, and would typically be done by a Vault administrator.
 
@@ -431,7 +440,8 @@ To complete the demo, we'll now run our `chef-node` Terraform configuration to s
     * Update the `vault_address` and `chef_server_address` variables with the IP address of our `mgmt-node` from above.
     * Update the `vault_token` variable with the `RoleID` token from Step 4.2 above.
 
-3. Perform a `terraform plan` to verify your changes and the resources that will be created. If all looks good, then perform a `terraform apply` to provision the resources.
+3. Perform a `terraform init` to pull down the necessary provider resources. Then `terraform plan` to verify your changes and the resources that will be created. If all looks good, then perform a `terraform apply` to provision the resources.
+    - The Terraform output will display the public IP address to SSH into your server.
 
 At this point, Terraform will perform the following actions:
 
@@ -460,6 +470,7 @@ Read Our Secrets:
 ## References
 
 The following is a curated list of webinars/blogs/etc. that add additional context to fill out the concepts discussed in the webinar and demonstrated in the code:
+- Webinar for this demo repo: [Delivering Secret Zero: Vault AppRole with Terraform and Chef](https://www.hashicorp.com/resources/delivering-secret-zero-vault-approle-terraform-chef)
 - [Jeff Mitchell: Managing Secrets in a Container Environment](https://www.youtube.com/watch?v=skENC9aXgco)
 - [Seth Vargo: Using HashiCorp's Vault with Chef](https://www.hashicorp.com/blog/using-hashicorps-vault-with-chef)
 - [Seth Vargo & JJ Asghar: Manage Secrets with Chef and HashiCorps Vault](https://blog.chef.io/2016/12/12/manage-secrets-with-chef-and-hashicorps-vault/)
@@ -467,5 +478,4 @@ The following is a curated list of webinars/blogs/etc. that add additional conte
 - [Alan Thatcher: Vault AppRole Authentication](http://blog.alanthatcher.io/vault-approle-authentication/)
 - [Alan Thatcher: Integrating Chef and HashiCorp Vault](http://blog.alanthatcher.io/integrating-chef-and-hashicorp-vault/)
 - [Vault Ruby Client](https://github.com/hashicorp/vault-ruby)
-- https://github.com/hashicorp-guides/vault-approle-chef (will eventually be merged with this repo)
-- Webinar recording/slides
+- https://github.com/hashicorp-guides/vault-approle-chef (README will eventually be merged with this document)

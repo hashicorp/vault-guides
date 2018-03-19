@@ -57,7 +57,6 @@ data "template_file" "bastion_user_data" {
 
 module "network_aws" {
   source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
-  # source = "../../../../../hashicorp-modules/network-aws"
 
   name              = "${var.name}"
   vpc_cidr          = "${var.vpc_cidr}"
@@ -95,7 +94,6 @@ data "template_file" "consul_user_data" {
 
 module "consul_aws" {
   source = "github.com/hashicorp-modules/consul-aws?ref=f-refactor"
-  # source = "../../../../../hashicorp-modules/consul-aws"
 
   name             = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id           = "${module.network_aws.vpc_id}"
@@ -140,6 +138,7 @@ module "vault_aws" {
   subnet_ids       = "${module.network_aws.subnet_private_ids}"
   release_version  = "${var.vault_release_version}"
   vault_version    = "${var.vault_version}"
+  consul_version   = "${var.consul_version}"
   os               = "${var.vault_os}"
   os_version       = "${var.vault_os_version}"
   count            = "${var.vault_count}"

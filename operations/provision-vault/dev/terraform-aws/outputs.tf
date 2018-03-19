@@ -4,6 +4,10 @@ Your "${var.name}" Vault cluster has been successfully provisioned!
 
 A private RSA key has been generated and downloaded locally. The file permissions have been changed to 0600 so the key can be used immediately for SSH or scp.
 
+If you're not running Terraform locally (e.g. in TFE or Jenkins) but are using remote state and need the private key locally for SSH, run the below command to download.
+
+  ${join("\n  ", formatlist("$ echo \"$(terraform output private_key_pem)\" > %s && chmod 0600 %s", module.ssh_keypair_aws.private_key_filename, module.ssh_keypair_aws.private_key_filename))}
+
 Run the below command to add this private key to the list maintained by ssh-agent so you're not prompted for it when using SSH or scp to connect to hosts with your public key.
 
   ${join("\n  ", formatlist("$ ssh-add %s", module.ssh_keypair_aws.private_key_filename))}
@@ -35,25 +39,9 @@ You can interact with Vault using any of the CLI (https://www.vaultproject.io/do
       http://127.0.0.1:8200/v1/secret/api | jq '.'
 
 Because this is a development environment, the Vault nodes are in a public subnet with SSH access open from the outside. WARNING - DO NOT DO THIS IN PRODUCTION!
-
-Below are output variables that are currently commented out to reduce clutter. If you need the value of a certain output variable, such as "private_key_pem", just uncomment in outputs.tf.
-
- - "vpc_cidr_block"
- - "vpc_id"
- - "subnet_public_ids"
- - "subnet_private_ids"
- - "private_key_name"
- - "private_key_filename"
- - "private_key_pem"
- - "public_key_pem"
- - "public_key_openssh"
- - "ssh_key_name"
- - "vault_asg_id"
- - "vault_sg_id"
 README
 }
 
-/*
 output "vpc_cidr_block" {
   value = "${module.network_aws.vpc_cidr_block}"
 }
@@ -101,4 +89,3 @@ output "vault_asg_id" {
 output "vault_sg_id" {
   value = "${module.vault_aws.vault_sg_id}"
 }
-*/

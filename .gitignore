@@ -1,7 +1,11 @@
-*.DS_Store
-*.vagrant
+# Compiled files
 *.tfstate
 *.tfstate.backup
 *.tfstate.lock.info
-*.terraform/
+
+# Directories
+.terraform/
+.vagrant/
+
+# SSH Keys
 *.pem

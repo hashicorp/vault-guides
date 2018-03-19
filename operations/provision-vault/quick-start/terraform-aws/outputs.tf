@@ -4,6 +4,10 @@ Your "${var.name}" Vault cluster has been successfully provisioned!
 
 A private RSA key has been generated and downloaded locally. The file permissions have been changed to 0600 so the key can be used immediately for SSH or scp.
 
+If you're not running Terraform locally (e.g. in TFE or Jenkins) but are using remote state and need the private key locally for SSH, run the below command to download.
+
+  ${join("\n  ", formatlist("$ echo \"$(terraform output private_key_pem)\" > %s && chmod 0600 %s", split(",", module.network_aws.private_key_filename), split(",", module.network_aws.private_key_filename)))}
+
 Run the below command to add this private key to the list maintained by ssh-agent so you're not prompted for it when using SSH or scp to connect to hosts with your public key.
 
   ${join("\n  ", formatlist("$ ssh-add %s", split(",", module.network_aws.private_key_filename)))}
@@ -67,30 +71,9 @@ To SSH into Consul server nodes, you can also leverage Consul's DNS functionalit
 To force the generation of a new key, the private key instance can be "tainted" using the below command.
 
   $ terraform taint -module=network_aws.ssh_keypair_aws.tls_private_key tls_private_key.key
-
-Below are output variables that are currently commented out to reduce clutter. If you need the value of a certain output variable, such as "private_key_pem", just uncomment in outputs.tf.
-
- - "vpc_cidr_block"
- - "vpc_id"
- - "subnet_public_ids"
- - "subnet_private_ids"
- - "bastion_security_group"
- - "bastion_username"
- - "bastion_ips_public"
- - "private_key_name"
- - "private_key_filename"
- - "private_key_pem"
- - "public_key_pem"
- - "public_key_openssh"
- - "ssh_key_name"
- - "consul_asg_id"
- - "consul_sg_id"
- - "vault_asg_id"
- - "vault_sg_id"
 README
 }
 
-/*
 output "vpc_cidr_block" {
   value = "${module.network_aws.vpc_cidr_block}"
 }
@@ -158,4 +141,3 @@ output "vault_asg_id" {
 output "vault_sg_id" {
   value = "${module.vault_aws.vault_sg_id}"
 }
-*/

@@ -1,9 +1,11 @@
 module "ssh_keypair_aws" {
-  source = "github.com/hashicorp-modules/ssh-keypair-aws?ref=f-refactor"
+  # source = "github.com/hashicorp-modules/ssh-keypair-aws?ref=f-refactor"
+  source = "../../../../../../hashicorp-modules/ssh-keypair-aws"
 }
 
 module "network_aws" {
-  source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
+  # source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/network-aws"
 
   name              = "${var.name}"
   vpc_cidrs_public  = "${var.vpc_cidrs_public}"
@@ -43,8 +45,8 @@ data "template_file" "vault_user_data" {
 }
 
 module "vault_aws" {
-  source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
-  # source = "../../../../../hashicorp-modules/vault-aws"
+  # source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/vault-aws"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
@@ -53,7 +55,7 @@ module "vault_aws" {
   public_ip    = "${var.vault_public_ip}"
   count        = "${var.vault_count}"
   image_id     = "${var.vault_image_id != "" ? var.vault_image_id : data.aws_ami.base.id}"
-  ssh_key_name = "${element(module.ssh_keypair_aws.name, 0)}"
+  ssh_key_name = "${module.ssh_keypair_aws.name}"
   user_data    = "${data.template_file.vault_user_data.rendered}" # Custom user_data
   tags         = "${var.vault_tags}"
 }

@@ -47,8 +47,7 @@ data "template_file" "bastion_quick_start" {
 }
 
 module "network_aws" {
-  # source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
-  source = "../../../../../hashicorp-modules/network-aws"
+  source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
 
   name          = "${var.name}"
   nat_count     = "1"
@@ -74,8 +73,7 @@ data "template_file" "consul_quick_start" {
 }
 
 module "consul_aws" {
-  # source = "github.com/hashicorp-modules/consul-aws?ref=f-refactor"
-  source = "../../../../../hashicorp-modules/consul-aws"
+  source = "github.com/hashicorp-modules/consul-aws?ref=f-refactor"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
@@ -101,8 +99,7 @@ data "template_file" "vault_quick_start" {
 }
 
 module "vault_aws" {
-  # source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
-  source = "../../../../../hashicorp-modules/vault-aws"
+  source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"

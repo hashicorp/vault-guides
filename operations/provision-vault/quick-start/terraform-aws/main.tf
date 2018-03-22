@@ -47,7 +47,8 @@ data "template_file" "bastion_quick_start" {
 }
 
 module "network_aws" {
-  source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
+  # source = "github.com/hashicorp-modules/network-aws?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/network-aws"
 
   name          = "${var.name}"
   nat_count     = "1"
@@ -73,14 +74,15 @@ data "template_file" "consul_quick_start" {
 }
 
 module "consul_aws" {
-  source = "github.com/hashicorp-modules/consul-aws?ref=f-refactor"
+  # source = "github.com/hashicorp-modules/consul-aws?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/consul-aws"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
   vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.consul_image_id != "" ? var.consul_image_id : data.aws_ami.base.id}"
-  ssh_key_name = "${element(split(",", module.network_aws.ssh_key_name), 0)}"
+  ssh_key_name = "${module.network_aws.ssh_key_name}"
   tags         = "${var.consul_tags}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode
@@ -99,15 +101,15 @@ data "template_file" "vault_quick_start" {
 }
 
 module "vault_aws" {
-  source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
-  # source = "../../../../../hashicorp-modules/vault-aws"
+  # source = "github.com/hashicorp-modules/vault-aws?ref=f-refactor"
+  source = "../../../../../hashicorp-modules/vault-aws"
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
   vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.vault_image_id != "" ? var.vault_image_id : data.aws_ami.base.id}"
-  ssh_key_name = "${element(split(",", module.network_aws.ssh_key_name), 0)}"
+  ssh_key_name = "${module.network_aws.ssh_key_name}"
   tags         = "${var.vault_tags}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode

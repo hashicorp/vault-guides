@@ -148,6 +148,45 @@ vault write auth/userpass/users/nico password=vault
 
 
 
+: '
+The following sentinel policy is base64 encoded and uploaded to Vault
+import "time"
+import "controlgroup"
+
+control_group = func() {
+    numAuthzs = 0
+    for controlgroup.authorizations as authz {
+        if "controllers" in authz.groups.by_name {
+            if time.load(authz.time).unix > time.now.unix - 3600 {
+                numAuthzs = numAuthzs + 1
+            }
+        }
+    }
+    if numAuthzs >= 2 {
+        return true
+    }
+    return false
+}
+
+main = rule {
+    control_group()
+}
+'
+
+cat <<EOF > control_groups_sentinel.json
+{
+  "policy": "aW1wb3J0ICJ0aW1lIgppbXBvcnQgImNvbnRyb2xncm91cCIKCmNvbnRyb2xfZ3JvdXAgPSBmdW5jKCkgewogICAgbnVtQXV0aHpzID0gMAogICAgZm9yIGNvbnRyb2xncm91cC5hdXRob3JpemF0aW9ucyBhcyBhdXRoeiB7CiAgICAgICAgaWYgImNvbnRyb2xsZXJzIiBpbiBhdXRoei5ncm91cHMuYnlfbmFtZSB7CiAgICAgICAgICAgIGlmIHRpbWUubG9hZChhdXRoei50aW1lKS51bml4ID4gdGltZS5ub3cudW5peCAtIDM2MDAgewogICAgICAgICAgICAgICAgbnVtQXV0aHpzID0gbnVtQXV0aHpzICsgMQogICAgICAgICAgICB9CiAgICAgICAgfQogICAgfQogICAgaWYgbnVtQXV0aHpzID49IDIgewogICAgICAgIHJldHVybiB0cnVlCiAgICB9CiAgICByZXR1cm4gZmFsc2UKfQoKbWFpbiA9IHJ1bGUgewogICAgY29udHJvbF9ncm91cCgpCn0K",
+  "enforcement_level": "hard-mandatory"
+}
+EOF
+
+curl  \
+    --silent \
+    --header "X-Vault-Token: ${ROOT_TOKEN}" \
+    --request PUT \
+    --data @control_groups_sentinel.json \
+    http://localhost:8200/v1/sys/policies/rgp/control_groups
+
 #USAGE
 #Login as Andrew
 #$ vault login -method=userpass username=andrew
@@ -176,4 +215,12 @@ vault write auth/userpass/users/nico password=vault
 #---                 -----
 #refresh_interval    768h
 #foo                 bar
+
+
+
+
+
+
+
+
 

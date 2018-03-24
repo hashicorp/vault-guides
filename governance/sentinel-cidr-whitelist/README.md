@@ -14,8 +14,9 @@ This exercise should only take 5-10 minutes to complete for a user familiar with
 ## Steps to deploy and test Sentinel policy
 
 ## Files in this repository
+
 File | Description | Application
---- | --- 
+--- | --- | ---
 egp-payload.json | Contains base64 enconded Sentinel policy | Used to register the Sentinel policy within Vault
 secret-example.json | Value representing sensitive information to be stored in Vault | Used to test if user can read/write a secret when Sentinel policy is in place
 cidr-policy.sentinel | The checks this Sentinel policy will enforce | Needs to be converted to base64 prior to be added to *egp-payload.json*
@@ -26,10 +27,7 @@ user-payload | Information to create an user | This user will test the Sentinel 
 ### Optional
 The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault. In this repository the Sentinel policy "cidr-policy.sentinel" is already encoded, however if you would like to change or use your own you can use a service such as https://www.base64decode.org/ to encode/decode a string.
 
-## Overview
-In the folowing steps, we will accomplish:
-- Register a Sentinel policy
-
+## Steps
 
 - Register Sentinel policy with the name "cidr". Any other name could have been used.
 ```
@@ -100,8 +98,9 @@ curl \
     $VAULT_ADDR/v1/secret/app1
 ```
 - Expected error
+```
 {"errors":["1 error occurred:\n\n* egp standard policy \"cidr\" evaluation resulted in denial.\n\nThe specific error was:\n\u003cnil\u003e\n\nA trace of the execution for policy \"cidr\" is available:\n\nResult: false\n\nDescription: \u003cnone\u003e\n\nRule \"main\" (byte offset 202) = false\n  false (offset 125): sockaddr.is_contained\n\nRule \"cidrcheck\" (byte offset 101) = false\n"]}
-
+```
 
 [sentinel-docs]: https://www.vaultproject.io/docs/enterprise/sentinel/index.html
 [sentinel-properties]: https://www.vaultproject.io/docs/enterprise/sentinel/properties.html

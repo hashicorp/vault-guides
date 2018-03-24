@@ -1,0 +1,5 @@
+{
+  "policy": "aW1wb3J0ICJzdHJpbmdzIg0KaW1wb3J0ICJzb2NrYWRkciINCg0KIyBXZSBleHBlY3QgcmVxdWVzdHMgdG8gY29tZSBvbmx5IGZyb20gb3VyIHByaXZhdGUgSVAgcmFuZ2UNCmNpZHJjaGVjayA9IHJ1bGUgew0KICAgIHNvY2thZGRyLmlzX2NvbnRhaW5lZChyZXF1ZXN0LmNvbm5lY3Rpb24ucmVtb3RlX2FkZHIsICIxMjIuMjIuMy40LzMyIikNCn0NCg0KbWFpbiA9IHJ1bGUgd2hlbiBzdHJpbmdzLmhhc19wcmVmaXgocmVxdWVzdC5wYXRoLCAic2VjcmV0L2FwcDEiKSB7DQogICAgY2lkcmNoZWNrDQp9",
+  "paths": [ "secret/*" ],
+  "enforcement_level": "hard-mandatory"
+}

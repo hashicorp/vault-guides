@@ -89,7 +89,7 @@ curl \
 ```
 - Update the environment variable with this token
 ```
-export VAULT_TOKEN=ACCESS_TOKEN_HERE
+export VAULT_TOKEN=CLIENT_TOKEN_HERE
 ```
 - Attempt to read the secret
 ```

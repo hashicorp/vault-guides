@@ -1,12 +1,12 @@
 #  Vault Sentinel policy
-This guide shows how to enable a Sentinel policy in Vault that will only allow access to a secret enpoint if the request comes from a certain ip address.
+This guide shows how to enable a Sentinel policy in Vault that will only allow access to a secret endpoint if the request comes from a certain IP CIDR, which would allow whitelisting a network range or specific IP address.
 
 Sentinel policies can be bound to any path within Vault using the *egp* endpoint, or to any Identity entities and groups or to tokens using the *rgp* endpoint. Additional information can be found [here][sentinel-docs].
 
 This guide only uses Sentinel for IP whitelisting of a secret endpoint. However there are many other types of checks available for Sentinel, such as request time, token attributes, path attributes and more. A complete list can be found [here][sentinel-properties]
 
 ## Enterprise only
-Please note that Sentinel is only available in the Enterprise version of Vault
+Please note that Sentinel is only available in Vault Enterprise Premium
 
 ## Estimated Time to Complete
 This exercise should only take 5-10 minutes to complete for a user familiar with Linux.
@@ -24,8 +24,12 @@ my-acl-policy.json | ACL policy to be associated to an user | This policy will a
 user-password.json | Contains user password | Used to create a new user with the permissive ACL policy
 user-payload | Information to create an user | This user will test the Sentinel check
 
-### Optional
-The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault. In this repository the Sentinel policy "cidr-policy.sentinel" is already encoded, however if you would like to change or use your own you can use a service such as https://www.base64decode.org/ to encode/decode a string.
+### Base64
+The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault. In this repository the Sentinel policy "cidr-policy.sentinel" is already encoded, however if you would like to change or use your own you can run the following command:
+```
+cat cidr-policy.sentinel | base64
+```
+Or you can use a free online service such as https://www.base64decode.org/ to encode/decode a string.
 
 ## Steps
 

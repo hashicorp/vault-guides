@@ -26,7 +26,7 @@ This directory contains example use cases involving [secrets management](https:/
 This directory contains examples of privilege access management, identity, access control.
 
 ## governance
-Guides related to governance within Vault stored here. Sentinel guides only available for enterprise version of Vault.
+Guides related to governance within Vault stored here. Sentinel guides only available for Vault Enterprise Premium.
 
 ## shared
 This directory contains common scripts and configuration files used to provision environments used for the guides in this repository.

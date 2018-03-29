@@ -11,6 +11,13 @@ Please note that Sentinel is only available in Vault Enterprise Premium
 ## Estimated Time to Complete
 This exercise should only take 5-10 minutes to complete for a user familiar with Linux.
 
+## Sentinel Testing
+You can test your Sentinel policy prior to deployment to validate syntax and to document expected behavior. Sentinel tests are found in the "test" folder, once you have downloaded the [Sentinel simulator][sentinel-binary] you can execute the command
+```
+cd vault-guides/governance/sentinel-cidr-whitelist
+sentinel test
+```
+
 ## Steps to deploy and test Sentinel policy
 
 ## Files in this repository
@@ -108,3 +115,4 @@ curl \
 
 [sentinel-docs]: https://www.vaultproject.io/docs/enterprise/sentinel/index.html
 [sentinel-properties]: https://www.vaultproject.io/docs/enterprise/sentinel/properties.html
+[sentinel-binary]: https://docs.hashicorp.com/sentinel/downloads.html

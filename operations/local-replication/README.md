@@ -1,5 +1,9 @@
 # Local replication
-Vault is a lightweight binary that runs as a single process. This allows multiple Vault processes to easily run on a single machine, which is useful for testing/validation of Vault capabilities, as well as for development purposes. In this example, we will run several Vault processes to validate Vault replication capabilities and operations.
+Vault is a lightweight binary that runs as a single process. This allows multiple Vault processes to easily run on a single machine, which is useful for testing/validation of Vault capabilities, as well as for development purposes. In this example, we will run three Vault processes to validate Vault replication capabilities and operations.
+
+The first Vault will be the primary, both for performance and for DR replications. The second Vault will be the secondary for performance, while the third will be the secondary for DR. 
+
+More information on performance and DR replication can be found HERE 
 
 Note: Requires Vault Enterprise binary in your local OS flavor. Instructions assume bash and common shell operations.
 
@@ -30,6 +34,8 @@ vrd
 vrd2
 vrd3
 ```
+
+Make sure you write down the unseal key of "vrd" for DR setup command.
 
 Vault UI links:  
 http://127.0.0.1:8200  
@@ -64,45 +70,147 @@ Model is as follows
 +---------------------------------+
 ```
 
-setup primary replication (vault->vault2)
+setup performance replication (vault->vault2)
 ```sh
 vault auth root
 vault write -f sys/replication/performance/primary/enable
+sleep 10
 PRIMARY_PERF_TOKEN=$(vault write -format=json sys/replication/performance/primary/secondary-token id=vault2 \
   | jq --raw-output '.wrap_info .token' )
-sleep 10
 vault2 auth root
 vault2 write sys/replication/performance/secondary/enable token=${PRIMARY_PERF_TOKEN}
 
+```
+
+Validation:
+```sh
+curl     http://127.0.0.1:8200/v1/sys/replication/status
+# Response:
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "mode":"disabled"
+      },
+      "performance":{  
+         "cluster_id":"8c31e8c1-0b1e-6aec-db70-323bad86eedc",
+         "known_secondaries":[  
+            "vault2"
+         ],
+         ...
+         "mode":"primary",
+         "primary_cluster_addr":""
+      }
+   },
+   ...
+}
+
+curl     http://127.0.0.1:8202/v1/sys/replication/status
+# Response:
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "mode":"disabled"
+      },
+      "performance":{  
+         "cluster_id":"8c31e8c1-0b1e-6aec-db70-323bad86eedc",
+         "known_primary_cluster_addrs":[  
+            "https://127.0.0.1:8201"
+         ],
+         ...
+         "primary_cluster_addr":"https://127.0.0.1:8201",
+         "secondary_id":"vault2",
+         "state":"stream-wals"
+      }
+   },
+   ...
+}
 ```
 
 setup DR replication (vault -> vault3)
 ```sh
 vault auth root
 vault write -f /sys/replication/dr/primary/enable
-PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
 sleep 10
+PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
 vault3 auth root
 vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ```
 
+Validation:
+```sh
+curl     http://127.0.0.1:8200/v1/sys/replication/status
+# Response:
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "cluster_id":"23e8768a-d173-70b5-3e10-560aecfe4d2a",
+         "known_secondaries":[  
+            "vault3"
+         ],
+         ...
+         "mode":"primary",
+         "primary_cluster_addr":""
+      },
+      "performance":{  
+         "cluster_id":"b0e7cfb8-d453-0919-48b2-9c2f33bdfee7",
+         "known_secondaries":[  
+            "vault2"
+         ],
+         ...
+         "mode":"primary",
+         "primary_cluster_addr":""
+      }
+   },
+   ...
+}
+
+curl     http://127.0.0.1:8204/v1/sys/replication/status
+# Response:
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "cluster_id":"23e8768a-d173-70b5-3e10-560aecfe4d2a",
+         "known_primary_cluster_addrs":[  
+            "https://127.0.0.1:8201"
+         ],
+         ...
+         "mode":"secondary",
+         "primary_cluster_addr":"https://127.0.0.1:8201",
+         "secondary_id":"vault3",
+         "state":"stream-wals"
+      },
+      "performance":{  
+         "mode":"disabled"
+      }
+   },
+   ...
+}
+
+```
+Now let's test DR. First we need to securely share a root token useable for Vault 3. The secure share is allowed by using "one time password"
+
 generate DR operation token (used to promote DR secondary)
 ```sh
 ## Generate one time password (otp) 
-DR_OTP=$(vault3 generate-root -genotp | awk '{print $2}')
+DR_OTP=$(vault3 operator generate-root -generate-otp)
 
 ## Initiate DR token generation, create nonce
-NONCE=$(vault3 generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
+NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
 
 ## Generate the encoded token using the unseal key from DR primary 
 ## as well as the nonce generated from prior execution.
 ##
 ## Note that production clusters would normally require several executions 
 ## to correlate with the Shamir sharing threshold number of keys
+??????
 PRIMARY_UNSEAL_KEY=<< PASTE UNSEAL KEY HERE >>
-ENCODED_TOKEN=$(vault3 generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep "Encoded" | awk '{print $3}')
-DR_OPERATION_TOKEN=$(vault generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN} | grep "Root token:" | awk '{print $3}')
+ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep "Nonce" | awk '{print $2}')
+DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN} | grep "Root token:" | awk '{print $3}')
 ```
 
 
@@ -153,6 +261,50 @@ diff ~/.vault-token ~/.vault-token-DRTEST
 vault auth root
 vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/performance/primary/disable
+
+# Response
+```sh
+curl http://127.0.0.1:8200/v1/sys/replication/status
+# Response
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "mode":"disabled"
+      },
+      "performance":{  
+         "mode":"disabled"
+      }
+   },
+   ...
+}
+
+curl     http://127.0.0.1:8202/v1/sys/replication/status
+# Response:
+{  
+   ...
+   "data":{  
+      "dr":{  
+         "mode":"disabled"
+      },
+      "performance":{  
+         "cluster_id":"b0e7cfb8-d453-0919-48b2-9c2f33bdfee7",
+         "known_primary_cluster_addrs":[  
+            "https://127.0.0.1:8201"
+         ],
+         "last_remote_wal":390,
+         "last_wal":695,
+         "merkle_root":"c0c2622f5960fce19420a0657f6b545dbe81fb7f",
+         "mode":"secondary",
+         "primary_cluster_addr":"https://127.0.0.1:8201",
+         "secondary_id":"vault2",
+         "state":"stream-wals"
+      }
+   },
+   ...
+}
+
+```
 
 # OPTION 2 - Demotion of replication role 
 # demote primary to secondary

@@ -34,6 +34,7 @@ cidr-policy.sentinel | Sentinel policy that checks request's IP | Needs to be co
 businesshours-policy.sentinel | Sentinel policy that checks request's time | Needs to be converted to base64 prior to be added to *egp-time-payload.json*
 my-acl-policy.json | ACL policy to be associated to an user | This policy will allow access to the secret path that will be protected by Sentinel
 secret-example.json | Value representing sensitive information to be stored in Vault | Used to test if user can read/write a secret when Sentinel policy is in place
+userpass-auth-payload.json | userpass auth method payload | Used to enable userpass authentication method for our tests
 user-password.json | Contains user password | Used to create a new user with the permissive ACL policy
 user-payload | Information to create an user | This user will test the Sentinel check
 
@@ -86,6 +87,14 @@ curl \
   --data @my-acl-policy.json \
   $VAULT_ADDR/v1/sys/policy/my-acl-policy
 ```
+- Ensures userpass auth method is enabled for our tests
+```
+curl \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data @userpass-auth-payload.json \
+    $VAULT_ADDR/v1/sys/auth/userpass
+```
 - Create a user *test* associated with policy my-acl-policy
 ```
 curl \
@@ -110,7 +119,7 @@ curl \
 ```
 - Save your Vault admin token
 ```
-VAULT_TOKEN_ADMIN=$(echo VAULT_TOKEN)
+VAULT_TOKEN_ADMIN=$(echo $VAULT_TOKEN)
 ```
 - Log as user *test* to get the authentication token associated with that user
 ```
@@ -132,7 +141,7 @@ curl \
 ```
 - Restore your Vault admin token
 ```
-VAULT_TOKEN=$(echo VAULT_TOKEN_ADMIN)
+VAULT_TOKEN=$(echo $VAULT_TOKEN_ADMIN)
 ```
 - Delete Sentinel policies
 ```
@@ -152,7 +161,7 @@ curl \
 - Repeat above steps:
 
 ```
-VAULT_TOKEN_ADMIN=$(echo VAULT_TOKEN)
+VAULT_TOKEN_ADMIN=$(echo $VAULT_TOKEN)
 
 VAULT_TOKEN=$(curl \
             --silent \

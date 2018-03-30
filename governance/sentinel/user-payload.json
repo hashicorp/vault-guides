@@ -1,4 +1,4 @@
 {
-    "password": "password",
-    "policies": "my-acl-policy"
-  }
+  "password": "password",
+  "policies": "my-acl-policy"
+}

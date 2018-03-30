@@ -1,14 +1,12 @@
 {
     "global": {
         "request": {
-            "path": "secret/app1",
             "connection": {
                     "remote_addr": "122.22.3.4"
             }
         }
     },
     "test": {
-        "main": true,
-        "cidrcheck": true
+        "main": true
     }
 }

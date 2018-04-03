@@ -304,8 +304,6 @@ curl     http://127.0.0.1:8202/v1/sys/replication/status
    ...
 }
 
-```
-
 # OPTION 2 - Demotion of replication role 
 # demote primary to secondary
 vault write -f /sys/replication/performance/primary/demote

@@ -196,21 +196,60 @@ Now let's test DR. First we need to securely share a root token useable for Vaul
 
 generate DR operation token (used to promote DR secondary)
 ```sh
+export VAULT_ADDR3=http://127.0.0.1:8204
+## Validate process hasn't started
+curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt
+
 ## Generate one time password (otp) 
 DR_OTP=$(vault3 operator generate-root -generate-otp)
 
 ## Initiate DR token generation, create nonce
 NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
 
+## Validate process has started
+curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt
+
+
 ## Generate the encoded token using the unseal key from DR primary 
 ## as well as the nonce generated from prior execution.
 ##
 ## Note that production clusters would normally require several executions 
 ## to correlate with the Shamir sharing threshold number of keys
-??????
-PRIMARY_UNSEAL_KEY=<< PASTE UNSEAL KEY HERE >>
-ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep "Nonce" | awk '{print $2}')
-DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN} | grep "Root token:" | awk '{print $3}')
+
+PRIMARY_UNSEAL_KEY= PASTE UNSEAL KEY HERE
+
+## Initiate DR token generation, provide unseal keys (1 unseal key in our example)
+## THIS IS BROKEN IN 0.9.5,0.9.6 AND WILL BE FIXED IN 0.10
+ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} )
+## API workaround for above:
+
+## create payload.json
+## {
+##   "key": "UNSEAL-KEY-VAULT-1",
+##   "nonce": "NONCE"
+## }
+
+ENCODED_TOKEN=$(curl \
+--request PUT \
+    --data @payload.json \
+    $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/update | jq .encoded_token)
+
+## Output:
+## {  
+##    "nonce":"NONCE",
+##    "started":true,
+##   "progress":1,
+##   "required":1,
+##   "complete":true,
+##   "encoded_token":"ENCODED_TOKEN",
+##   "encoded_root_token":"",
+##   "pgp_fingerprint":""
+## }
+##
+
+ENCODED_TOKEN=
+
+DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN})
 ```
 
 

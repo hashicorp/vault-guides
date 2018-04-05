@@ -1,109 +1,59 @@
-# Vault Autounseal using AWS KMS
+# Vault Auto-unseal using AWS KMS
 
-In this guide, we'll show an example of how to use Terraform to provision an instance that can utilize an encryption key from AWS Key Management Services to unseal Vault.
+These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://www.vaultproject.io/guides/operations/autounseal-aws-kms.html) guide.
 
-## Overview
-Vault unseal operation either requires either a number of people who each possess a shard of a key, split by Shamir's Secret sharing algorithm, or protection of the master key via an HSM or cloud key management services (Google CKMS or AWS KMS). 
-
-This guide has a guide on how to implement and use this feature in AWS. Included is a Terraform configuration that has the following features:  
-* Ubuntu 16.04 LTS with Vault Enterprise (0.9.0+prem.hsm).   
-* An instance profile granting the AWS EC2 instance to a KMS key.   
-* Vault configured with access to a KMS key.   
+---
 
 
-## Prerequisites
+## Demo Steps
 
-This guide assumes the following:   
+### Setup
 
-1. Access to Vault Enterprise > 0.9.0 which supports AWS KMS as an unseal mechanism. 
-1. A URL to download Vault Enterprise from (an S3 bucket will suffice). 
-1. AWS account for provisioning cloud resources. 
-1. Terraform installed, and basic understanding of its usage
+1. Set this location as your working directory
+1. Set your AWS credentials as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
+1. Set Vault Enterprise URL in a file named `terraform.tfvars` (see `terraform.tfvars.example`)
 
+### Commands Cheat Sheet
 
-## Usage
-Instructions assume this location as a working directory, as well as AWS credentials exposed as environment variables
+```bash
+# Pull necessary plugins
+$ terraform init
 
-1. Set Vault Enterprise URL in a file named terraform.tfvars (see terraform.tfvars.example)
-1. Perform the following to provision the environment
+$ terraform plan
 
+# Output provides the SSH instruction
+$ terraform apply
+
+# SSH into the EC2 machine
+$ ssh ubuntu@<IP_ADDRESS> -i private.key
+
+#----------------------------------
+# Once inside the EC2 instance...
+$ export VAULT_ADDR=http://127.0.0.1:8200
+
+$ vault status
+
+# Initialize Vault
+$ vault operator init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
+
+# Stop the Vault server
+$ sudo systemctl stop vault
+
+# Restart the Vault server
+$ sudo systemctl start vault
+
+# Check to verify that the Vault is auto-unsealed
+$ vault status
+
+$ vault login <INITIAL_ROOT_TOKEN>
+
+# Explorer the Vault configuration file
+$ cat /etc/vault.d/vault.hcl
+
+$ exit
+#----------------------------------
+
+# Clean up...
+$ terraform destroy -force
+$ rm -rf .terraform terraform.tfstate* private.key
 ```
-terraform init
-terraform plan
-terraform apply
-```
-
-Outputs will contain instructions to connect to the server via SSH
-
-
-```
-# vault status
-Error checking seal status: Error making API request.
-
-URL: GET http://127.0.0.1:8200/v1/sys/seal-status
-Code: 400. Errors:
-
-* server is not yet initialized
-
-# vault init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
-Recovery Key 1: oOxAQfxcZitjqZfF3984De8rUckPeahQDUvmJ1A4JrQ=
-Initial Root Token: 54c4dbe3-d45b-79d9-18d0-602831a6a991
-
-Vault initialized successfully.
-
-Recovery key initialized with 1 keys and a key threshold of 1. Please
-securely distribute the above keys.
-
-# systemctl stop vault
-root@ip-192-168-100-100:~# vault status
-Error checking seal status: Get http://127.0.0.1:8200/v1/sys/seal-status: dial tcp 127.0.0.1:8200: getsockopt: connection refused
-
-# systemctl start vault
-root@ip-192-168-100-100:~# vault status
-Type: shamir
-Sealed: false
-Key Shares: 1
-Key Threshold: 1
-Unseal Progress: 0
-Unseal Nonce:
-Version: 0.9.0+prem.hsm
-Cluster Name: vault-cluster-01cf6f33
-Cluster ID: fb787d8a-b882-fee8-b461-445320cde311
-
-High-Availability Enabled: false
-
-# vault auth 54c4dbe3-d45b-79d9-18d0-602831a6a991
-Successfully authenticated! You are now logged in.
-token: 54c4dbe3-d45b-79d9-18d0-602831a6a991
-token_duration: 0
-token_policies: [root]
-
-
-# cat /etc/vault.d/vault.hcl
-storage "file" {
-  path = "/opt/vault"
-}
-listener "tcp" {
-  address     = "0.0.0.0:8200"
-  tls_disable = 1
-}
-seal "awskms" {
-  kms_key_id = "d7c1ffd9-8cce-45e7-be4a-bb38dd205966"
-}
-ui=true
-```
-
-
-
-
-Once complete perform the following to clean up
-
-```
-terraform destroy -force
-rm -rf .terraform terraform.tfstate* private.key
-
-```
-
-
-
-

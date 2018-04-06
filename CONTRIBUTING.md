@@ -5,91 +5,123 @@ Also, please include a README completed describing the guide, using the content 
 If there are additional notes, diagrams or instructions that make sense to be included, please provide them in a separate markdown page adjacent to the README.
 
 
+# _Guide Template_
 
-# Vault-guides contribution template
-
-----
-
-
-# Guide Name 
-_Summary of pain point/challenge/business case and goal of the guide in 2 paragraphs_
+_Summary of pain point/challenge/business case and goal of the guide in 2 paragraphs._
 
 ## Reference Material
-Any relevant reference material that will help the user better understand the use case being solved for
+- _[Any relevant reference material that will help the user better understand the use case being solved for]()_
 
 ## Estimated Time to Complete
-A rough estimate of time it would take a beginner to read the guide and complete the steps. The assumption is that they completed the prerequisites.
+_A rough estimate of time it would take a beginner to read the guide and complete the steps. The assumption is that they completed the prerequisites._
+
+## Personas
+_Paragraph describing the personas involved in the challenge and solution._
 
 ## Challenge
-Paragraph describing the challenge
+_Paragraph describing the challenge._
 
 ## Solution
-Paragraph describing the proposed solution
+_Paragraph describing the proposed solution._
 
 ## Prerequisites
-Any prerequisite guides or material that should be completed before starting
+- _[Any prerequisite guides or material that should be completed before starting]()_
 
 ## Steps
-Summary of steps involved to solve the challenge, perhaps embedded screencast walkthrough. Not all steps will have UI, API, and CLI components.
+_Summary of steps involved to solve the challenge and embedded screencast walkthrough. Not all steps will have UI, CLI, API (cURL/PowerShell), and Terraform components._
 
-### Step n: <Step Title>
-Summary of what will be completed in this step
+
+### Step n: _Step Title_
+_Summary of what will be completed in this step._
 
 #### UI
-Link to docs for this command if available
+_[Link to docs for this command if available]()_
 ##### Request
-UI request screenshot(s)
+_UI request screenshot(s)_
 
 ##### Response
-UI response screenshot(s)
+_UI response screenshot(s)_
+
+#### CLI
+_[Link to CLI docs for this command if available]()_
+
+##### Request
+```sh
+$ <CLI request command>
+```
+
+_[Link to specific CLI request command in accompanying guide script]()_
+
+##### Response
+```
+$ <CLI request response output>
+```
+
 
 #### cURL
-Link to docs for this command if available
+_[Link to API docs for this command if available]()_
 
 ##### Request
 ```sh
 $ <curl request command>
 ```
 
-Link to specific cURL request command in accompanying guide script
+_[Link to specific cURL request command in accompanying guide script]()_
 
 ##### Response
 ```
-<curl request response output>
+$ <curl request response output>
 ```
 
-#### CLI
-Link to docs for this command if available
+#### PowerShell
+_[Link to API docs for this command if available]()_
 
 ##### Request
 ```sh
-$ vault read secret/path
+$ <PowerShell Invoke-RestMethod request command>
 ```
 
-Link to specific CLI request command in accompanying guide script
+_[Link to specific PowerShell request command in accompanying guide script]()_
 
 ##### Response
 ```
-CLI request response output
+$ <PowerShell Invoke-RestMethod response output>
+```
+
+#### Terraform
+_[Link to docs for resources to be provisioned if available]()_
+
+##### Request
+```sh
+$ <terraform apply command>
+```
+
+_[Link to specific Terraform config accompanying guide script]()_
+
+##### Response
+```
+$ <terraform apply command output>
 ```
 
 #### Validation
-Summary of inspec test(s) used to validate the step was completed successfully
+_Summary of test(s) used to validate the step was completed successfully._
 
 ##### Request
 ```sh
 $ <validation command>
 ```
 
-Link to specific validation command in accompanying guide script
+_[Link to specific validation command in accompanying guide script]()_
 
 ##### Response
 ```
-validation output
+<validation output>
 ```
 
-#### Reference Content
-- Any reference content that might be valuable
+
+#### Documentation
+- _[Any reference content that might be valuable]()_
 
 ## Next Steps
-- Link to next guide that should be completed
+### _Persona_
+- _[Link to next guide that each persona should complete next]()_

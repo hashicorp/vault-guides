@@ -25,7 +25,7 @@ sudo mkdir -pm 0755 /opt/consul/data
 logger "/usr/local/bin/consul --version: $(/usr/local/bin/consul --version)"
 
 logger "Configuring consul ${CONSUL_VERSION}"
-sudo cp /tmp/consul/config/* /etc/consul.d/
+sudo cp /tmp/consul/config-hcl/* /etc/consul.d/
 sudo chown -R consul:consul /etc/consul.d /opt/consul
 sudo chmod -R 0644 /etc/consul.d/*
 

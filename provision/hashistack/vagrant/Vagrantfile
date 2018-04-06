@@ -36,9 +36,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: $script, privileged: false
 
   # copy the consul and nomad directories to the vm
-  config.vm.provision "file", source: "../../../shared/consul", destination: "/tmp"
-  config.vm.provision "file", source: "../../../shared/vault", destination: "/tmp"
-  config.vm.provision "file", source: "../../../shared/nomad", destination: "/tmp"
+  config.vm.provision "file", source: "../../../shared/consul", destination: "/tmp/consul"
+  config.vm.provision "file", source: "../../../shared/vault", destination: "/tmp/vault"
+  config.vm.provision "file", source: "../../../shared/nomad", destination: "/tmp/nomad"
 
   # bootstrap the vm
   config.vm.provision "shell", path: "../../../shared/scripts/base.sh"

@@ -228,9 +228,157 @@ a Docker registry, and the YAML will need to be adjusted to reference
 those Docker container images. See 'image:' and 'imagePullPolicy' in the
 consul.yml.
 
-[consul.yml](https://github.com/hashicorp/hashistack-on-k8s/tree/master/static/examples/consul-vault-on-k8s/consul.yml)
+[consul.yml](https://github.com/hashicorp/vault-guides/tree/master/consul.yml)
 
 ``` yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "consul-ui"
+spec:
+  type: NodePort
+  ports:
+    - name: "ui"
+      port: 8500
+      protocol: TCP
+  selector:
+    app: consul
+    role: server
+    quorum: voting
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "consul"
+spec:
+  ports:
+    - name: "rpc"
+      port: 8300
+    - name: "lan"
+      port: 8301
+    - name: "wan"
+      port: 8302
+    - name: "api"
+      port: 8500
+      protocol: TCP
+    - name: "dns-udp"
+      port: 8600
+      protocol: UDP
+    - name: "dns-tcp"
+      port: 8600
+      protocol: TCP
+  clusterIP: None
+  selector:
+    app: consul
+    role: server
+    quorum: voting
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: consul-local-config
+data:
+  local.config: |
+    {
+      "server": true,
+      "client_addr": "0.0.0.0",
+      "ui": true,
+      "bind_addr": "0.0.0.0",
+      "bootstrap_expect": 3,
+      "raft_protocol": 3,
+      "retry_join": [
+        "consul-0.consul",
+        "consul-1.consul",
+        "consul-2.consul",
+        "consul-3.consul",
+        "consul-4.consul"
+      ]
+    }
+
+---
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: consul
+spec:
+  selector:
+    matchLabels:
+      app: consul
+      role: server
+      quorum: voting
+  serviceName: "consul"
+  replicas: 5
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: consul
+        role: server
+        quorum: voting
+    spec:
+      containers:
+      - name: consul-server
+        image: consul-enterprise
+        imagePullPolicy: Never
+        env:
+          - name: CONSUL_LOCAL_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: consul-local-config
+                key: local.config
+        command: [ "docker-entrypoint.sh" ]
+        args: [ "agent", "-config-file", "/consul/config/local.json" ]
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - ps aux | grep consul
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+        readinessProbe:
+          httpGet:
+            path: /v1/status/peers
+            port: 8500
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        ports:
+        - containerPort: 8500
+          name: api
+        - containerPort: 8600
+          name: dns-udp
+          protocol: UDP
+        - containerPort: 8600
+          name: dns-tcp
+          protocol: TCP
+        volumeMounts:
+        - name: consul-config
+          mountPath: /consul/config
+        - name: consul-data
+          mountPath: /consul/data
+  volumeClaimTemplates:
+  - metadata:
+      name: consul-config
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Mi
+  - metadata:
+      name: consul-data
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
 ```
 
 #### Deploying and Operating
@@ -335,9 +483,155 @@ YAML.
 
 #### Manifest
 
-[vault.yml](https://github.com/hashicorp/hashistack-on-k8s/tree/master/static/examples/consul-vault-on-k8s/vault.yml)
+[vault.yml](https://github.com/hashicorp/vault-guides/tree/master/provision/kubernetes/minikube/vault.yml)
 
 ``` yaml
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "vault-ui"
+spec:
+  type: NodePort
+  ports:
+    - name: "ui"
+      port: 8200
+      protocol: TCP
+  selector:
+    app: vault
+    role: server
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: "vault"
+spec:
+  ports:
+    - name: "api"
+      port: 8200
+    - name: "rpc"
+      port: 8201
+  clusterIP: None
+  selector:
+    app: vault
+    role: server
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-local-config
+data:
+  local.config: |
+    {
+      "ui": true,
+      "listener": [{
+        "tcp": {
+          "address": "0.0.0.0:8200",
+          "tls_disable": true
+        }
+      }],
+      "storage": [{
+        "consul": {
+          "address": "localhost:8500",
+          "schema": "http",
+          "path": "vault"
+        }
+      }]
+    }
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vault-consul-local-config
+data:
+  local.config: |
+    {
+      "server": false,
+      "client_addr": "127.0.0.1",
+      "ui": false,
+      "raft_protocol": 3,
+      "retry_join": [
+        "consul-0.consul",
+        "consul-1.consul",
+        "consul-2.consul",
+        "consul-3.consul",
+        "consul-4.consul"
+      ]
+    }
+
+---
+
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: vault
+  labels:
+    app: vault
+    role: server
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: vault
+      role: server
+  template:
+    metadata:
+      labels:
+        app: vault
+        role: server
+    spec:
+      containers:
+      - name: vault
+        image: vault-enterprise
+        imagePullPolicy: Never
+        securityContext:
+          capabilities:
+            add: [ "IPC_LOCK" ]
+        env:
+        - name: VAULT_LOCAL_CONFIG
+          valueFrom:
+            configMapKeyRef:
+              name: vault-local-config
+              key: local.config
+        args: [ "server" ]
+        livenessProbe:
+          exec:
+            command:
+            - pidof
+            - vault
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+        ports:
+        - containerPort: 8200
+          name: api
+      - name: consul-client
+        image: consul-enterprise
+        imagePullPolicy: Never
+        env:
+          - name: CONSUL_LOCAL_CONFIG
+            valueFrom:
+              configMapKeyRef:
+                name: vault-consul-local-config
+                key: local.config
+        command: [ "docker-entrypoint.sh" ]
+        args: [ "agent", "-config-file", "/consul/config/local.json"]
+        livenessProbe:
+          exec:
+            command:
+            - pidof
+            - consul
+          initialDelaySeconds: 5
+          timeoutSeconds: 2
+        ports:
+        - containerPort: 8500
+          name: api
 ```
 
 #### Deploying and Operating

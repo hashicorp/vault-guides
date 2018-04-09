@@ -136,9 +136,8 @@ available in a Docker registry, and the YAML will need to be adjusted to
 reference those Docker container images. See 'image:' and 'imagePullPolicy'
 in the consul.yml.
 
-[[https://github.com/hashicorp/hashistack-on-k8s/tree/master/static/examples/consul-vault-on-k8s/consul.yml][consul.yml]]
-
-#+include: "./static/examples/consul-vault-on-k8s/consul.yml" src yaml
+[[https://github.com/hashicorp/vault-guides/tree/master/consul.yml][consul.yml]]
+#+include: "./consul.yml" src yaml
 
 **** Deploying and Operating
 
@@ -224,9 +223,8 @@ to reference those Docker container images. See 'image:' and
 'imagePullPolicy' in the YAML.
 
 **** Manifest
-[[https://github.com/hashicorp/hashistack-on-k8s/tree/master/static/examples/consul-vault-on-k8s/vault.yml][vault.yml]]
-
-#+include: "./static/examples/consul-vault-on-k8s/vault.yml" src yaml
+[[https://github.com/hashicorp/vault-guides/tree/master/provision/kubernetes/minikube/vault.yml][vault.yml]]
+#+include: "./vault.yml" src yaml
 
 **** Deploying and Operating
 

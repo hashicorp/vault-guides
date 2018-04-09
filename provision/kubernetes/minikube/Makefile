@@ -42,4 +42,4 @@ doc:
 	@echo "**********************************************"
 	@echo "***** Building Markdown doc from Org ... *****"
 	@echo "**********************************************"
-	pandoc -s --toc -f org -t commonmark -o README.markdown hashistack-on-k8s.org
+	pandoc -s --toc -f org -t commonmark -o README.markdown README.org

@@ -256,7 +256,10 @@ for automated
 Unsealing<sup>[[https://www.vaultproject.io/docs/enterprise/auto-unseal/index.html][1]],[[https://www.vaultproject.io/docs/enterprise/hsm/index.html][2]]</sup> of the cryptographic barrier of the back-end storage however, for the
 purpose of this documentation, we will rely on the manual method using Shamir's Secret Sharing<sup>[[https://www.vaultproject.io/docs/internals/security.html][1]],[[https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing][2]]</sup>.
 
-First let's init the Vault secure storage:
+First let's init the Vault secure storage...
+
+**NOTE: the example below performs and init which requires only single unseal key. This is not even close to a production-grade
+workflow and is done here only for demo purposes. Please refer to [[https://www.vaultproject.io/docs/concepts/seal.html][section of the Vault docs]] for more info.**
 
 #+BEGIN_EXAMPLE
 $ kubectl get pods | grep vault

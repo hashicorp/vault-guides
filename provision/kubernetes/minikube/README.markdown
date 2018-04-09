@@ -668,7 +668,13 @@ purpose of this documentation, we will rely on the manual method using
 Shamir's Secret
 Sharing\<sup\>[1](https://www.vaultproject.io/docs/internals/security.html),[2](https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing)\</sup\>.
 
-First let's init the Vault secure storage:
+First let's init the Vault secure storage…
+
+****NOTE: the example below performs and init which requires only single
+unseal key. This is not even close to a production-grade workflow and is
+done here only for demo purposes. Please refer to [section of the Vault
+docs](https://www.vaultproject.io/docs/concepts/seal.html) for more
+info.****
 
 ``` example
 $ kubectl get pods | grep vault

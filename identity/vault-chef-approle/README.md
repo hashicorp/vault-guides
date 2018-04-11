@@ -33,7 +33,7 @@ $ terraform apply
 
 ### AppRole Configuration
 
-Run the `/home/ubuntu/demo_setup.sh` script this performs ***Step 3*** through ***6*** in the [guide](https://www.vaultproject.io/guides/identity/approle-trusted-entities.html#steps).
+Run the `/home/ubuntu/demo_setup.sh` script which performs ***Step 3*** through ***6*** in the [guide](https://www.vaultproject.io/guides/identity/approle-trusted-entities.html#steps).
 
 
 ### Chef Node

@@ -1,0 +1,184 @@
+$base = <<BASE
+sudo apt-get install -q -y wget unzip ca-certificates
+sudo curl -s -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 > /usr/local/bin/jq
+sudo chmod +x /usr/local/bin/jq
+BASE
+
+$vault_install = <<VAULT_INST
+VAULT=0.9.6
+VAULT_ZIP=/vagrant/bin/vault_${VAULT}_linux_amd64.zip
+if [ ! -f $VAULT_ZIP ]; then
+  mkdir -p /vagrant/bin
+  wget https://releases.hashicorp.com/vault/${VAULT}/vault_${VAULT}_linux_amd64.zip --quiet -O $VAULT_ZIP
+fi
+unzip -q $VAULT_ZIP >/dev/null
+sudo chmod +x vault
+sudo mv vault /usr/local/bin
+sudo chmod 0755 /usr/local/bin/vault
+sudo chown root:root /usr/local/bin/vault
+VAULT_INST
+
+$vault_env = <<VAULT_ENV
+sudo cat << EOF > /etc/profile.d/vault.sh
+export VAULT_ADDR="http://192.168.50.151:8200"
+export VAULT_SKIP_VERIFY=true
+EOF
+VAULT_ENV
+
+$vault_run = <<VAULT_RUN
+nohup /usr/local/bin/vault server -dev \
+  -dev-root-token-id="password" \
+  -dev-listen-address="0.0.0.0:8200" 0<&- &>/dev/null &
+VAULT_RUN
+
+$vault_policies = <<VAULT_POLICIES
+#Auth to the Vault
+vault auth password
+#Create a policy
+
+#Write our test secret
+vault write secret/nodejs/app key=hellovault
+VAULT_POLICIES
+
+$hosts_file = <<HOSTS_FILE
+sudo cat << EOF >> /etc/hosts
+192.168.50.151 vault vault.example.com
+192.168.50.152 nodejs node.example.com
+EOF
+HOSTS_FILE
+
+$install_consul_template = <<INSTALL_CONSUL_TEMPLATE
+#Utils
+sudo apt-get -y install unzip
+
+#Install consul template
+CONSUL_TEMPLATE_VERSION="0.19.4"
+CONSUL_TEMPLATE_ZIP="consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.zip"
+CONSUL_TEMPLATE_URL="https://releases.hashicorp.com/consul-template/${CONSUL_TEMPLATE_VERSION}/${CONSUL_TEMPLATE_ZIP}"
+CONSUL_TEMPLATE_USER="root"
+CONSUL_TEMPLATE_GROUP="root"
+CONFIG_DIR="/etc/consul-template.d"
+DATA_DIR="/opt/consul-template/data"
+DOWNLOAD_DIR="/tmp"
+
+curl --silent --output ${DOWNLOAD_DIR}/${CONSUL_TEMPLATE_ZIP} ${CONSUL_TEMPLATE_URL}
+sudo unzip -o ${DOWNLOAD_DIR}/${CONSUL_TEMPLATE_ZIP} -d /usr/local/bin/
+sudo chmod 0755 /usr/local/bin/consul-template
+sudo chown ${CONSUL_TEMPLATE_USER}:${CONSUL_TEMPLATE_GROUP} /usr/local/bin/consul-template
+sudo mkdir -pm 0755 ${CONFIG_DIR} ${DATA_DIR}
+sudo chown -R ${CONSUL_TEMPLATE_USER}:${CONSUL_TEMPLATE_GROUP} ${CONFIG_DIR} ${DATA_DIR}
+sudo chmod -R 0644 ${CONFIG_DIR}
+
+#Consul template config
+sudo bash -c 'cat << EOF > /etc/consul-template.d/config.hcl
+vault {
+  address = "http://vault.example.com:8200"
+  grace = "15s"
+  unwrap_token = true
+  renew_token = true
+}
+template {
+  source = "/etc/consul-template.d/config.ctmpl"
+  destination = "/usr/src/app/config.js"
+  perms = 0777
+  create_dest_dirs = true
+  error_on_missing_key = true
+  backup = true
+}
+EOF'
+
+#Consul template file for app
+sudo bash -c 'cat << EOF > /etc/consul-template.d/config.ctmpl
+module.exports = {
+  "vault_secret": "{{ with secret "secret/nodejs/app" }}{{ .Data.key }}{{ end }}"
+};
+EOF'
+
+#Create the systemd file
+sudo bash -c 'cat << EOF > /etc/systemd/system/consul-template.service
+[Unit]
+Description=Consul Template
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+EnvironmentFile=-/etc/vault-token
+Restart=on-failure
+ExecStart=/usr/local/bin/consul-template -config /etc/consul-template.d/config.hcl
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+User=root
+Group=root
+
+[Install]
+WantedBy=multi-user.target
+EOF'
+
+#Register service and keep it disabled
+sudo systemctl disable consul-template.service
+INSTALL_CONSUL_TEMPLATE
+
+$node_deploy = <<NODE_DEPLOY
+sudo apt-get update
+sudo apt-get install -y nodejs npm
+sudo mkdir -p /usr/src/app
+sudo chown vagrant:vagrant /usr/src/app
+cp /vagrant/vault-si-demo/* /usr/src/app
+cd /usr/src/app
+npm install
+sudo cp /vagrant/nodejs.service /etc/systemd/system/nodejs.service
+sudo systemctl disable nodejs.service
+NODE_DEPLOY
+
+$vault_secure_intro = <<VAULT_SECURE_INTRO
+#Auth to vault
+vault auth password
+#Create the app policy
+vault write sys/policy/nodejs policy=@/vagrant/nodejs.acl
+#Create the token and place it for consul template
+sudo bash -c 'export VAULT_ADDR=http://192.168.50.151:8200; echo VAULT_TOKEN=$(vault token-create -policy=nodejs -renewable=true -ttl=2m -explicit-max-ttl=10m -wrap-ttl=30s -field=wrapping_token) > /etc/vault-token'
+# Restart consul template service
+sudo systemctl enable consul-template.service
+sudo systemctl restart consul-template.service
+# Restart nodejs service
+sudo systemctl enable nodejs.service
+sudo systemctl restart nodejs.service
+VAULT_SECURE_INTRO
+
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "512"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.customize ["modifyvm", :id, "--chipset", "ich9"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+  config.vm.define "vault" do |vault|
+    vault.vm.network :private_network, ip: "192.168.50.151"
+    vault.vm.network :forwarded_port, guest: 8200, host: 8200
+    vault.vm.box = "bento/ubuntu-16.04"
+    vault.vm.hostname = "vault"
+    vault.vm.network "private_network", type: "dhcp"
+    vault.vm.provision "shell", inline: $base
+    vault.vm.provision "shell", inline: $vault_install
+    vault.vm.provision "shell", inline: $vault_env
+    vault.vm.provision "shell", inline: $vault_run, run: 'always'
+    vault.vm.provision "shell", inline: $vault_policies, privileged: false, run: 'always'
+    vault.vm.provision "shell", inline: $hosts_file
+  end
+  config.vm.define "nodejs" do |nodejs|
+    nodejs.vm.network :private_network, ip: "192.168.50.152"
+    nodejs.vm.network :forwarded_port, guest: 3000, host: 3000
+    nodejs.vm.box = "bento/ubuntu-16.04"
+    nodejs.vm.hostname = "nodejs"
+    nodejs.vm.network "private_network", type: "dhcp"
+    nodejs.vm.provision "shell", inline: $base
+    nodejs.vm.provision "shell", inline: $vault_install
+    nodejs.vm.provision "shell", inline: $vault_env
+    nodejs.vm.provision "shell", inline: $hosts_file
+    nodejs.vm.provision "shell", inline: $install_consul_template
+    nodejs.vm.provision "shell", inline: $node_deploy, run: 'always'
+    nodejs.vm.provision "shell", inline: $vault_secure_intro, run: 'always'
+  end
+end

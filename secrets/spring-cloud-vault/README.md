@@ -1,6 +1,6 @@
 # spring-vault-demo
 
-Java example for dynamic secrets and transit (encryption) using Spring and [Spring Cloud Vault](https://cloud.spring.io/spring-cloud-vault)
+Java example for [dynamic secrets](https://www.vaultproject.io/intro/getting-started/dynamic-secrets.html) and [transit encryption](https://www.vaultproject.io/docs/secrets/transit/) using [Spring Cloud Vault](https://cloud.spring.io/spring-cloud-vault)
 
 Check out our HashiCorp Webinar: https://www.youtube.com/watch?v=NxL2-XuZ3kc
 

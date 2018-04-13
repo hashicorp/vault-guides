@@ -8,9 +8,29 @@ The static and dynamic Nomad examples leverage Nomad's [template feature](https:
 
 You can see the bootstrap config directly in the job file for each of the Nomad samples.
 
-We need to add entries to Consul and Vault for our jobs to run. See example below.
+We need to add entries to Consul and Vault for our jobs to run.
 
 ```
 vault write secret/order/postgres username=postgres password=postgres
 consul kv put postgres/jdbc jdbc:postgresql://localhost:5432/postgres
+```
+
+These job templates also assume Nomad is Consul DNS aware. Alternatively you can supply the Vault address and JDBC directly in the job files are strings.  See example below.
+
+
+```
+spring.cloud.vault:
+    authentication: TOKEN
+    token: ${VAULT_TOKEN}
+    host: active.vault.service.consul
+    port: 8200
+    scheme: http
+    fail-fast: true
+    config.lifecycle.enabled: true
+    database:
+        enabled: true
+        role: order
+        backend: database
+spring.datasource:
+  url: {{ key "postgres/jdbc" }}
 ```

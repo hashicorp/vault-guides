@@ -8,5 +8,5 @@ An example configmap is included for you to deploy to an existing K8s cluster. T
 
 If you prefer to manage K8s with Terraform you can use the Terraform code included in the folder. Here are two projects to help you get a K8s cluster with Terraform:
 
-Azure: https://github.com/hashicorp/terraform-guides/tree/master/infrastructure-as-code/k8s-cluster-acs
-GKE: https://github.com/hashicorp/terraform-guides/tree/master/infrastructure-as-code/k8s-cluster-gke
+- Azure: https://github.com/hashicorp/terraform-guides/tree/master/infrastructure-as-code/k8s-cluster-acs
+- GKE: https://github.com/hashicorp/terraform-guides/tree/master/infrastructure-as-code/k8s-cluster-gke

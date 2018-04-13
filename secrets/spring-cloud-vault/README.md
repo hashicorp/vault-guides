@@ -11,6 +11,8 @@ You can run the sample as a standalone Java application. You will need a Vault i
 1. Run the [Postgres script](scripts/postgres.sql) at your Postgres instance.
 2. Run the [Vault script](scripts/vault.sh) at your Vault instance.
 3. Update the [bootstrap.yaml](bootstrap.yaml) file for your enviornment.
+4. Run the Java application.
+5. Verify the dynamic secret in the logs and try the API.
 
 ## Deployment Platforms
 

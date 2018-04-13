@@ -12,7 +12,7 @@ You can run the sample as a standalone Java application. You will need a Vault i
 2. Run the [Vault script](scripts/vault.sh) at your Vault instance.
 3. Update the [bootstrap.yaml](bootstrap.yaml) file for your enviornment.
 4. Run the Java application.
-5. Verify the dynamic secret in the logs and try the API.
+5. Try the API.
 
 ## Deployment Platforms
 

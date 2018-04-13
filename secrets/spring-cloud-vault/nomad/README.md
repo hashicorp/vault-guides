@@ -22,7 +22,7 @@ These job templates also assume Nomad client nodes are Consul DNS aware. Alterna
 spring.cloud.vault:
     authentication: TOKEN
     token: ${VAULT_TOKEN}
-    host: active.vault.service.consul
+    host: localhost
     port: 8200
     scheme: http
     fail-fast: true
@@ -32,5 +32,5 @@ spring.cloud.vault:
         role: order
         backend: database
 spring.datasource:
-  url: {{ key "postgres/jdbc" }}
+  url: jdbc:postgresql://localhost:5432/postgres
 ```

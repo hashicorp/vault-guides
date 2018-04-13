@@ -15,7 +15,7 @@ vault write secret/order/postgres username=postgres password=postgres
 consul kv put postgres/jdbc jdbc:postgresql://localhost:5432/postgres
 ```
 
-These job templates also assume Nomad is Consul DNS aware. Alternatively you can supply the Vault address and JDBC directly in the job files are strings.  See example below.
+These job templates also assume Nomad client nodes are Consul DNS aware. Alternatively you can supply the Vault address and JDBC directly in the job files are strings.  See example below.
 
 
 ```

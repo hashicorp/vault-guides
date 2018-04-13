@@ -9,7 +9,7 @@ Check out our HashiCorp Webinar: https://www.youtube.com/watch?v=NxL2-XuZ3kc
 You can run the sample as a standalone Java application. You will need a Vault instance and a Postgres instance to get started.
 
 1. Run the [Postgres script](scripts/postgres.sql) at your Postgres instance.
-2. Run the [vault script](scripts/vault.sh) at your Vault instance.
+2. Run the [Vault script](scripts/vault.sh) at your Vault instance.
 3. Update the [bootstrap](bootstrap.yaml) file for your enviornment.
 
 ## Deployment Platforms

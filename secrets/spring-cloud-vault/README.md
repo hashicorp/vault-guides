@@ -8,7 +8,7 @@ You will need a Postgres instance for this application. See the [Postgres script
 
 The [vault script](scripts/vault.sh) has a sample config for your Vault.
 
-You can run the sample as standalone Java application. See the [boostrap file](bootstrap.yaml) for a sample config. Alternatively the [Nomad](nomad) and [Kubernetes](kubernetes) folders provide sample container platform deployments. Any additional config for those platforms is located in the folder.
+You can run the sample as standalone Java application. See the [boostrap](bootstrap.yaml) for a sample config. Alternatively the [Nomad](nomad) and [Kubernetes](kubernetes) folders provide sample container platform deployments. Any additional config for those platforms is located in the folder.
 
 ## API USE
 

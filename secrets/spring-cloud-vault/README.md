@@ -14,7 +14,7 @@ You can run the sample as standalone Java application. See the [bootstrap](boots
 
 - Get Orders
 ```
-curl -X GET \
+$ curl -X GET \
    http://localhost:8080/api/orders | jq
 [
   {

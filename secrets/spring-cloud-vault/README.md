@@ -32,7 +32,7 @@ $ curl -X POST \
    -H 'content-type: application/json' \
    -d '{"customerName": "Lance", "productName": "Vault-Ent"}' | jq
 {
-  "id": 203,
+  "id": 204,
   "customerName": "Lance",
   "productName": "Vault-Ent",
   "orderDate": 1523655803652

@@ -1,0 +1,1 @@
+# spring-vault-demo-vagrant

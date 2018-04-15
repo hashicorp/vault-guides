@@ -1,6 +1,6 @@
-# spring-vault-demo-k8s
+# spring-vault-demo-kubernetes
 
-This folder will help you deploy the sample app to K8s.
+This folder will help you deploy the sample app to kubernetes.
 
 Run the additional [vault script](vault.sh) in this folder to configure the Kubernetes trust relationship with Vault.
 

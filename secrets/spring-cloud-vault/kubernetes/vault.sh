@@ -2,7 +2,7 @@
 
 #*****K8s Config*****
 
-vault auth-enable kubernetes
+vault auth enable kubernetes
 
 kubectl create serviceaccount --namespace=default vault
 kubectl create clusterrolebinding vault --clusterrole=system:auth-delegator --serviceaccount=default:vault

@@ -15,8 +15,10 @@ You can run the sample as a standalone Java application. You will need a Vault i
 5. Try the API.
 
 ## Deployment Platforms
-
-The [Nomad](nomad) and [Kubernetes](kubernetes) folders provide sample container platform deployments. Any additional config for those platforms is located in the folder.
+The following provides example deployments on various platforms.
+- [Vagrant](vagrant-local)
+- [Nomad](nomad)
+- [Kubernetes](kubernetes)
 
 ## API USE
 

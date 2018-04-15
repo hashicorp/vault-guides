@@ -24,18 +24,18 @@ path "database/creds/order" {
 
 path "sys/renew/*" {
   capabilities = ["update"]
-}' | vault policy-write order -
+}' | vault policy write order -
 
 #*****Postgres Confg*****
 
 #Mount DB backend
-vault mount database
+vault secrets enable database
 
 #Create the DB connection
 vault write database/config/postgresql \
   plugin_name=postgresql-database-plugin \
   allowed_roles="*" \
-  connection_url="postgresql://postgres:postgres@localhost:5432/postgres"
+  connection_url="postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
 
 #Create the DB order role
 vault write database/roles/order \
@@ -47,7 +47,7 @@ vault write database/roles/order \
 #*****Transit Confg*****
 
 #Mount transit backend
-vault mount transit
+vault secrets enable transit
 
 #Create transit key
 vault write -f transit/keys/order

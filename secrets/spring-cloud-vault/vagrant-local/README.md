@@ -1,1 +1,7 @@
 # spring-vault-demo-vagrant
+
+The Spring server takes about 20 seconds to start.
+After running `vagrant up` you can check the spring logs on the demo box with the following command.
+```
+docker logs spring -f
+```

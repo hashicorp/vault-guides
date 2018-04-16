@@ -1,11 +1,15 @@
 #!/bin/sh
 # Script for rotating passwords on the local machine.
 # Make sure and store VAULT_TOKEN as an environment variable before running this.
+# OPTIONAL - Clone the bashpass repository and use it to generate passphrases
+# Bashpass is located here: https://github.com/joshuar/bashpass
+# Requires the `hunspell` package to work.
 
 USERNAME=$1
 PASSLENGTH=$2
 VAULTURL=$3
-NEWPASS=$(openssl rand -base64 $PASSLENGTH)
+# NEWPASS=$(openssl rand -base64 $PASSLENGTH)
+NEWPASS=$(bashpass -n 4)
 JSON="{ \"options\": { \"max_versions\": 3 }, \"data\": { \"root\": \"$NEWPASS\" } }"
 
 # Check for usage

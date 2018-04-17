@@ -82,7 +82,7 @@ $ curl http://localhost:8080/api/secret | jq
 }
 ```
 
-3.Create the new secret.
+3. Create the new secret.
 ```
 $ curl -i  \
     --header "X-Vault-Token: root" \
@@ -103,7 +103,7 @@ $ curl -X POST http://localhost:8080/actuator/refresh | jq
 ]
 ```
 
-5.Read the new secret.
+5. Read the new secret.
 ```
 $ curl http://localhost:8080/api/secret | jq
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current

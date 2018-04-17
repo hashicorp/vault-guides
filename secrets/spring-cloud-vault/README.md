@@ -25,7 +25,7 @@ The following provides example deployments on various platforms.
 
 - Get Orders
 ```
-$ curl -X GET \
+$ curl -s -X GET \
    http://localhost:8080/api/orders | jq
 [
   {
@@ -38,7 +38,7 @@ $ curl -X GET \
 ```
 - Create Order
 ```
-$ curl -X POST \
+$ curl -s -X POST \
    http://localhost:8080/api/orders \
    -H 'content-type: application/json' \
    -d '{"customerName": "Lance", "productName": "Vault-Ent"}' | jq
@@ -51,64 +51,58 @@ $ curl -X POST \
 ```
 - Delete Orders
 ```
-$ curl -i -X DELETE http://localhost:8080/api/orders
-    HTTP/1.1 200
-    Content-Length: 0
-    Date: Fri, 13 Apr 2018 21:50:43 GMT
+$ curl -s -X DELETE -w "%{http_code}" http://localhost:8080/api/orders | jq
+200
 ```
 
 ## Refreshing Static Secrets
 Spring has an actuator we can use to facilitate the rotation of static credentials. Example below.
-
-1. Create the old secret.
+1. Export your env vars
 ```
-$ curl -i  \
-    --header "X-Vault-Token: root" \
-    --request POST \
-    --data '{"secret":"hello-old"}' \
-    http://localhost:8200/v1/secret/spring-vault-demo
-  HTTP/1.1 204 No Content
-  Cache-Control: no-store
-  Content-Type: application/json
-  Date: Tue, 17 Apr 2018 00:47:55 GMT
+export VAULT_ADDR=http://localhost:8200
+export VAULT_TOKEN=root
 ```
 
-2. Read the old secret.
+2. Create the old secret.
 ```
-$ curl http://localhost:8080/api/secret | jq
+$ curl -s \
+   --header "X-Vault-Token: ${VAULT_TOKEN}" \
+   --request POST \
+   --data '{"secret":"hello-old"}' \
+   --write-out "%{http_code}" ${VAULT_ADDR}/v1/secret/spring-vault-demo | jq
+204
+```
+
+3. Read the old secret.
+```
+$ curl -s http://localhost:8080/api/secret | jq
 {
   "key": "secret",
   "value": "hello-old"
 }
 ```
 
-3. Create the new secret.
+4. Create the new secret.
 ```
-$ curl -i  \
-    --header "X-Vault-Token: root" \
-    --request POST \
-    --data '{"secret":"hello-new"}' \
-    http://localhost:8200/v1/secret/spring-vault-demo
-  HTTP/1.1 204 No Content
-  Cache-Control: no-store
-  Content-Type: application/json
-  Date: Tue, 17 Apr 2018 00:47:55 GMT
+$ curl -s \
+   --header "X-Vault-Token: ${VAULT_TOKEN}" \
+   --request POST \
+   --data '{"secret":"hello-new"}' \
+   --write-out "%{http_code}" ${VAULT_ADDR}/v1/secret/spring-vault-demo | jq
+204
 ```
 
-4. Rotate the secret.
+5. Rotate the secret.
 ```
-$ curl -X POST http://localhost:8080/actuator/refresh | jq
+$ curl -s -X POST http://localhost:8080/actuator/refresh | jq
 [
   "secret"
 ]
 ```
 
-5. Read the new secret.
+6. Read the new secret.
 ```
-$ curl http://localhost:8080/api/secret | jq
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100    36    0    36    0     0   3600      0 --:--:-- --:--:-- --:--:--  3600
+$ curl -s http://localhost:8080/api/secret | jq
 {
   "key": "secret",
   "value": "hello-new"

@@ -58,7 +58,7 @@ $ curl -i -X DELETE http://localhost:8080/api/orders
 ```
 
 ## Refreshing Static Secrets
-Spring has an actuator we can use to faciliate the rotation of static credentials. Example below.
+Spring has an actuator we can use to facilitate the rotation of static credentials. Example below.
 
 ```
 $ curl -i  \

@@ -60,6 +60,7 @@ $ curl -i -X DELETE http://localhost:8080/api/orders
 ## Refreshing Static Secrets
 Spring has an actuator we can use to facilitate the rotation of static credentials. Example below.
 
+1. Create the old secret.
 ```
 $ curl -i  \
     --header "X-Vault-Token: root" \
@@ -72,6 +73,7 @@ $ curl -i  \
   Date: Tue, 17 Apr 2018 00:47:55 GMT
 ```
 
+2. Read the old secret.
 ```
 $ curl http://localhost:8080/api/secret | jq
 {
@@ -80,6 +82,7 @@ $ curl http://localhost:8080/api/secret | jq
 }
 ```
 
+3.Create the new secret.
 ```
 $ curl -i  \
     --header "X-Vault-Token: root" \
@@ -92,6 +95,7 @@ $ curl -i  \
   Date: Tue, 17 Apr 2018 00:47:55 GMT
 ```
 
+4. Rotate the secret.
 ```
 $ curl -X POST http://localhost:8080/actuator/refresh | jq
 [
@@ -99,6 +103,7 @@ $ curl -X POST http://localhost:8080/actuator/refresh | jq
 ]
 ```
 
+5.Read the new secret.
 ```
 $ curl http://localhost:8080/api/secret | jq
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current

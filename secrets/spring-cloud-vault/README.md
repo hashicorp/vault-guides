@@ -20,6 +20,43 @@ The following provides example deployments on various platforms.
 - [Nomad](nomad)
 - [Kubernetes](kubernetes)
 
+
+## API USE
+
+- Get Orders
+```
+$ curl -X GET \
+   http://localhost:8080/api/orders | jq
+[
+  {
+    "id": 204,
+    "customerName": "Lance",
+    "productName": "Vault-Ent",
+    "orderDate": 1523656082215
+  }
+]
+```
+- Create Order
+```
+$ curl -X POST \
+   http://localhost:8080/api/orders \
+   -H 'content-type: application/json' \
+   -d '{"customerName": "Lance", "productName": "Vault-Ent"}' | jq
+{
+  "id": 204,
+  "customerName": "Lance",
+  "productName": "Vault-Ent",
+  "orderDate": 1523656082215
+}
+```
+- Delete Orders
+```
+$ curl -i -X DELETE http://localhost:8080/api/orders
+    HTTP/1.1 200
+    Content-Length: 0
+    Date: Fri, 13 Apr 2018 21:50:43 GMT
+```
+
 ## Refreshing Static Secrets
 Spring has an actuator we can use to faciliate the rotation of static credentials. Example below.
 
@@ -71,40 +108,4 @@ $ curl http://localhost:8080/api/secret | jq
   "key": "secret",
   "value": "hello-new"
 }
-```
-
-## API USE
-
-- Get Orders
-```
-$ curl -X GET \
-   http://localhost:8080/api/orders | jq
-[
-  {
-    "id": 204,
-    "customerName": "Lance",
-    "productName": "Vault-Ent",
-    "orderDate": 1523656082215
-  }
-]
-```
-- Create Order
-```
-$ curl -X POST \
-   http://localhost:8080/api/orders \
-   -H 'content-type: application/json' \
-   -d '{"customerName": "Lance", "productName": "Vault-Ent"}' | jq
-{
-  "id": 204,
-  "customerName": "Lance",
-  "productName": "Vault-Ent",
-  "orderDate": 1523656082215
-}
-```
-- Delete Orders
-```
-$ curl -i -X DELETE http://localhost:8080/api/orders
-    HTTP/1.1 200
-    Content-Length: 0
-    Date: Fri, 13 Apr 2018 21:50:43 GMT
 ```

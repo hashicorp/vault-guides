@@ -111,9 +111,6 @@ $ curl -X POST http://localhost:8080/actuator/refresh | jq
 6. Read the new secret.
 ```
 $ curl http://localhost:8080/api/secret | jq
-  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
-                                 Dload  Upload   Total   Spent    Left  Speed
-100    36    0    36    0     0   3600      0 --:--:-- --:--:-- --:--:--  3600
 {
   "key": "secret",
   "value": "hello-new"

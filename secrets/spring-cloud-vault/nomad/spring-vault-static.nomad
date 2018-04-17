@@ -21,6 +21,7 @@ job "spring" {
 
             template {
               data = <<EOH
+              spring.application.name: spring-vault-demo
               spring.cloud.vault:
                   authentication: TOKEN
                   token: ${VAULT_TOKEN}

@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#*****KV Secret Engine****
+vault secrets disable secret
+vault secrets enable -version=1 -path=secret kv
 #*****Policy*****
 
 echo 'path "secret/spring-vault-demo" {

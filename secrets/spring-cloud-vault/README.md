@@ -20,6 +20,59 @@ The following provides example deployments on various platforms.
 - [Nomad](nomad)
 - [Kubernetes](kubernetes)
 
+## Refreshing Static Secrets
+Spring has an actuator we can use to faciliate the rotation of static credentials. Example below.
+
+```
+$ curl -i  \
+    --header "X-Vault-Token: root" \
+    --request POST \
+    --data '{"secret":"hello-old"}' \
+    http://localhost:8200/v1/secret/spring-vault-demo
+  HTTP/1.1 204 No Content
+  Cache-Control: no-store
+  Content-Type: application/json
+  Date: Tue, 17 Apr 2018 00:47:55 GMT
+```
+
+```
+$ curl http://localhost:8080/api/secret | jq
+{
+  "key": "secret",
+  "value": "hello-old"
+}
+```
+
+```
+$ curl -i  \
+    --header "X-Vault-Token: root" \
+    --request POST \
+    --data '{"secret":"hello-new"}' \
+    http://localhost:8200/v1/secret/spring-vault-demo
+  HTTP/1.1 204 No Content
+  Cache-Control: no-store
+  Content-Type: application/json
+  Date: Tue, 17 Apr 2018 00:47:55 GMT
+```
+
+```
+$ curl -X POST http://localhost:8080/actuator/refresh | jq
+[
+  "secret"
+]
+```
+
+```
+$ curl http://localhost:8080/api/secret | jq
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    36    0    36    0     0   3600      0 --:--:-- --:--:-- --:--:--  3600
+{
+  "key": "secret",
+  "value": "hello-new"
+}
+```
+
 ## API USE
 
 - Get Orders

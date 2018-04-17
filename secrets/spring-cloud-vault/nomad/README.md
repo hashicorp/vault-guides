@@ -19,7 +19,6 @@ These job templates also assume Nomad client nodes are Consul DNS aware. Alterna
 
 
 ```
-spring.application.name: spring-vault-demo
 spring.cloud.vault:
     authentication: TOKEN
     token: ${VAULT_TOKEN}

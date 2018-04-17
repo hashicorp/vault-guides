@@ -73,6 +73,7 @@ resource "kubernetes_config_map" "spring" {
   data {
     config = <<EOF
 ---
+spring.application.name: spring-vault-demo
 spring.cloud.vault:
     authentication: KUBERNETES
     kubernetes:

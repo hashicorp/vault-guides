@@ -78,7 +78,8 @@ Open your local Vault UI on `http://127.0.0.1:8200` and show the root password. 
 ### Show older versions of the credentials
 Here you can talk about versioned KV and how older versions of the credentials are still accessible. You might need them for forensics or to know which password was used at a particular time in the past.
 ```
-export VAULT_TOKEN=password
+export VAULT_TOKEN=root
+export VAULT_ADDR=http://127.0.0.1:8200
 apt install jq
 curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=1 | jq .
 curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=2 | jq .

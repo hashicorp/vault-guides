@@ -14,7 +14,7 @@ The following files are provided as demo scripts:
   * Create `my_app_key` encryption key
   * Create `rewrap_example` policy
   * Generate a token to be used by the app
-- `run-app.sh` performs [Step 4](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#step4) in the guide
+- `run_app.sh` performs [Step 4](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#step4) in the guide
   * Runs the example app
   * Prints out the commends to explore the MySQL DB
 - `rewrap_example.sh` performs [Step 5](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#step-5-rotate-the-encryption-keys) in the guide

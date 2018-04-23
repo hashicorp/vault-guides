@@ -62,7 +62,7 @@ gcloud compute ssh --zone us-central1-a linuxdemo -- -p 22 -R 8200:localhost:820
 ```
 
 ### Step 5: Rotate the root password
-Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2. You do not need to install Vault on this Linux instance. The update script uses the built-in `curl` command to securely save newly generated credentials in Vault. The script requires three arguments, the username, the length of the randomly generated password, and your Vault URL.
+Run these commands on the linuxdemo instance. Use the Vault token you created earlier. You do not need to install Vault on this Linux instance. The update script uses the built-in `curl` command to securely save newly generated credentials in Vault. The script requires three arguments, the username, the length of the randomly generated password, and your Vault URL.
 ```
 sudo /bin/su - root
 cd /tmp

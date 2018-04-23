@@ -39,17 +39,20 @@ The MySQL server is now ready, and port 3306 is forwarded back to your machine. 
 In a new terminal, run the following commands to get Vault setup on your laptop:
 
 ```
-vault server -dev -dev-root-token-id=password
+vault server -dev -dev-root-token-id=root
 ```
 
 Leave Vault running in this terminal. You can point out API actions as they are logged, such as revoked leases, etc.
 
-### Step 3: Configure the Vault database backend for MySQL
-Open a third terminal and run these commands. You can copy and paste all of this code in one block:
-
+### Step 3: Export your Vault server address
+Open a third terminal for running Vault CLI commands.
 ```
 export VAULT_ADDR=http://127.0.0.1:8200
+```
 
+### Step 4: Configure the Vault database backend for MySQL
+You can copy and paste all of this code in one block:
+```
 vault secrets enable database
 
 vault write database/config/my-mysql-database \
@@ -64,7 +67,7 @@ vault write database/roles/my-role \
 
 Your Vault server is now ready. 
 
-### Step 4: Present your demo
+### Step 5: Present your demo
 
 You are ready to present your demo.
 ```
@@ -89,7 +92,7 @@ You can stop here or proceed further for a more advanced demo.
 ## Advanced Demo - A Vault Enabled App and Database
 
 ### Step 1: Show off the Vault UI
-Log onto http://localhost:8200 in a web browser. Use `password` as the token to log on (you set this above in Step 2).
+Log onto http://localhost:8200 in a web browser. Use `root` as the token to log on (you set this above in Step 2).
 
 ### Step 2: Create a policy in the UI
 Create a policy called `db_read_only` with the following contents:
@@ -100,7 +103,12 @@ path "database/creds/my-role" {
 }
 ```
 
-### Step 3: Generate a periodic token for your 'app'
+### Step 3: Export your VAULT_ADDR variable:
+```
+export VAULT_ADDR=http://127.0.0.1:8200
+```
+
+### Step 4: Generate a periodic token for your 'app'
 Generate a token for your 'app' server. Export it into a variable for ease of use. Replace with *your* token. 
 ```
 vault token create -period 1h -policy db_read_only
@@ -110,10 +118,10 @@ export APP_TOKEN=47b422f4-ddeb-671a-756a-c161b66a84dd
 Now you can fetch credentials with it:
 ```
 curl -H "X-Vault-Token: $APP_TOKEN" \
-     -X GET http://127.0.0.1:8200/v1/database/creds/my-role | jq .
+     -X GET ${VAULT_ADDR}/v1/database/creds/my-role | jq .
 ```
 
-### Step 4: Log on to MySQL using the dynamic credentials
+### Step 5: Log on to MySQL using the dynamic credentials
 For this bit you'll need a MySQL client installed on your laptop. The setup script loads a sample database called employees that you can browse. You will be mimicing the behavior of an application interacting with Vault and a MySQL database.
 
 ```
@@ -129,7 +137,7 @@ select emp_no, first_name, last_name, gender from employees limit 10;
 exit
 ```
 
-### Step 5: Revoke the lease
+### Step 6: Revoke the lease
 Use the lease id that you generated in step 3. Scroll back in your terminal to find it.
 ```
 vault lease revoke database/creds/my-role/f9cf14cd-806c-50c4-8738-0232129bdd0b
@@ -138,7 +146,7 @@ vault lease revoke database/creds/my-role/f9cf14cd-806c-50c4-8738-0232129bdd0b
 vault lease revoke -prefix database/creds/my-role
 ```
 
-### Step 6: Attempt to log on again
+### Step 7: Attempt to log on again
 ```
 mysql -uv-token-my-role-vz90z2r03tpx4tq5 -pA1a-z2s3r4wzz568y2uw -h 127.0.0.1
 
@@ -150,7 +158,7 @@ ERROR 1045 (28000): Access denied for user 'v-token-my-role-vz90z2r03tpx4tq5'@'l
 #### Show renewal of a token using renew-self
 ```
 curl -H "X-Vault-Token: $APP_TOKEN" \
-     -X POST http://127.0.0.1:8200/v1/auth/token/renew-self | jq
+     -X POST ${VAULT_ADDR}/v1/auth/token/renew-self | jq
 ```
 
 #### Show a list of all leases
@@ -165,7 +173,7 @@ The increment is measured in seconds. Try setting it to 86400 and see what happe
 curl -H "X-Vault-Token: $APP_TOKEN" \
      -X POST \
      --data '{ "lease_id": "database/creds/my-role/1dafdffe-028a-9455-0bde-b6bf1df5e207", "increment": 3600}' \
-     http://127.0.0.1:8200/v1/sys/leases/renew | jq .
+     ${VAULT_ADDR}/v1/sys/leases/renew | jq .
 ```
 
 #### Revoke all leases and invalidate all active credentials

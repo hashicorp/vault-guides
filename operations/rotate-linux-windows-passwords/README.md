@@ -1,5 +1,5 @@
 # Simple Password Rotation with HashiCorp Vault
-This guide demonstrates a simple automated password rotation workflow using Vault and a simple Bash script. These scripts could be run in a cron job or scheduled task to dynamically update local system passwords on a regular basis.
+This guide demonstrates an automated password rotation workflow using Vault and a simple Bash script. These scripts could be run in a cron job or scheduled task to dynamically update local system passwords on a regular basis.
 
 NOTE: This is *not* the be-all and end-all of password rotation. It is also not a PAM tool. It can do the following:
 
@@ -61,8 +61,8 @@ gcloud compute scp --zone us-central1-a \
 gcloud compute ssh --zone us-central1-a linuxdemo -- -p 22 -R 8200:localhost:8200
 ```
 
-### Step 4: Rotate the root password
-Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2. You do not need to install Vault on this Linux instance. The update script uses the built-in `curl` command to securely save the credentials in Vault.
+### Step 5: Rotate the root password
+Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2. You do not need to install Vault on this Linux instance. The update script uses the built-in `curl` command to securely save newly generated credentials in Vault.
 ```
 sudo /bin/su - root
 cd /tmp
@@ -70,12 +70,12 @@ export VAULT_TOKEN=4ebeb7f9-d691-c53f-d8d0-3c3d500ddda8
 ./rotate_linux_password.sh root 12 http://localhost:8200
 ```
 
-### Step 5: 
-Open your local Vault UI on `http://127.0.0.1:8200` and show the root password. It is stored in `secret/linux/linuxdemo/root_creds`. Run the script from step 4 again and show it update.
+### Step 6: 
+Open your local Vault UI on `http://127.0.0.1:8200` and show the root password. It is stored in `secret/linux/linuxdemo/root_creds`. Run the script from step 5 again and show it update.
 
-### Optional Extras
+## Optional Extras
 
-## Show older versions of the credentials
+### Show older versions of the credentials
 Here you can talk about versioned KV and how older versions of the credentials are still accessible. You might need them for forensics or to know which password was used at a particular time in the past.
 ```
 export VAULT_TOKEN=password
@@ -84,15 +84,15 @@ curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/dat
 curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=2 | jq .
 ```
 
-## Do it on Windows
+### Do it on Windows
 A Windows Powershell script and sample policy are provided for Windows users. You'll need a running Vault instance and a token for the script to run. Usage is exactly the same as for the bash script in the example above. The script was tested on a Windows 2016 server instance.
 
-## Use longer phrase-based passwords
+### Use longer phrase-based passwords
 Security experts recommend using a really long password based on words that you can remember easily. Relevant XKCD: https://xkcd.com/936/
 
 To enable this feature, simply uncomment the relevant lines in the bash or powershell script. For the Linux version you'll need the optional 'bashpass' utility installed. https://github.com/joshuar/bashpass
 
-### Cleanup
+## Cleanup
 Run this to delete your demo instance:
 ```
 gcloud compute instances delete linuxdemo

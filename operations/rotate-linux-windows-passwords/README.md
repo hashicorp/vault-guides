@@ -37,7 +37,7 @@ path "secret/data/linux/*" {
 ```
 
 ### Step 3: Generate a token
-Open a second terminal and generate a token for use in Step 4.
+Open a second terminal and generate a token for use in Step 5.
 ```
 export VAULT_ADDR=http://127.0.0.1:8200
 vault token create -period 24h -policy rotate-linux

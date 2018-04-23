@@ -82,8 +82,8 @@ Here you can talk about versioned KV and how older versions of the credentials a
 export VAULT_TOKEN=root
 export VAULT_ADDR=http://127.0.0.1:8200
 apt install jq
-curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=1 | jq .
-curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=2 | jq .
+curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" ${VAULT_ADDR}/v1/secret/data/linux/linuxdemo/root_creds?version=1 | jq .
+curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" ${VAULT_ADDR}/v1/secret/data/linux/linuxdemo/root_creds?version=2 | jq .
 ```
 
 ### Do it on Windows

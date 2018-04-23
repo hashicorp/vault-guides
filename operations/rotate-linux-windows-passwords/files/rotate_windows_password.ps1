@@ -8,7 +8,7 @@ Param(
 )
 
 # Inspired by https://daniel.streefkerkonline.com/2016/05/19/correct-horse-battery-staple-for-powershell-aka-random-memorable-password-generator/
-
+# This function will generate longer phrase based passwords.
 function Get-RandomPassword {
     
     [OutputType([string])]
@@ -24,9 +24,11 @@ function Get-RandomPassword {
     1..$Count | ForEach-Object {"$([string]::Join($Separator,(1..4 | ForEach-Object {[cultureinfo]::CurrentCulture.TextInfo.ToTitleCase(($words | Get-Random))})))$Separator$(1..99 | Get-Random)"}
 }
 
+# This snippet generates random passwords of a specified length
 # Credit: https://blogs.technet.microsoft.com/undocumentedfeatures/2016/09/20/powershell-random-password-generator/
-# $NEWPASS = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..$PASSLENGTH] -join ''
-$NEWPASS = Get-RandomPassword
+$NEWPASS = ([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | Sort-Object {Get-Random})[0..$PASSLENGTH] -join ''
+# Use this instead if you want phrase-based passwords instead.
+# $NEWPASS = Get-RandomPassword
 $SECUREPASS = ConvertTo-SecureString $NEWPASS -AsPlainText -Force
 $JSON = "{ `"options`": { `"max_versions`": 3 }, `"data`": { `"Administrator`": `"$NEWPASS`" } }"
 

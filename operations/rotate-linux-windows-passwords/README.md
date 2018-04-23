@@ -1,48 +1,95 @@
 # Simple Password Rotation with HashiCorp Vault
+This guide demonstrates a simple automated password rotation workflow using Vault and a simple Bash script. These scripts could be run in a cron job or scheduled task to dynamically update local system passwords on a regular basis.
 
-![ALT TEXT GOES HERE](./assets/image.png)
+NOTE: This is *not* the be-all and end-all of password rotation. It is also not a PAM tool. It can do the following:
 
-## Reference Material
- * [Bla and Foo and Bar](https://foo.bar.com/baz.html)
+* Rotate local system passwords on a regular basis
+* Allow systems to rotate their own passwords
+* Store login credentials securely in Vault
+* Ensure that passwords meet complexity requirements
+* Require users to check credentials out of Vault 
 
-## Estimated Time to Complete
-30-60 minutes
-
-## Personas
-Our target persona is a sysadmin or security engineer who wants to make sure local Linux and Windows account passwords are rotated on a regular basis.
-
-## Challenge
-Lorem ipsum dolor amet aesthetic +1 chambray mustache retro PBR&B freegan green juice master cleanse twee photo booth viral leggings. IPhone disrupt before they sold out tofu, offal kale chips hoodie fixie godard biodiesel tote bag tbh ethical meditation marfa. 
-
-## Solution
-Portland four loko twee literally mustache gochujang cloud bread +1 cred pok pok. Bitters roof party quinoa food truck shoreditch. Knausgaard viral schlitz mlkshk art party tofu wayfarers tumeric semiotics squid pour-over waistcoat lyft cornhole.
+In this demo you'll have three terminal windows open. One for running Vault, a second for entering Vault CLI commands, and one for your remote Linux server. The scripts run from the remote GCP instance and connect to Vault to update their stored credentials.
 
 ## Prerequisites
-Cred edison bulb butcher typewriter, gastropub flannel brooklyn vinyl cardigan kinfolk polaroid 3 wolf moon cray bushwick. Mumblecore VHS retro, art party offal next level kombucha synth pour-over whatever sustainable typewriter vice taxidermy hoodie. Letterpress palo santo 8-bit organic. Health goth glossier gluten-free tousled prism VHS truffaut selvage venmo viral sartorial migas. Polaroid af quinoa lumbersexual. Vice drinking vinegar glossier art party 90's DIY yuccie marfa tofu, iPhone banjo selfies normcore. Succulents humblebrag prism, fashion axe drinking vinegar microdosing master cleanse crucifix.
+* Vault installed on your local machine: https://www.vaultproject.io/downloads.html
+* GCP account and SDK command line tools installed: https://cloud.google.com/sdk/
 
-## Steps
-Succulents humblebrag prism, fashion axe drinking vinegar microdosing master cleanse crucifix.
+## Estimated Time to Complete
+10 minutes
 
-### Step 1: bLA bLA
-Whatever pour-over la croix pinterest. Hexagon distillery keytar subway tile tumeric snackwave succulents four dollar toast four loko bitters selfies. Narwhal venmo tumeric, bushwick fanny pack vinyl copper mug skateboard vape migas intelligentsia hella pok pok vice keffiyeh. 
-
-### Step 2: Run fOO
-
-#### CLI
- * [Vault API Docs](http://link/to/kv/docs)
-
-#### Request
+### Step 1: Configure Vault on your local machine
+In a new terminal, run the following commands to get Vault setup on your laptop:
 
 ```
-$ vault secrets enable -path=secret kv
-$ vault kv enable-versioning secret/
-$ vault write secret/config max_versions=3
+vault server -dev -dev-root-token-id=password
 ```
 
-#### Response
+Leave Vault running in this terminal. You can point out API actions as they are logged, such as revoked leases, etc.
+
+### Step 2: Configure a policy
+Open the Vault UI at http://127.0.0.1:8200 and create an ACL policy called `rotate-linux` with the following content:
+
 ```
-Output goes here
+path "secret/data/linux/*" {
+  capabilities = ["create", "read", "update", "list"]
+}
 ```
 
-## Next Steps 
+### Step 3: Generate a token
+Open a second terminal and generate a token for use in Step 4.
+```
+export VAULT_ADDR=http://127.0.0.1:8200
+vault token create -period 24h -policy rotate-linux
+```
 
+### Step 4: Configure a Linux instance
+Open a third terminal window and run the following commands. The first one creates a new Linux instance in GCP. The second command copies our password rotation script to the remote host. The third establishes an SSH connection to the remote host, while enabling a tunnel back to Vault on our local machine.
+
+```
+gcloud compute instances create linuxdemo \
+  --zone us-central1-a \
+  --image-family=ubuntu-1604-lts \
+  --image-project=ubuntu-os-cloud
+
+# You may have to wait a few seconds before running the next command. GCP is fast, but not *that* fast.
+
+gcloud compute scp --zone us-central1-a \
+  files/rotate_linux_password.sh \
+  linuxdemo:/tmp/rotate_linux_password.sh
+
+gcloud compute ssh --zone us-central1-a linuxdemo -- -p 22 -R 8200:localhost:8200
+```
+
+### Step 4: Rotate the root password
+Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2.
+```
+sudo /bin/su - root
+cd /tmp
+export VAULT_TOKEN=4ebeb7f9-d691-c53f-d8d0-3c3d500ddda8
+./rotate_linux_password.sh root 12 http://localhost:8200
+```
+
+### Step 5: 
+Open your local Vault UI on `http://127.0.0.1:8200` and show the root password. It is stored in `secret/linux/linuxdemo/root_creds`. Run the script from step 4 again and show it update.
+
+### Optional Extras
+
+## Show older versions of the credentials
+Here you can talk about versioned KV and how older versions of the credentials are still accessible. You might need them for forensics or to know which password was used at a particular time in the past.
+```
+export VAULT_TOKEN=password
+apt install jq
+curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=1 | jq .
+curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/data/linux/linuxdemo/root_creds?version=2 | jq .
+```
+
+## Do it on Windows
+A powershell script and sample policy are provided for Windows users. You'll need a running Vault instance and a token for the script to run. Usage is exactly the same as for the bash script in the example above.
+
+## Use longer phrase-based passwords
+Security experts recommend using a really long password based on words that you can remember easily. Relevant XKCD: https://xkcd.com/936/
+
+To enable this feature, simply uncomment the relevant lines in the bash or powershell script. For the Linux version you'll need the optional 'bashpass' utility installed. https://github.com/joshuar/bashpass
+
+### Cleanup

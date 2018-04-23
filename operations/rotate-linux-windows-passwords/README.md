@@ -22,7 +22,7 @@ In this demo you'll have three terminal windows open. One for running Vault, a s
 In a new terminal, run the following commands to get Vault setup on your laptop:
 
 ```
-vault server -dev -dev-root-token-id=password
+vault server -dev -dev-root-token-id=root
 ```
 
 Leave Vault running in this terminal. You can point out API actions as they are logged, such as revoked leases, etc.
@@ -62,7 +62,7 @@ gcloud compute ssh --zone us-central1-a linuxdemo -- -p 22 -R 8200:localhost:820
 ```
 
 ### Step 4: Rotate the root password
-Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2.
+Run these commands on the linuxdemo instance. Use the Vault token you created in Step 2. You do not need to install Vault on this Linux instance. The update script uses the built-in `curl` command to securely save the credentials in Vault.
 ```
 sudo /bin/su - root
 cd /tmp
@@ -85,7 +85,7 @@ curl -X GET -H "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8200/v1/secret/dat
 ```
 
 ## Do it on Windows
-A powershell script and sample policy are provided for Windows users. You'll need a running Vault instance and a token for the script to run. Usage is exactly the same as for the bash script in the example above.
+A Windows Powershell script and sample policy are provided for Windows users. You'll need a running Vault instance and a token for the script to run. Usage is exactly the same as for the bash script in the example above. The script was tested on a Windows 2016 server instance.
 
 ## Use longer phrase-based passwords
 Security experts recommend using a really long password based on words that you can remember easily. Relevant XKCD: https://xkcd.com/936/
@@ -93,3 +93,7 @@ Security experts recommend using a really long password based on words that you 
 To enable this feature, simply uncomment the relevant lines in the bash or powershell script. For the Linux version you'll need the optional 'bashpass' utility installed. https://github.com/joshuar/bashpass
 
 ### Cleanup
+Run this to delete your demo instance:
+```
+gcloud compute instances delete linuxdemo
+```

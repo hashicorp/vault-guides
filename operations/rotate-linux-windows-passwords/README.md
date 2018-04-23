@@ -67,6 +67,7 @@ Run these commands on the linuxdemo instance. Use the Vault token you created in
 sudo /bin/su - root
 cd /tmp
 export VAULT_ADDR=http://127.0.0.1:8200
+# Don't forget to replace with the token you created in step #3 here!
 export VAULT_TOKEN=4ebeb7f9-d691-c53f-d8d0-3c3d500ddda8
 ./rotate_linux_password.sh root 12 $VAULT_ADDR
 ```

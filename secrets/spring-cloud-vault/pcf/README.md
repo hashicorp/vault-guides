@@ -27,3 +27,13 @@ cf login -a https://api.sys.YOUR_PCF_URL -u YOUR_USER_NAME --skip-ssl-validation
 ```
 ./deploy.sh
 ```
+
+Note: when creating the static secret in Vault to use as described in the [README](../README.md), make sure $PCF_APP_NAME matches tone of the values found in [bootstrap.yaml](bootstrap.yaml.template) *application-name*
+```
+$ curl -s \
+   --header "X-Vault-Token: ${VAULT_TOKEN}" \
+   --request POST \
+   --data '{"secret":"hello-new"}' \
+   --write-out "%{http_code}" ${VAULT_ADDR}/v1/secret/$PCF_APP_NAME | jq
+204
+```

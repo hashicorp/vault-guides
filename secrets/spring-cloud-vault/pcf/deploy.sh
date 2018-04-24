@@ -1,15 +1,29 @@
 #!/bin/bash
 
-export PCF_ORG=
+PCF_ORG=webinar
 : ${PCF_ORG:?"Need to set PCF_ORG non-empty"}
-export PCF_SPACE=
+PCF_SPACE=example
 : ${PCF_SPACE:?"Need to set PCF_SPACE non-empty"}
-export DOCKER_IMAGE=lanceplarsen/spring-vault-cf
+DOCKER_IMAGE=stenio123/spring-vault-cf
 : ${DOCKER_IMAGE:?"Need to set DOCKER_IMAGE non-empty"}
-export PCF_VAULT_SERVICE_BROKER_NAME=
+PCF_VAULT_SERVICE_BROKER_NAME=vault
 : ${PCF_VAULT_SERVICE_BROKER_NAME:?"Need to set PCF_VAULT_SERVICE_BROKER_NAME non-empty"}
-export PCF_APP_NAME=
+PCF_APP_NAME=myapp
 : ${PCF_APP_NAME:?"Need to set PCF_APP_NAME non-empty"}
+POSTGRES_DB_URL=steniodb-aws.csdltcd61o6f.us-east-1.rds.amazonaws.com:5432/postgres
+: ${PCF_APP_NAME:?"Need to set POSTGRES_DB_URL non-empty"}
+POSTGRES_DB_NAME=postgres
+: ${PCF_APP_NAME:?"Need to set POSTGRES_DB_NAME non-empty"}
+
+# Dynamically creates bootstrap.yaml based on env vars
+echo "Creating bootstrap.yaml based on env vars ..."
+echo $PCF_VAULT_SERVICE_BROKER_NAME
+sed -e "s#PCF_VAULT_SERVICE_BROKER_NAME#$PCF_VAULT_SERVICE_BROKER_NAME#g" \
+    -e "s#PCF_APP_NAME#$PCF_APP_NAME#g" \
+    -e "s#POSTGRES_DB_URL#$POSTGRES_DB_URL#g" \
+    -e "s#POSTGRES_DB_NAME#$POSTGRES_DB_NAME#g" \
+    bootstrap.yaml.template > bootstrap.yaml
+
 
 #Build
 mvn package -f ../pom.xml

@@ -4,7 +4,7 @@ This folder will help you deploy the sample app to Pivotal Cloud Foundry PCF.
 
 ## Requirements
 - A PCF environment with Vault PCF Service Broker deployed and configured. More information about the service broker can be found [here](https://www.hashicorp.com/blog/cloud-foundry-vault-service-broker)
-- A properly configured Vault. Make sure you run this [script](../scripts/vault.sh)
+- A properly configured Vault. Make sure you run this [script](../scripts/vault.sh). You will need to update the DB connection string.
 - A properly configured Postgres DB with the "order" table. Make sure you run this [script](../scripts/postgres.sql)
 - Docker properly configured in your machine, with access to Docker Hub to push the image. More information [here](https://docs.docker.com/docker-hub/)
 - Maven installed in your machine, to generate the jar file. More information [here](https://maven.apache.org/install.html)

@@ -18,6 +18,12 @@ PCF_SPACE: Name of the PCF space where you want your app deployed
 DOCKER_IMAGE: Name of your docker hub repository and an image name. Example: lanceplarsen/spring-vault-cf
 PCF_VAULT_SERVICE_BROKER_NAME: Name of your Vault service broker. Example: vault
 PCF_APP_NAME: A name for your app. This name must ber unique across all organizations of the PCF where the app is being deployed.
+POSTGRES_DB_URL: URL for the database that Vault is configured to work with , per [vault.sh](../scripts/vault.sh). Example: MYDB.us-east-1.rds.amazonaws.com:5432
+POSTGRES_DB_NAME: Name of the database that Vault is configured to work with, per [vault.sh](../scripts/vault.sh). Example: postgres
+```
+- Login to docker hub by issuing the command
+```
+docker login -u YOUR_USERNAME -p YOUR_PASSWORD
 ```
 - Login to PCF by issuing the command
 ```

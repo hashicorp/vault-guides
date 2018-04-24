@@ -1,19 +1,19 @@
 #!/bin/bash
 
-PCF_ORG=webinar
+PCF_ORG=
 : ${PCF_ORG:?"Need to set PCF_ORG non-empty"}
-PCF_SPACE=example
+PCF_SPACE=
 : ${PCF_SPACE:?"Need to set PCF_SPACE non-empty"}
-DOCKER_IMAGE=stenio123/spring-vault-cf
+DOCKER_IMAGE=
 : ${DOCKER_IMAGE:?"Need to set DOCKER_IMAGE non-empty"}
-PCF_VAULT_SERVICE_BROKER_NAME=vault
+PCF_VAULT_SERVICE_BROKER_NAME=
 : ${PCF_VAULT_SERVICE_BROKER_NAME:?"Need to set PCF_VAULT_SERVICE_BROKER_NAME non-empty"}
-PCF_APP_NAME=myapp
+PCF_APP_NAME=
 : ${PCF_APP_NAME:?"Need to set PCF_APP_NAME non-empty"}
-POSTGRES_DB_URL=steniodb-aws.csdltcd61o6f.us-east-1.rds.amazonaws.com:5432/postgres
-: ${PCF_APP_NAME:?"Need to set POSTGRES_DB_URL non-empty"}
+POSTGRES_DB_URL=
+: ${POSTGRES_DB_URL:?"Need to set POSTGRES_DB_URL non-empty"}
 POSTGRES_DB_NAME=postgres
-: ${PCF_APP_NAME:?"Need to set POSTGRES_DB_NAME non-empty"}
+: ${POSTGRES_DB_NAME:?"Need to set POSTGRES_DB_NAME non-empty"}
 
 # Dynamically creates bootstrap.yaml based on env vars
 echo "Creating bootstrap.yaml based on env vars ..."

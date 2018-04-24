@@ -19,6 +19,7 @@ The following provides example deployments on various platforms.
 - [Vagrant](vagrant-local)
 - [Nomad](nomad)
 - [Kubernetes](kubernetes)
+- [Pivotal Cloud Foundry - PCF](pcf)
 
 
 ## API USE

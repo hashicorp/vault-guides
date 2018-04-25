@@ -97,7 +97,7 @@ module "consul_aws" {
 
   name             = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id           = "${module.network_aws.vpc_id}"
-  vpc_cidr         = "${module.network_aws.vpc_cidr_block}"
+  vpc_cidr         = "${module.network_aws.vpc_cidr}"
   subnet_ids       = "${module.network_aws.subnet_private_ids}"
   release_version  = "${var.consul_release_version}"
   consul_version   = "${var.consul_version}"
@@ -108,7 +108,8 @@ module "consul_aws" {
   instance_type    = "${var.consul_instance_type}"
   user_data        = "${data.template_file.consul_user_data.rendered}" # Custom user_data
   ssh_key_name     = "${module.ssh_keypair_aws_override.name}"
-  tags             = "${var.consul_tags}"
+  #tags             = "${var.tags}"
+  tags_list        = "${var.consul_tags}"
 }
 
 data "template_file" "vault_user_data" {
@@ -133,7 +134,7 @@ module "vault_aws" {
 
   name             = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id           = "${module.network_aws.vpc_id}"
-  vpc_cidr         = "${module.network_aws.vpc_cidr_block}"
+  vpc_cidr         = "${module.network_aws.vpc_cidr}"
   subnet_ids       = "${module.network_aws.subnet_private_ids}"
   release_version  = "${var.vault_release_version}"
   vault_version    = "${var.vault_version}"
@@ -145,5 +146,6 @@ module "vault_aws" {
   instance_type    = "${var.vault_instance_type}"
   user_data        = "${data.template_file.vault_user_data.rendered}" # Custom user_data
   ssh_key_name     = "${module.ssh_keypair_aws_override.name}"
-  tags             = "${var.vault_tags}"
+  #tags             = "${var.tags}"
+  tags_list        = "${var.vault_tags}"
 }

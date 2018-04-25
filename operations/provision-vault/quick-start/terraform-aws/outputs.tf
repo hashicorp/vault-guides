@@ -74,8 +74,8 @@ To force the generation of a new key, the private key instance can be "tainted" 
 README
 }
 
-output "vpc_cidr_block" {
-  value = "${module.network_aws.vpc_cidr_block}"
+output "vpc_cidr" {
+  value = "${module.network_aws.vpc_cidr}"
 }
 
 output "vpc_id" {

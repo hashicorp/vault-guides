@@ -77,11 +77,12 @@ module "consul_aws" {
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
-  vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
+  vpc_cidr     = "${module.network_aws.vpc_cidr}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.consul_image_id != "" ? var.consul_image_id : data.aws_ami.base.id}"
   ssh_key_name = "${module.network_aws.ssh_key_name}"
-  tags         = "${var.consul_tags}"
+  #tags         = "${var.consul_tags}"
+  tags_list     = "${var.consul_tags}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode
 ${data.template_file.consul_quick_start.rendered} # Configure Consul quick start
@@ -103,11 +104,12 @@ module "vault_aws" {
 
   name         = "${var.name}" # Must match network_aws module name for Consul Auto Join to work
   vpc_id       = "${module.network_aws.vpc_id}"
-  vpc_cidr     = "${module.network_aws.vpc_cidr_block}"
+  vpc_cidr     = "${module.network_aws.vpc_cidr}"
   subnet_ids   = "${module.network_aws.subnet_private_ids}"
   image_id     = "${var.vault_image_id != "" ? var.vault_image_id : data.aws_ami.base.id}"
   ssh_key_name = "${module.network_aws.ssh_key_name}"
-  tags         = "${var.vault_tags}"
+  #tags        = "${var.vault_tags}"
+  tags_list    = "${var.vault_tags}"
   user_data    = <<EOF
 ${data.template_file.consul_install.rendered} # Runtime install Consul in -dev mode
 ${data.template_file.vault_install.rendered} # Runtime install Vault in -dev mode

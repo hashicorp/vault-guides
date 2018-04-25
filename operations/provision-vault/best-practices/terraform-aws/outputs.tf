@@ -77,7 +77,7 @@ README
 }
 
 output "vpc_cidr_block" {
-  value = "${module.network_aws.vpc_cidr_block}"
+  value = "${module.network_aws.vpc_cidr}"
 }
 
 output "vpc_id" {

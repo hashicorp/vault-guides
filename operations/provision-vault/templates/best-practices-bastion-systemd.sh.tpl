@@ -96,4 +96,7 @@ echo "Don't start Vault in -dev mode & stop Vault now that the CLI is pointing t
 echo '' | sudo tee /etc/vault.d/vault.conf
 sudo systemctl stop vault
 
+echo "Stop Nomad"
+sudo systemctl stop nomad
+
 echo "[---best-practices-bastion-systemd.sh Complete---]"

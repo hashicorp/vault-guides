@@ -10,7 +10,7 @@ vault_host_port = ENV['VAULT_HOST_PORT'] || 8200
 base_box = ENV['BASE_BOX'] || "bento/ubuntu-16.04"
 
 # Consul variables
-consul_version = ENV['CONSUL_VERSION'] || "0.9.2"
+consul_version = ENV['CONSUL_VERSION'] || "1.0.6"
 consul_ent_url = ENV['CONSUL_ENT_URL']
 consul_group = "consul"
 consul_user = "consul"
@@ -18,7 +18,7 @@ consul_comment = "Consul"
 consul_home = "/srv/consul"
 
 # Vault variables
-vault_version = ENV['VAULT_VERSION'] || "0.8.1"
+vault_version = ENV['VAULT_VERSION'] || "0.10.0"
 vault_ent_url = ENV['VAULT_ENT_URL']
 vault_group = "vault"
 vault_user = "vault"
@@ -130,12 +130,12 @@ You can interact with Vault using any of the CLI (https://www.vaultproject.io/do
   $ sudo cat /srv/vault/.vault-token
 
   # Use the CLI to write and read a generic secret
-  $ vault write secret/cli bar=baz
-  $ vault read secret/cli
+  $ vault kv put secret/cli foo=bar
+  $ vault kv get secret/cli
 
   # Use the API to write and read a generic secret
-  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" -X POST -d '{\"bar\":\"baz\"}' http://127.0.0.1:8200/v1/secret/api | jq '.'
-  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://127.0.0.1:8200/v1/secret/api | jq '.'
+  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" -X POST -d '{\"data\": {\"bar\":\"baz\"}}' http://127.0.0.1:8200/v1/secret/data/api | jq '.'
+  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://127.0.0.1:8200/v1/secret/data/api | jq '.'
 
 Visit the Consul UI: http://#{private_ip}:#{consul_host_port}/
 Visit the Vault UI: http://#{private_ip}:#{vault_host_port}/

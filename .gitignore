@@ -1,4 +1,5 @@
 # Compiled files
+*.tfstate
 *.tfstate.*
 
 # Module directory in any sub-folder

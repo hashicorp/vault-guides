@@ -1,28 +1,39 @@
-# spring-vault-demo
+# Java Sample App using Spring Cloud Vault
 
-Java example for [dynamic secrets](https://www.vaultproject.io/intro/getting-started/dynamic-secrets.html) and [transit encryption](https://www.vaultproject.io/docs/secrets/transit/) using [Spring Cloud Vault](https://cloud.spring.io/spring-cloud-vault)
+These assets are provided to perform the tasks described in the [Java Sample App using Spring Cloud Vault](https://www.vaultproject.io/guides/encryption/spring-demo.html) guide.
 
-Check out our HashiCorp Webinar: https://www.hashicorp.com/resources/solutions-engineering-webinar-series-episode-2-vault
 
-## Overview
+Originally, this app was demonstrated during the [Manage secrets, access, and encryption in the public cloud
+with Vault](https://www.hashicorp.com/resources/solutions-engineering-webinar-series-episode-2-vault)
+webinar.
+
+
+----
+
+
+## Demo Instruction
+
+To keep it simple and lightweight, the [Java Sample App using Spring Cloud Vault](https://www.vaultproject.io/guides/encryption/spring-demo.html) guide used **Vagrant** to demonstrate the app.  This repository also provides example deployments on various platforms:
+
+- [Nomad](nomad)
+- [Kubernetes](kubernetes)
+- [Pivotal Cloud Foundry - PCF](pcf)
+- [Vagrant](vagrant-local)
+<br>
+
+### Setup
 
 You can run the sample as a standalone Java application. You will need a Vault instance and a Postgres instance to get started.
 
 1. Run the [Postgres script](scripts/postgres.sql) at your Postgres instance.
 2. Run the [Vault script](scripts/vault.sh) at your Vault instance.
-3. Update the [bootstrap.yaml](bootstrap.yaml) file for your enviornment.
+3. Update the [bootstrap.yaml](bootstrap.yaml) file for your environment.
 4. Run the Java application.
 5. Try the API.
 
-## Deployment Platforms
-The following provides example deployments on various platforms.
-- [Vagrant](vagrant-local)
-- [Nomad](nomad)
-- [Kubernetes](kubernetes)
-- [Pivotal Cloud Foundry - PCF](pcf)
 
 
-## API USE
+### API
 
 - Get Orders
 ```
@@ -56,7 +67,8 @@ $ curl -s -X DELETE -w "%{http_code}" http://localhost:8080/api/orders | jq
 200
 ```
 
-## Refreshing Static Secrets
+### Refreshing Static Secrets
+
 Spring has an actuator we can use to facilitate the rotation of static credentials. Example below.
 1. Export your env vars
 ```

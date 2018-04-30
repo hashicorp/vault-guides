@@ -8,6 +8,7 @@
 # State file in any sub-folder
 **/terraform.tfstate
 **/terraform.tfstate.backup
+*.tfstate.lock.info
 
 # Terraform Variables
 *.tfvars

@@ -1,83 +1,59 @@
 output "zREADME" {
   value = <<README
-Your "${var.name}" Vault cluster has been successfully provisioned!
 
-A private RSA key has been generated and downloaded locally. The file permissions have been changed to 0600 so the key can be used immediately for SSH or scp.
+Your "${var.name}" AWS Vault Best Practices cluster has been
+successfully provisioned!
 
-If you're not running Terraform locally (e.g. in TFE or Jenkins) but are using remote state and need the private key locally for SSH, run the below command to download.
+${module.network_aws.zREADME}To force the generation of a new key, the private key instance can be "tainted"
+using the below command.
 
-  ${format("$ echo \"$(terraform output private_key_pem)\" > %s && chmod 0600 %s", module.ssh_keypair_aws_override.private_key_filename, module.ssh_keypair_aws_override.private_key_filename)}
+  $ terraform taint -module=ssh_keypair_aws_override.tls_private_key \
+      tls_private_key.key
+${var.download_certs ?
+"\n${module.root_tls_self_signed_ca.zREADME}
+${module.leaf_tls_self_signed_cert.zREADME}
+# ------------------------------------------------------------------------------
+# Local HTTP API Requests
+# ------------------------------------------------------------------------------
 
-Run the below command to add this private key to the list maintained by ssh-agent so you're not prompted for it when using SSH or scp to connect to hosts with your public key.
+If you're making HTTPS API requests outside the Bastion (locally), set
+the below env vars.
 
-  ${format("$ ssh-add %s", module.ssh_keypair_aws_override.private_key_filename)}
+The `vault_public` and `consul_public` variables must be set to true for
+requests to work.
 
-The public part of the key loaded into the agent ("public_key_openssh" output) has been placed on the target system in ~/.ssh/authorized_keys.
+`vault_public`: ${var.vault_public}
+`consul_public`: ${var.consul_public}
 
-To SSH into a Bastion host using this private key, run one of the below commands.
+  $ export VAULT_ADDR=https://${module.vault_aws.vault_lb_dns}:8200
+  $ export VAULT_CACERT=./${module.leaf_tls_self_signed_cert.ca_cert_filename}
+  $ export VAULT_CLIENT_CERT=./${module.leaf_tls_self_signed_cert.leaf_cert_filename}
+  $ export VAULT_CLIENT_KEY=./${module.leaf_tls_self_signed_cert.leaf_private_key_filename}
 
-  ${join("\n  ", formatlist("$ ssh -A -i %s %s@%s", module.ssh_keypair_aws_override.private_key_filename, module.network_aws.bastion_username, module.network_aws.bastion_ips_public))}
+  $ export CONSUL_ADDR=https://${module.consul_aws.consul_lb_dns}:8080 # HTTPS
+  $ export CONSUL_ADDR=http://${module.consul_aws.consul_lb_dns}:8500 # HTTP
+  $ export CONSUL_CACERT=./${module.leaf_tls_self_signed_cert.ca_cert_filename}
+  $ export CONSUL_CLIENT_CERT=./${module.leaf_tls_self_signed_cert.leaf_cert_filename}
+  $ export CONSUL_CLIENT_KEY=./${module.leaf_tls_self_signed_cert.leaf_private_key_filename}\n" : ""}
+# ------------------------------------------------------------------------------
+# Vault Best Practices
+# ------------------------------------------------------------------------------
 
-You won't be able to start interacting with Vault from the Bastion host yet as the Vault server has not been initialized & unsealed. Follow the below steps to set this up.
-
-1.) SSH into one of the Vault servers registered with Consul, you can use the below command to accomplish this automatically (we'll use Consul DNS moving forward once Vault is unsealed)
-
-  $ ssh -A ${module.vault_aws.vault_username}@$(curl http://127.0.0.1:8500/v1/agent/members | jq -M -r '[.[] | select(.Name | contains ("${var.name}-vault")) | .Addr][0]')
-
-2.) Initialize Vault
-
-  $ vault init
-
-3.) Unseal Vault using the "Unseal Keys" output from the `vault init` command and check the seal status
-
-  $ vault unseal <unsealkey1>
-  $ vault unseal <unsealkey2>
-  $ vault unseal <unsealkey3>
-  $ vault status
-
-Repeat steps 1.) and 3.) to unseal the other "standby" Vault servers as well to achieve high availablity.
-
-4.) Logout of the Vault server (ctrl+d) and check Vault's seal status from the Bastion host to verify you can interact with the Vault cluster from the Bastion host Vault CLI
-
-  $ vault status
-
-5.) You can now interact with Vault using any of the CLI (https://www.vaultproject.io/docs/commands/index.html) or API (https://www.vaultproject.io/api/index.html) commands from your Bastion host
-
-  # Set your Vault token to authenticate requests, to start we can use the "Root Token" that was output from the `vault init` command above
-  $ export VAULT_TOKEN=<roottoken>
-
-  # Use Vault's CLI to write and read a generic secret
-  $ vault write secret/cli foo=bar
-  $ vault read secret/cli
-
-  # Use Vault's API with Consul DNS to write and read a generic secret
-  $ curl \
-      -H "X-Vault-Token: $VAULT_TOKEN" \
-      -X POST \
-      -d '{"foo":"bar"}' \
-      -k --cacert /opt/vault/tls/ca.crt --cert /opt/vault/tls/vault.crt --key /opt/vault/tls/vault.key \
-      https://vault.service.consul:8200/v1/secret/api | jq '.'
-  $ curl \
-      -H "X-Vault-Token: $VAULT_TOKEN" \
-      -k --cacert /opt/vault/tls/ca.crt --cert /opt/vault/tls/vault.crt --key /opt/vault/tls/vault.key \
-      https://vault.service.consul:8200/v1/secret/api | jq '.'
-
-Now that Vault is unsealed, you can seemlessly SSH back into unsealed Vault servers using Consul DNS (rather than using the command in Step 1). The nodes returned will be both active and standby Vault servers as long as they're unsealed.
-
-  $ ssh -A ${module.vault_aws.vault_username}@vault.service.consul
-
-To SSH into Consul server nodes, you can also leverage Consul's DNS functionality.
+Once on the Bastion host, you can use Consul's DNS functionality to seamlessly
+SSH into other Consul or Vault nodes if they exist.
 
   $ ssh -A ${module.consul_aws.consul_username}@consul.service.consul
 
-To force the generation of a new key, the private key instance can be "tainted" using the below command.
+  # Vault must be initialized & unsealed for this command to work
+  $ ssh -A ${module.vault_aws.vault_username}@vault.service.consul
 
-  $ terraform taint -module=ssh_keypair_aws_override.tls_private_key tls_private_key.key
+${module.vault_aws.zREADME}
+${module.consul_aws.zREADME}
 README
 }
 
-output "vpc_cidr_block" {
-  value = "${module.network_aws.vpc_cidr_block}"
+output "vpc_cidr" {
+  value = "${module.network_aws.vpc_cidr}"
 }
 
 output "vpc_id" {
@@ -136,10 +112,42 @@ output "consul_sg_id" {
   value = "${module.consul_aws.consul_sg_id}"
 }
 
+output "consul_lb_sg_id" {
+  value = "${module.consul_aws.consul_lb_sg_id}"
+}
+
+output "consul_tg_http_8500_arn" {
+  value = "${module.consul_aws.consul_tg_http_8500_arn}"
+}
+
+output "consul_tg_https_8080_arn" {
+  value = "${module.consul_aws.consul_tg_https_8080_arn}"
+}
+
+output "consul_lb_dns" {
+  value = "${module.consul_aws.consul_lb_dns}"
+}
+
 output "vault_asg_id" {
   value = "${module.vault_aws.vault_asg_id}"
 }
 
 output "vault_sg_id" {
   value = "${module.vault_aws.vault_sg_id}"
+}
+
+output "vault_lb_sg_id" {
+  value = "${module.vault_aws.vault_lb_sg_id}"
+}
+
+output "vault_tg_http_8200_arn" {
+  value = "${module.vault_aws.vault_tg_http_8200_arn}"
+}
+
+output "vault_tg_https_8200_arn" {
+  value = "${module.vault_aws.vault_tg_https_8200_arn}"
+}
+
+output "vault_lb_dns" {
+  value = "${module.vault_aws.vault_lb_dns}"
 }

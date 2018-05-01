@@ -26,7 +26,7 @@ requests to work.
 # ------------------------------------------------------------------------------
 
 Once on the Bastion host, you can use Consul's DNS functionality to seamlessly
-SSH into other Consul or Nomad nodes if they exist.
+SSH into other Consul or Vault nodes if they exist.
 
   $ ssh -A ${module.consul_aws.consul_username}@consul.service.consul
 

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # General Variables
 # ---------------------------------------------------------------------------------------------------------------------
-# name      = "vault-quick-start"
+name      = "jlundberg-webinar-vault-qs"
 # ami_owner = "099720109477" # Base image owner, defaults to RHEL
 # ami_name  = "*ubuntu-xenial-16.04-amd64-server-*" # Base image name, defaults to RHEL
 
@@ -17,7 +17,7 @@
 # bastion_instance = "t2.micro"
 # bastion_image_id = "" # AMI ID override, defaults to base RHEL AMI
 
-# network_tags = {"owner" = "hashicorp", "TTL" = "24"}
+network_tags = {"owner" = "jlundberg", "TTL" = "24"}
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Consul Variables
@@ -46,12 +46,12 @@
 # }
 # EOF
 
-# consul_tags = {"owner" = "hashicorp", "TTL" = "24"}
+consul_tags = {"owner" = "jlundberg", "TTL" = "24"}
 
-# consul_tags_list = [
-#   {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
-#   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
-# ]
+ consul_tags_list = [
+   {"key" = "owner", "value" = "jlundberg", "propagate_at_launch" = true},
+   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+ ]
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Vault Variables
@@ -71,9 +71,9 @@
 # cluster_name = "dc1"
 # EOF
 
-# vault_tags = {"owner" = "hashicorp", "TTL" = "24"}
+ vault_tags = {"owner" = "jlundberg", "TTL" = "24"}
 #
-# vault_tags_list = [
-#   {"key" = "owner", "value" = "hashicorp", "propagate_at_launch" = true},
-#   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
-# ]
+ vault_tags_list = [
+   {"key" = "owner", "value" = "jlundberg", "propagate_at_launch" = true},
+   {"key" = "TTL", "value" = "24", "propagate_at_launch" = true}
+ ]

@@ -3,13 +3,13 @@
 
 # Networking
 private_ip = ENV['PRIVATE_IP'] || "192.168.50.152"
-consul_host_port = ENV['CONSUL_HOST_PORT'] || 8500
-vault_host_port = ENV['VAULT_HOST_PORT'] || 8200
 
 # Base box selection
 base_box = ENV['BASE_BOX'] || "bento/ubuntu-16.04"
 
 # Consul variables
+consul_install = ENV['CONSUL_INSTALL'] || true
+consul_host_port = ENV['CONSUL_HOST_PORT'] || 8500
 consul_version = ENV['CONSUL_VERSION'] || "1.0.6"
 consul_ent_url = ENV['CONSUL_ENT_URL']
 consul_group = "consul"
@@ -18,6 +18,7 @@ consul_comment = "Consul"
 consul_home = "/srv/consul"
 
 # Vault variables
+vault_host_port = ENV['VAULT_HOST_PORT'] || 8200
 vault_version = ENV['VAULT_VERSION'] || "0.10.0"
 vault_ent_url = ENV['VAULT_ENT_URL']
 vault_group = "vault"
@@ -35,8 +36,6 @@ Vagrant.configure("2") do |config|
 
   # Setup networking
   config.vm.network :private_network, ip: private_ip
-  config.vm.network :forwarded_port, guest: 8500, host: consul_host_port, auto_correct: true
-  config.vm.network :forwarded_port, guest: 8200, host: vault_host_port, auto_correct: true
   config.vm.network "private_network", type: "dhcp"
 
   # Use base_box set at the top of this file
@@ -46,25 +45,33 @@ Vagrant.configure("2") do |config|
   # Bootstrap the vm
   config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
 
-  # Setup Consul user
-  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
-    env: {
-      "GROUP" => consul_group,
-      "USER" => consul_user,
-      "COMMENT" => consul_comment,
-      "HOME" => consul_home,
-    }
+  if (consul_install)
+    # Forward Consul port
+    config.vm.network :forwarded_port, guest: 8500, host: consul_host_port, auto_correct: true
 
-  # Install Consul
-  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul.sh | bash",
-    env: {
-      "VERSION" => consul_version,
-      "URL" => consul_ent_url,
-      "USER" => consul_user,
-      "GROUP" => consul_group,
-    }
+    # Setup Consul user
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
+      env: {
+        "GROUP" => consul_group,
+        "USER" => consul_user,
+        "COMMENT" => consul_comment,
+        "HOME" => consul_home,
+      }
 
-  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul-systemd.sh | bash"
+    # Install Consul
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul.sh | bash",
+      env: {
+        "VERSION" => consul_version,
+        "URL" => consul_ent_url,
+        "USER" => consul_user,
+        "GROUP" => consul_group,
+      }
+
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul-systemd.sh | bash"
+  end
+
+  # Forward Vault port
+  config.vm.network :forwarded_port, guest: 8200, host: vault_host_port, auto_correct: true
 
   # Setup Vault user
   config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",

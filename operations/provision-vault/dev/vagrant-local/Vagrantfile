@@ -144,8 +144,8 @@ You can interact with Vault using any of the CLI (https://www.vaultproject.io/do
   $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" -X POST -d '{\"data\": {\"bar\":\"baz\"}}' http://127.0.0.1:8200/v1/secret/data/api | jq '.'
   $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://127.0.0.1:8200/v1/secret/data/api | jq '.'
 
-Visit the Consul UI: http://#{private_ip}:#{consul_host_port}/
-Visit the Vault UI: http://#{private_ip}:#{vault_host_port}/
+Visit the Vault UI: http://#{private_ip}:#{vault_host_port}
+#{consul_install ? 'Visit the Consul UI: http://'+ private_ip + ':' + consul_host_port : ''}
 
 Don't forget to tear your VM down after.
 

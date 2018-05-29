@@ -87,4 +87,4 @@ $ terraform apply
 
 ## Next Steps
 
-Now that you've provisioned and configured a development Vault cluster, start walking through the [Vault Guides](https://www.consul.io/docs/guides/index.html).
+Now that you've provisioned and configured a development Vault cluster, start walking through the [Vault Guides](https://www.vaultproject.io/guides/)

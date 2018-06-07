@@ -8,7 +8,7 @@ private_ip = ENV['PRIVATE_IP'] || "192.168.50.152"
 base_box = ENV['BASE_BOX'] || "bento/ubuntu-16.04"
 
 # Consul variables
-consul_install = ENV['CONSUL_INSTALL'] || true
+consul_install = ["true", "1"].include?((ENV['CONSUL_INSTALL'] || true).to_s.downcase)
 consul_host_port = ENV['CONSUL_HOST_PORT'] || 8500
 consul_version = ENV['CONSUL_VERSION'] || "1.0.6"
 consul_ent_url = ENV['CONSUL_ENT_URL']
@@ -27,8 +27,8 @@ vault_comment = "Vault"
 vault_home = "/srv/vault"
 
 # Tests & cleanup
-run_tests = ENV['RUN_TESTS']
-cleanup = ENV['CLEANUP']
+run_tests = ["true", "1"].include?((ENV['RUN_TESTS'] || true).to_s.downcase)
+cleanup = ["true", "1"].include?((ENV['CLEANUP'] || true).to_s.downcase)
 
 Vagrant.configure("2") do |config|
   # Use vagrant insecure public key, comment this out to restrict access
@@ -130,9 +130,11 @@ To SSH into a Vault host, run the below command.
 
   $ vagrant ssh
 
-You can interact with Vault using any of the CLI (https://www.vaultproject.io/docs/commands/index.html) or API (https://www.vaultproject.io/api/index.html) commands.
+You can interact with Vault using any of the CLI (https://www.vaultproject.io/docs/commands/index.html)
+or API (https://www.vaultproject.io/api/index.html) commands.
 
-  # The Root token for your Vault -dev instance is set to `root` and placed in /srv/vault/.vault-token, the `VAULT_TOKEN` environment variable has already been set for you
+  # The Root token for your Vault -dev instance is set to `root` and placed in /srv/vault/.vault-token,
+  # the `VAULT_TOKEN` environment variable has already been set for you
   $ echo $VAULT_TOKEN
   $ sudo cat /srv/vault/.vault-token
 

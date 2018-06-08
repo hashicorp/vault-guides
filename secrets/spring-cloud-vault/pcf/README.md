@@ -1,7 +1,5 @@
 # Spring example with Spring Cloud Vault and Cloud Foundry.
 
-TODO: Externalize DB url with Spring Config Server in [bootstrap config](src/main/resources/bootstrap.yaml)
-
 ## Description
 App that shows the following functions:
 - PCF integration with Vault using service broker

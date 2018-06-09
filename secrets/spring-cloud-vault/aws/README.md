@@ -40,4 +40,4 @@ journalctl -u springboot -f
 ```
 
 The API will serve on port 8080. Instructions for API use can be found in the top-level folder.
-You can can increase the count of the VMs and verify the additional Vault leases and DB users.
+You can can increase the count of the VMs using Terraform and verify the additional Vault leases and DB users.

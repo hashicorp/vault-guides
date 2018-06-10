@@ -17,8 +17,9 @@ To keep it simple and lightweight, the [Java Sample App using Spring Cloud Vault
 
 - [Nomad](nomad)
 - [Kubernetes](kubernetes)
-- [Pivotal Cloud Foundry - PCF](pcf)
+- [Pivotal Cloud Foundry](pcf)
 - [Vagrant](vagrant-local)
+- [AWS](aws)
 <br>
 
 ### Setup

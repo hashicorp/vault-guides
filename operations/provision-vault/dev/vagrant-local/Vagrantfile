@@ -26,10 +26,6 @@ vault_user = "vault"
 vault_comment = "Vault"
 vault_home = "/srv/vault"
 
-# Tests & cleanup
-run_tests = ["true", "1"].include?((ENV['RUN_TESTS'] || true).to_s.downcase)
-cleanup = ["true", "1"].include?((ENV['CLEANUP'] || true).to_s.downcase)
-
 Vagrant.configure("2") do |config|
   # Use vagrant insecure public key, comment this out to restrict access
   config.ssh.insert_key = false
@@ -92,19 +88,6 @@ Vagrant.configure("2") do |config|
     }
 
   config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault-systemd.sh | bash"
-
-  # Setup tests
-  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-testing.sh | bash"
-
-  # Run tests if `RUN_TESTS` env var is provided
-  if (run_tests)
-    config.vm.provision "shell", inline: "cd /tmp && rake vault:spec"
-  end
-
-  # Cleanup if `CLEANUP` env var is provided
-  if (cleanup)
-    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/cleanup.sh | bash"
-  end
 
   # Increase memory for Parallels Desktop
   config.vm.provider "parallels" do |p, o|

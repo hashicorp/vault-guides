@@ -1,11 +1,10 @@
 # These are all the defaults for any environment variables below.  Setting environment variables before accessing this set of defaults will override anything set here.
+DEFAULT_ROOT_DOMAIN=hashidemos.com
 
 # Software versions.   These are probably the only values that should change over time
 DEFAULT_VAULT_VERSION=0.10.1
 DEFAULT_CONSUL_VERSION=1.0.6
 DEFAULT_CONSUL_TEMPLATE_VERSION=0.19.4
-
-DEFAULT_ROOT_DOMAIN=hashidemos.com
 
 DEFAULT_ROOT_PKI_PATH=pki_root
 DEFAULT_VAULT_PORT=8200
@@ -16,7 +15,6 @@ DEFAULT_INTERMEDIATE_CERT_TTL=43824h
 DEFAULT_TOKEN_TTL=120s
 DEFAULT_LOCAL_MOUNT=/var/tmp
 DEFAULT_DOCKER_MOUNT=/var/tmp/docker
-
 
 ROOT_PKI_PATH=${ROOT_PKI_PATH:-$DEFAULT_ROOT_PKI_PATH}
 ROOT_DOMAIN=${ROOT_DOMAIN:-$DEFAULT_ROOT_DOMAIN}

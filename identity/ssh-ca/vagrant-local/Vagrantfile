@@ -23,13 +23,6 @@ nohup /usr/local/bin/vault server -dev \
   -dev-listen-address="0.0.0.0:8200" 0<&- &>/dev/null &
 VAULT_RUN
 
-$hosts_file = <<HOSTS_FILE
-sudo cat << EOF >> /etc/hosts
-192.168.50.100  vault vault.example.com
-192.168.50.101  client client.example.com
-EOF
-HOSTS_FILE
-
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "512"]
@@ -40,6 +33,7 @@ Vagrant.configure("2") do |config|
   end
   config.vm.define "vault" do |vault|
     vault.vm.network :private_network, ip: "192.168.50.100"
+    vault.vm.provision :hosts, sync_hosts: true
     vault.vm.box = "bento/centos-7.3"
     vault.vm.box_version = "2.3.8"
     vault.vm.hostname = "vault"
@@ -60,23 +54,23 @@ Vagrant.configure("2") do |config|
       }
     vault.vm.provision "shell", inline: $vault_env
     vault.vm.provision "shell", inline: $vault_run
-    vault.vm.provision "shell", inline: $hosts_file
   end
 
   config.vm.define "client" do |client|
     client.vm.network :private_network, ip: "192.168.50.101"
+    client.vm.provision :hosts, sync_hosts: true
     client.vm.box = "bento/centos-7.3"
     client.vm.box_version = "2.3.8"
     client.vm.hostname = "client"
-    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
-    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
+    client.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
+    client.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
       env: {
         "GROUP" => vault_group,
         "USER" => vault_user,
         "COMMENT" => vault_comment,
         "HOME" => vault_home,
       }
-    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault.sh | bash",
+    client.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault.sh | bash",
       env: {
         "VERSION" => vault_version,
         "URL" => vault_ent_url,
@@ -84,6 +78,5 @@ Vagrant.configure("2") do |config|
         "GROUP" => vault_group,
       }
     client.vm.provision "shell", inline: $vault_env
-    client.vm.provision "shell", inline: $hosts_file
   end
 end

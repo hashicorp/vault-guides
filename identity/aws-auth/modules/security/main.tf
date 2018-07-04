@@ -6,10 +6,7 @@ provider "aws" {
   region = "${var.aws_region}"
 }
 
-# ---------------------------------------------------------------------------------------------------------------------
-# CREATE A SECURITY GROUP TO CONTROL WHAT REQUESTS CAN GO IN AND OUT OF EACH EC2 INSTANCE
-# ---------------------------------------------------------------------------------------------------------------------
-
+# Security group to manage ingress and egress access
 resource "aws_security_group" "lc_security_group" {
   name_prefix = "vault-demo-sg-${var.name_prefix}"
   description = "Security group for the Vault demo launch configuration"
@@ -55,6 +52,7 @@ resource "aws_security_group_rule" "allow_vault_inbound_from_cidr_blocks" {
   security_group_id = "${aws_security_group.lc_security_group.id}"
 }
 
+# TODO: to allow access per security group id
 #resource "aws_security_group_rule" "allow_vault_inbound_from_sg_id" {
 #  count                    = "${length(var.vault_listening_port) >= 1 ? 1 : 0}"
 #  type                     = "ingress"

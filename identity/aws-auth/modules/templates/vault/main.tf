@@ -9,10 +9,6 @@ data "template_file" "vault_aws_auth_policy_template" {
   }
 }
 
-#resource "aws_iam_role_policy" "vault_aws_auth_policy" {
-#  role   = "${aws_iam_role.vault_role.id}"
-#  policy = "${data.template_file.vault_aws_auth_policy_template.rendered}"
-#}
 resource "aws_iam_user" "vault_demo_user" {
   name = "vault_demo_user"
 }

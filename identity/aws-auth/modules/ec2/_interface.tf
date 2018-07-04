@@ -1,3 +1,5 @@
+variable "aws_region" {}
+
 variable "owner_tag" {}
 
 variable "ttl_tag" {}
@@ -5,6 +7,7 @@ variable "ttl_tag" {}
 variable "ami_id" {}
 
 variable "instance_type" {}
+variable "ssh_key_name" {}
 
 /**
 Provided as an example if key creation is needed (check README.md)
@@ -17,8 +20,6 @@ variable "user_data" {}
 variable "iam_instance_profile_name" {
   default = ""
 }
-
-variable "vpc_security_group_ids" {}
 
 output "ip" {
   value = "${aws_instance.ubuntu.public_ip}"

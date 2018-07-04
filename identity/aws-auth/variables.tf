@@ -2,6 +2,9 @@
 # AWS_ACCESS_KEY_ID
 # AWS_DEFAULT_REGION
 # AWS_SECRET_ACCESS_KEY
+variable "aws_region" {
+  default = "us-east-1"
+}
 
 variable "aws_account_id" {
   description = "AWS account id required for Vault IAM policy"

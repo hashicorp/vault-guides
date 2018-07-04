@@ -2,7 +2,9 @@ terraform {
   required_version = ">= 0.11.0"
 }
 
-provider "aws" {}
+provider "aws" {
+  region = "${var.aws_region}"
+}
 
 /**
 Provided as an example if key creation is needed (check README.md)
@@ -12,11 +14,19 @@ Provided as an example if key creation is needed (check README.md)
 }
 */
 
+module "security" {
+  source      = "../security"
+  aws_region  = "${var.aws_region}"
+  name_prefix = "${var.name_prefix}"
+  owner_tag   = "${var.owner_tag}"
+  ttl_tag     = "${var.ttl_tag}"
+}
+
 resource "aws_instance" "ubuntu" {
   ami                    = "${var.ami_id}"
   instance_type          = "${var.instance_type}"
   key_name               = "stenio-aws"
-  vpc_security_group_ids = "${var.vpc_security_group_ids}"
+  vpc_security_group_ids = ["${module.security.security_group_id}"]
   user_data              = "${var.user_data}"
   iam_instance_profile   = "${var.iam_instance_profile_name}"
 

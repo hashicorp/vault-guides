@@ -1,0 +1,65 @@
+
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Vault variable defaults
+vault_version = ENV['VAULT_VERSION'] || "0.9.0"
+vault_ent_url = ENV['VAULT_ENT_URL']
+vault_group = "vault"
+vault_user = "vault"
+vault_comment = "Vault"
+vault_home = "/srv/vault"
+
+$vault_env = <<VAULT_ENV
+sudo cat << EOF > /etc/profile.d/vault.sh
+export VAULT_ADDR="http://192.168.50.100:8200"
+export VAULT_SKIP_VERIFY=true
+EOF
+VAULT_ENV
+
+$vault_run = <<VAULT_RUN
+nohup /usr/local/bin/vault server -dev \
+  -dev-root-token-id="password" \
+  -dev-listen-address="0.0.0.0:8200" 0<&- &>/dev/null &
+VAULT_RUN
+
+$hosts_file = <<HOSTS_FILE
+sudo cat << EOF >> /etc/hosts
+192.168.50.100  vault vault.example.com
+EOF
+HOSTS_FILE
+
+Vagrant.configure("2") do |config|
+  config.vm.provider "virtualbox" do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "512"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+    vb.customize ["modifyvm", :id, "--cpuexecutioncap", "50"]
+    vb.customize ["modifyvm", :id, "--chipset", "ich9"]
+    vb.customize ["modifyvm", :id, "--ioapic", "on"]
+  end
+  config.vm.define "vault" do |vault|
+    vault.vm.network :private_network, ip: "192.168.50.100"
+    vault.vm.box = "bento/centos-7.3"
+    vault.vm.box_version = "2.3.8"
+    vault.vm.hostname = "vault"
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
+      env: {
+        "GROUP" => vault_group,
+        "USER" => vault_user,
+        "COMMENT" => vault_comment,
+        "HOME" => vault_home,
+      }
+    vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault.sh | bash",
+      env: {
+        "VERSION" => vault_version,
+        "URL" => vault_ent_url,
+        "USER" => vault_user,
+        "GROUP" => vault_group,
+      }
+    vault.vm.provision "shell", inline: $vault_env
+    vault.vm.provision "shell", inline: $vault_run
+    vault.vm.provision "shell", inline: $hosts_file
+  end
+
+end

@@ -37,7 +37,7 @@ variable "network_tags" {
 # ---------------------------------------------------------------------------------------------------------------------
 variable "consul_servers"  { default = -1 }
 variable "consul_instance" { default = "t2.micro" }
-variable "consul_version"  { default = "1.0.6" }
+variable "consul_version"  { default = "1.2.0" }
 variable "consul_url"      { default = "" }
 variable "consul_image_id" { default = "" }
 

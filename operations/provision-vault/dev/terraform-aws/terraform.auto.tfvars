@@ -22,7 +22,7 @@
 # Consul Variables
 # ---------------------------------------------------------------------------------------------------------------------
 # consul_install = true # Install Consul
-# consul_version = "1.0.6" # Consul Version for runtime install, defaults to 1.0.6
+# consul_version = "1.2.0" # Consul Version for runtime install, defaults to 1.2.0
 # consul_url     = "" # Consul Enterprise download URL for runtime install, defaults to Consul OSS
 
 # consul_config_override = <<EOF

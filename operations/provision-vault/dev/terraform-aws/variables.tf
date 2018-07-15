@@ -34,7 +34,7 @@ variable "network_tags" {
 # Consul Variables
 # ---------------------------------------------------------------------------------------------------------------------
 variable "consul_install" { default = false }
-variable "consul_version" { default = "1.0.6" }
+variable "consul_version" { default = "1.2.0" }
 variable "consul_url"     { default = "" }
 
 variable "consul_config_override" { default = "" }

@@ -64,7 +64,7 @@ variable "consul_tags_list" {
 # ---------------------------------------------------------------------------------------------------------------------
 variable "vault_servers"  { default = -1 }
 variable "vault_instance" { default = "t2.micro" }
-variable "vault_version"  { default = "0.10.0" }
+variable "vault_version"  { default = "0.10.3" }
 variable "vault_url"      { default = "" }
 variable "vault_image_id" { default = "" }
 

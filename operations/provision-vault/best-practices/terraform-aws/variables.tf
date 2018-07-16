@@ -28,7 +28,7 @@ variable "bastion_servers"        { default = 1 }
 variable "bastion_instance"       { default = "t2.small" }
 variable "bastion_release"        { default = "0.1.0" }
 variable "bastion_consul_version" { default = "1.0.6" }
-variable "bastion_vault_version"  { default = "0.10.0" }
+variable "bastion_vault_version"  { default = "0.10.3" }
 variable "bastion_os"             { default = "RHEL" }
 variable "bastion_os_version"     { default = "7.3" }
 variable "bastion_image_id"       { default = "" }
@@ -73,7 +73,7 @@ variable "consul_tags_list" {
 variable "vault_servers"    { default = -1 }
 variable "vault_instance"   { default = "t2.small" }
 variable "vault_release"    { default = "0.1.0" }
-variable "vault_version"    { default = "0.10.0" }
+variable "vault_version"    { default = "0.10.3" }
 variable "vault_os"         { default = "RHEL" }
 variable "vault_os_version" { default = "7.3" }
 variable "vault_image_id"   { default = "" }

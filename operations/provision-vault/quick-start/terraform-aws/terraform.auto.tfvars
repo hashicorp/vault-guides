@@ -24,7 +24,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # consul_servers  = 1 # Number of Consul servers, defaults to subnet count
 # consul_instance = "t2.micro"
-# consul_version  = "1.0.6" # Consul Version for runtime install, defaults to 1.0.6
+# consul_version  = "1.2.0" # Consul Version for runtime install, defaults to 1.2.0
 # consul_url      = "" # Consul Enterprise download URL for runtime install, defaults to Consul OSS
 # consul_image_id = "" # AMI ID override, defaults to base RHEL AMI
 
@@ -58,7 +58,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # vault_servers   = 1 # Number of Vault servers, defaults to subnet count
 # vault_instance  = "t2.micro"
-# vault_version   = "0.10.0" # Vault Version for runtime install, defaults to 0.10.0
+# vault_version   = "0.10.3" # Vault Version for runtime install, defaults to 0.10.3
 # vault_url       = "" # Vault Enterprise download URL for runtime install, defaults to Vault OSS
 # vault_image_id  = "" # AMI ID override, defaults to base RHEL AMI
 

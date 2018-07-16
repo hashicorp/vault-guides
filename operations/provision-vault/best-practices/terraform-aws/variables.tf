@@ -27,7 +27,7 @@ variable "nat_count"              { default = 1 }
 variable "bastion_servers"        { default = 1 }
 variable "bastion_instance"       { default = "t2.small" }
 variable "bastion_release"        { default = "0.1.0" }
-variable "bastion_consul_version" { default = "1.0.6" }
+variable "bastion_consul_version" { default = "1.2.0" }
 variable "bastion_vault_version"  { default = "0.10.3" }
 variable "bastion_os"             { default = "RHEL" }
 variable "bastion_os_version"     { default = "7.3" }
@@ -44,7 +44,7 @@ variable "network_tags" {
 variable "consul_servers"    { default = -1 }
 variable "consul_instance"   { default = "t2.small" }
 variable "consul_release"    { default = "0.1.0" }
-variable "consul_version"    { default = "1.0.6" }
+variable "consul_version"    { default = "1.2.0" }
 variable "consul_os"         { default = "RHEL" }
 variable "consul_os_version" { default = "7.3" }
 variable "consul_image_id"   { default = "" }

@@ -25,6 +25,8 @@ listener "tcp" {
   tls_key_file       = "/etc/certs/\${VAULT_HOST}_key.pem"
   tls_client_ca_file = "/etc/certs/\${VAULT_HOST}_ca_chain.pem"
 }
+
+ui=true
 EOF
 
 mkdir -p /etc/bash/bashrc.d

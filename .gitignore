@@ -14,7 +14,7 @@
 *.tfvars
 
 # Ignored Terraform files
-gitignore.tf
+*gitignore*.tf
 
 # SSH Keys
 *.pem

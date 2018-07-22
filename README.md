@@ -1,6 +1,6 @@
 ----
 -	Website: https://www.vaultproject.io
--  GitHub repository: https://github.com/hashicorp/vault
+-	GitHub repository: https://github.com/hashicorp/vault
 -	IRC: `#vault-tool` on Freenode
 -	Announcement list: [Google Groups](https://groups.google.com/group/hashicorp-announce)
 -	Discussion list: [Google Groups](https://groups.google.com/group/vault-tool)
@@ -36,6 +36,12 @@ This directory contains example use cases involving [encryption as a service](ht
 ## Assets
 
 This directory contains graphics and other material for the repository.
+
+## `gitignore.tf` Files
+
+You may notice some [`gitignore.tf`](operations/provision-consul/best-practices/terraform-aws/gitignore.tf) files in certain directories. `.tf` files that contain the word "gitignore" are ignored by git in the [`.gitignore`](./.gitignore) file.
+
+If you have local Terraform configuration that you want ignored (like Terraform backend configuration), create a new file in the directory (separate from `gitignore.tf`) that contains the word "gitignore" (e.g. `backend.gitignore.tf`) and it won't be picked up as a change.
 
 ## Contributing
 

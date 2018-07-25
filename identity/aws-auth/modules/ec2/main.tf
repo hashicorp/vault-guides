@@ -25,7 +25,7 @@ module "security" {
 resource "aws_instance" "ubuntu" {
   ami                    = "${var.ami_id}"
   instance_type          = "${var.instance_type}"
-  key_name               = "stenio-aws"
+  key_name               = "${var.ssh_key_name}"
   vpc_security_group_ids = ["${module.security.security_group_id}"]
   user_data              = "${var.user_data}"
   iam_instance_profile   = "${var.iam_instance_profile_name}"

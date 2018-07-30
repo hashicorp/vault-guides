@@ -62,4 +62,7 @@ echo '' | sudo tee /etc/vault.d/vault.conf
 echo "Stop Vault now that the CLI is pointing to a live Vault cluster"
 sudo systemctl stop vault
 
+echo "Install Wetty"
+sudo curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/web-terminal.sh | bash
+
 echo "[---quick-start-bastion-systemd.sh Complete---]"

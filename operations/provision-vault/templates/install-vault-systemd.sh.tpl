@@ -48,7 +48,4 @@ fi
 echo "Restart Vault"
 sudo systemctl restart vault
 
-echo "Install Wetty"
-sudo curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/web-terminal.sh | bash
-
 echo "[---install-vault-systemd.sh Complete---]"

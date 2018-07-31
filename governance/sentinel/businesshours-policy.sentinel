@@ -2,12 +2,12 @@ import "time"
 
 # We expect requests to only happen during work days (0 for Sunday, 6 for Saturday)
 workdays = rule {
-    timespace.weekday > 0 and timespace.weekday < 6 
+    time.now.weekday > 0 and time.now.weekday < 6 
 }
 
 # We expect requests to only happen during work hours
 workhours = rule {
-    timespace.hour > 7 and timespace.hour < 18 
+    time.now.hour > 7 and time.now.hour < 18 
 }
 
 main = rule {

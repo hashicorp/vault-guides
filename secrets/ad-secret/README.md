@@ -10,16 +10,18 @@ As described in [this Microsoft document][ldap-tls], LDAP password changes are o
 ### 1- Create Windows Server 2016 Datacenter Instance
 TODO - Terraform code
 #### Azure:
-Make an Azure Resource Group (vault-ad-test)
-Create a Windows Server 2016 Datacenter instance in the new Resource Group
-Machine Name: vault-ad-test
-Username: vault-ad-test
-Password: YOUR-PASSWORD
-A1 Standard
-Static IP  (XX.XX.XX.XX) (if dynamic ip, it can change when you reboot)
-Allow inbound ports 389 (LDAP) and 636 (LDAPS … ANY protocol). Use non-overlapping priorities.
-Enable auto-shutdown
-View the instance and download the RDP info from “Connect”
+
+- Make an Azure Resource Group (vault-ad-test)
+- Create a Windows Server 2016 Datacenter instance in the new Resource Group
+- Machine Name: vault-ad-test
+- Username: vault-ad-test
+- Password: YOUR-PASSWORD
+- A1 Standard
+- Static IP  (XX.XX.XX.XX) (if dynamic ip, it can change when you reboot)
+- Allow inbound ports 389 (LDAP) and 636 (LDAPS … ANY protocol). Use non-overlapping priorities.
+- Enable auto-shutdown
+- View the instance and download the RDP info from “Connect”
+
 #### AWS:
 same
 
@@ -29,12 +31,14 @@ Follow the steps described here, with a few caveats:
 - Do not change DNS address
 - It is not necessary to install .Net 3.5 
 - *The Root Domain name will be used in your TLS certificate and as the server URL*
+
 https://blogs.technet.microsoft.com/canitpro/2017/02/22/step-by-step-setting-up-active-directory-in-windows-server-2016/
 
 ### 3- Configure TLS/SSL for Active Directory Server
 Follow the steps described in this video, with the caveat:
 - *Do not change the defaults of CA Name configuration*
 - Reboot computer once done
+
 https://www.youtube.com/watch?v=JFPa_uY8NhY
 
 ### 4- Test Locally
@@ -53,8 +57,9 @@ Again on Powershell or cmd, type
 ```
 ldp
 ```
-Click on "Connect", enter your AD URL, port 389. This validates ldap connection.
-Click on "Connect", enter your AD URL, port 636, check "SSL". This validates ldaps connection.
+Click on "Connect", enter your AD ROOT DOMAIN, port 389. This validates ldap connection.
+
+Click on "Connect", enter your AD ROOT DOMAIN, port 636, check "SSL". This validates ldaps connection.
 
 ### 5- Test Remotely
 We need to export the certificate and share with the remote client.
@@ -64,9 +69,13 @@ On Powershell or cmd, type:
 mmc
 ```
 Add snap-in: Certificate > Computer account > Local Computer.
+
 Click on Certificates > Personal > Certificates
+
 Find your certificate with column "Intended Purposes - Client Auth", right click, All Tasks, Export
+
 In the Export Wizard, don't export private key and select "Base-64 encoded X.509"
+
 Save certificate. If you open it on Notepad, if should follow the format:
 ```
 -----BEGIN CERTIFICATE-----
@@ -78,11 +87,11 @@ Share the certificate with remote computer.
 
 #### Add certificate to trust chain:
 ##### Mac
-Double click certificate to open "Keychain Access"
-Find certificate under the "login" tab on top left
-Copy and past under "System", so that all users and services in this machine can retrieve this certificate
-Under "System", right click certificate, click on "Trust" and change to "Always trust"
-If you have a terminal open, you will need to open a new one to update the trusted certificates available in the session
+- Double click certificate to open "Keychain Access"
+- Find certificate under the "login" tab on top left
+- Copy and past under "System", so that all users and services in this machine can retrieve this certificate
+- Under "System", right click certificate, click on "Trust" and change to "Always trust"
+- If you have a terminal open, you will need to open a new one to update the trusted certificates available in the session
 
 #### Linux Rhel
 Execute:
@@ -115,15 +124,15 @@ The above represents success - AD Server was reached but no AD account was given
 ### 6- Create AD Vault user and test user
 In the Windows Server, click on Search type "dsa.msc" to open "Active Directory Users and Computers"
 
-Open your ROOT-DOMAIN and add a new user for vault-admin under the "Users" folder
-Left click on "Users", and select "Delegate Control"
-Type user name, click "check name" and next
-Click "Create a custom task"
-Click "Only the following ..." and select "Users" (last item)
-Click "General" and "Property specific"
-Click "Change Password" and "Reset Password" (near start of list) and "Read userAccountControl" and "Write userAccountControl" (near the end of list)
+- Open your ROOT-DOMAIN and add a new user for vault-admin under the "Users" folder
+- Left click on "Users", and select "Delegate Control"
+- Type user name, click "check name" and next
+- Click "Create a custom task"
+- Click "Only the following ..." and select "Users" (last item)
+- Click "General" and "Property specific"
+- Click "Change Password" and "Reset Password" (near start of list) and "Read userAccountControl" and "Write userAccountControl" (near the end of list)
 
-Create another user under the "Users" folder, to test password rotation
+- Create another user under the "Users" folder, to test password rotation
 
 
 ### 7- Configure Vault

@@ -2,11 +2,19 @@
 *.tfstate
 *.tfstate.*
 
-# Module directory
-.terraform/
+# Module directory in any sub-folder
+**/.terraform
+
+# State file in any sub-folder
+**/terraform.tfstate
+**/terraform.tfstate.backup
+*.tfstate.lock.info
 
 # Terraform Variables
 *.tfvars
+
+# Ignored Terraform files
+*gitignore*.tf
 
 # SSH Keys
 *.pem

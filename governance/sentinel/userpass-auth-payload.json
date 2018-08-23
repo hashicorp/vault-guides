@@ -1,0 +1,4 @@
+{
+  "type": "userpass",
+  "description": "Login with Username and password managed by Vault"
+}

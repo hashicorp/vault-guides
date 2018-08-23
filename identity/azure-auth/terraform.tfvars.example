@@ -1,0 +1,12 @@
+#REQUIRED See Readme for instructions
+public_key = ""
+client_id=""
+client_secret=""
+tenant_id=""
+subscription_id=""
+
+#OPTIONAL (Defaults declared inside _interface.tf)
+#vault_download_url=""
+#vm_name = ""
+#resource_group_name=""
+

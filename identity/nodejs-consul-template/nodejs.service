@@ -1,0 +1,12 @@
+[Unit]
+Description=Vault nodejs example
+After=network.target
+
+[Service]
+Type=simple
+User=vagrant
+ExecStart=/usr/bin/nodejs /usr/src/app/index.js
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

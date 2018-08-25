@@ -1,6 +1,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # General Variables
 # ---------------------------------------------------------------------------------------------------------------------
+# create    = true
 # name      = "vault-quick-start"
 # ami_owner = "099720109477" # Base image owner, defaults to RHEL
 # ami_name  = "*ubuntu-xenial-16.04-amd64-server-*" # Base image name, defaults to RHEL
@@ -11,6 +12,11 @@
 # vpc_cidr          = "172.19.0.0/16"
 # vpc_cidrs_public  = ["172.19.0.0/20", "172.19.16.0/20", "172.19.32.0/20",]
 # vpc_cidrs_private = ["172.19.48.0/20", "172.19.64.0/20", "172.19.80.0/20",]
+
+# CIDRs to be given external access if the '*_public' variable is true; Terraform will
+# automatically add the CIDR of the machine it is being run on to this list, or
+# you can alternatively discover your IP by googling "what is my ip"
+# public_cidrs = ["",] # Close cluster LBs off to the public internet
 
 # nat_count        = 1 # Number of NAT gateways to provision across public subnets, defaults to public subnet count.
 # bastion_servers  = 0 # Number of bastion hosts to provision across public subnets, defaults to public subnet count.
@@ -28,8 +34,9 @@
 # consul_url      = "" # Consul Enterprise download URL for runtime install, defaults to Consul OSS
 # consul_image_id = "" # AMI ID override, defaults to base RHEL AMI
 
-# If 'consul_public' is true, assign a public IP, open port 22 for public access, & provision into
-# public subnets to provide easier accessibility without a Bastion host - DO NOT DO THIS IN PROD
+# If 'consul_public' is true, assign a public IP, open port 22 for public access,
+# & provision into public subnets to provide easier accessibility from the
+# 'public_cidrs' without going through a Bastion host - DO NOT DO THIS IN PROD
 # consul_public = true
 
 # consul_server_config_override = <<EOF
@@ -62,8 +69,9 @@
 # vault_url       = "" # Vault Enterprise download URL for runtime install, defaults to Vault OSS
 # vault_image_id  = "" # AMI ID override, defaults to base RHEL AMI
 
-# If 'vault_public' is true, assign a public IP, open port 22 for public access, & provision into
-# public subnets to provide easier accessibility without a Bastion host - DO NOT DO THIS IN PROD
+# If 'vault_public' is true, assign a public IP, open port 22 for public access,
+# & provision into public subnets to provide easier accessibility from the
+# 'public_cidrs' without going through a Bastion host - DO NOT DO THIS IN PROD
 # vault_public = true
 
 # vault_server_config_override = <<EOF

@@ -6,22 +6,27 @@ NODE_NAME=$(hostname)
 LOCAL_IPV4=$(curl -s ${local_ip_url})
 CONSUL_TLS_DIR=/opt/consul/tls
 CONSUL_CONFIG_DIR=/etc/consul.d
+WETTY_TLS_DIR=/opt/wetty/tls
 
 echo "Update resolv.conf"
 sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
 
+echo "Create TLS dirs for certs"
+sudo mkdir -pm 0755 $CONSUL_TLS_DIR $WETTY_TLS_DIR
+
 echo "Write certs to TLS directories"
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul-ca.crt
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul-ca.crt $WETTY_TLS_DIR/wetty-ca.crt
 ${ca_crt}
 EOF
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.crt
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.crt $WETTY_TLS_DIR/wetty.crt
 ${leaf_crt}
 EOF
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.key
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.key $WETTY_TLS_DIR/wetty.key
 ${leaf_key}
 EOF
 
 sudo chown -R consul:consul $CONSUL_TLS_DIR $CONSUL_CONFIG_DIR
+sudo chown -R root:root $WETTY_TLS_DIR
 
 echo "Configure Consul server"
 cat <<CONFIG | sudo tee $CONSUL_CONFIG_DIR/default.json
@@ -53,7 +58,8 @@ cat <<CONFIG | sudo tee $CONSUL_CONFIG_DIR/default.json
   },
   "addresses": {
     "https": "0.0.0.0"
-  }
+  },
+  "service": {"name": "consul", "tags": ["server"], "port": 8080}
 }
 CONFIG
 
@@ -80,5 +86,12 @@ CONSUL_HTTP_SSL_VERIFY=false
 ENVVARS
 
 sudo systemctl restart consul
+
+echo "Configure Wetty with SSL"
+cat <<ENVVARS | sudo tee /opt/wetty/wetty.conf
+FLAGS=-p 3030 --host 127.0.0.1 --sslkey $WETTY_TLS_DIR/wetty.key --sslcert $WETTY_TLS_DIR/wetty.crt
+ENVVARS
+
+sudo systemctl restart wetty
 
 echo "[---best-practices-consul-systemd.sh Complete---]"

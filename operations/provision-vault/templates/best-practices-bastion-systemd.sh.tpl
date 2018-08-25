@@ -7,26 +7,28 @@ LOCAL_IPV4=$(curl -s ${local_ip_url})
 CONSUL_TLS_DIR=/opt/consul/tls
 CONSUL_CONFIG_DIR=/etc/consul.d
 VAULT_TLS_DIR=/opt/vault/tls
+WETTY_TLS_DIR=/opt/wetty/tls
 
 echo "Update resolv.conf"
 sudo sed -i '1i nameserver 127.0.0.1\n' /etc/resolv.conf
 
 echo "Create TLS dirs for certs"
-sudo mkdir -pm 0755 $CONSUL_TLS_DIR $VAULT_TLS_DIR
+sudo mkdir -pm 0755 $CONSUL_TLS_DIR $VAULT_TLS_DIR $WETTY_TLS_DIR
 
 echo "Write certs to TLS directories"
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul-ca.crt $VAULT_TLS_DIR/vault-ca.crt
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul-ca.crt $VAULT_TLS_DIR/vault-ca.crt $WETTY_TLS_DIR/wetty-ca.crt
 ${ca_crt}
 EOF
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.crt $VAULT_TLS_DIR/vault.crt
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.crt $VAULT_TLS_DIR/vault.crt $WETTY_TLS_DIR/wetty.crt
 ${leaf_crt}
 EOF
-cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.key $VAULT_TLS_DIR/vault.key
+cat <<EOF | sudo tee $CONSUL_TLS_DIR/consul.key $VAULT_TLS_DIR/vault.key $WETTY_TLS_DIR/wetty.key
 ${leaf_key}
 EOF
 
 sudo chown -R consul:consul $CONSUL_TLS_DIR $CONSUL_CONFIG_DIR
 sudo chown -R vault:vault $VAULT_TLS_DIR
+sudo chown -R root:root $WETTY_TLS_DIR
 
 echo "Configure Bastion Consul client"
 cat <<CONFIG | sudo tee $CONSUL_CONFIG_DIR/default.json
@@ -55,7 +57,8 @@ cat <<CONFIG | sudo tee $CONSUL_CONFIG_DIR/default.json
   },
   "addresses": {
     "https": "0.0.0.0"
-  }
+  },
+  "service": {"name": "consul", "tags": ["client"], "port": 8080}
 }
 CONFIG
 
@@ -96,7 +99,11 @@ echo "Don't start Vault in -dev mode & stop Vault now that the CLI is pointing t
 echo '' | sudo tee /etc/vault.d/vault.conf
 sudo systemctl stop vault
 
-echo "Install Wetty"
-sudo curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/web-terminal.sh | bash
+echo "Configure Wetty with SSL"
+cat <<ENVVARS | sudo tee /opt/wetty/wetty.conf
+FLAGS=-p 3030 --host 127.0.0.1 --sslkey $WETTY_TLS_DIR/wetty.key --sslcert $WETTY_TLS_DIR/wetty.crt
+ENVVARS
+
+sudo systemctl restart wetty
 
 echo "[---best-practices-bastion-systemd.sh Complete---]"

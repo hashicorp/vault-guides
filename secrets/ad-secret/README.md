@@ -70,7 +70,7 @@ mmc
 ```
 Add snap-in: Certificate > Computer account > Local Computer.
 
-Click on Certificates > Personal > Certificates
+Click on Certificates > Trusted Root Certification Authorities > Certificates
 
 Find your certificate with column "Intended Purposes - Client Auth", right click, All Tasks, Export
 
@@ -142,11 +142,12 @@ Note: ensure you have updated your hosts file to point the "YOUR-AD-ROOT-DOMAIN"
 
 In a workstation with Vault client and a copy of the above cert, execute
 ```
+vault secrets enable ad
 # Example userdn if your users are in the default "Users" folder:
 # userdn="CN=Users,DC=example,DC=net"
 
-export USERNAME=YOUR-VAULT-USERNAME@YOUR-AD-ROOT-DOMAIN
-export PASSWORD=YOUR-VAULT-USER-PASSWORD
+export USERNAME=YOUR-VAULT-USERNAME-IN-AD@YOUR-AD-ROOT-DOMAIN
+export PASSWORD=YOUR-VAULT-USER-IN-AD-PASSWORD
 
 vault write ad/config     binddn=$USERNAME     bindpass=$PASSWORD     url=ldaps://YOUR-AD-ROOT-DOMAIN-HERE     userdn="SEE-EXAMPLE-ABOVE" certificate=@PATH-TO-CERTIFICATE
 

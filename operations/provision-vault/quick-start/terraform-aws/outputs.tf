@@ -119,6 +119,54 @@ output "ssh_key_name" {
   value = "${module.network_aws.ssh_key_name}"
 }
 
+output "vault_asg_id" {
+  value = "${module.vault_aws.vault_asg_id}"
+}
+
+output "vault_sg_id" {
+  value = "${module.vault_aws.vault_sg_id}"
+}
+
+output "vault_app_lb_sg_id" {
+  value = "${module.vault_aws.vault_app_lb_sg_id}"
+}
+
+output "vault_lb_arn" {
+  value = "${module.vault_aws.vault_lb_arn}"
+}
+
+output "vault_app_lb_dns" {
+  value = "${module.vault_aws.vault_app_lb_dns}"
+}
+
+output "vault_network_lb_dns" {
+  value = "${module.vault_aws.vault_network_lb_dns}"
+}
+
+output "vault_tg_tcp_22_arn" {
+  value = "${module.vault_aws.vault_tg_tcp_22_arn}"
+}
+
+output "vault_tg_tcp_8200_arn" {
+  value = "${module.vault_aws.vault_tg_tcp_8200_arn}"
+}
+
+output "vault_tg_http_8200_arn" {
+  value = "${module.vault_aws.vault_tg_http_8200_arn}"
+}
+
+output "vault_tg_https_8200_arn" {
+  value = "${module.vault_aws.vault_tg_https_8200_arn}"
+}
+
+output "vault_tg_http_3030_arn" {
+  value = "${module.vault_aws.vault_tg_http_3030_arn}"
+}
+
+output "vault_tg_https_3030_arn" {
+  value = "${module.vault_aws.vault_tg_https_3030_arn}"
+}
+
 output "consul_asg_id" {
   value = "${module.consul_aws.consul_asg_id}"
 }
@@ -169,52 +217,4 @@ output "consul_tg_http_3030_arn" {
 
 output "consul_tg_https_3030_arn" {
   value = "${module.consul_aws.consul_tg_https_3030_arn}"
-}
-
-output "vault_asg_id" {
-  value = "${module.vault_aws.vault_asg_id}"
-}
-
-output "vault_sg_id" {
-  value = "${module.vault_aws.vault_sg_id}"
-}
-
-output "vault_app_lb_sg_id" {
-  value = "${module.vault_aws.vault_app_lb_sg_id}"
-}
-
-output "vault_lb_arn" {
-  value = "${module.vault_aws.vault_lb_arn}"
-}
-
-output "vault_app_lb_dns" {
-  value = "${module.vault_aws.vault_app_lb_dns}"
-}
-
-output "vault_network_lb_dns" {
-  value = "${module.vault_aws.vault_network_lb_dns}"
-}
-
-output "vault_tg_tcp_22_arn" {
-  value = "${module.vault_aws.vault_tg_tcp_22_arn}"
-}
-
-output "vault_tg_tcp_8200_arn" {
-  value = "${module.vault_aws.vault_tg_tcp_8200_arn}"
-}
-
-output "vault_tg_http_8200_arn" {
-  value = "${module.vault_aws.vault_tg_http_8200_arn}"
-}
-
-output "vault_tg_https_8200_arn" {
-  value = "${module.vault_aws.vault_tg_https_8200_arn}"
-}
-
-output "vault_tg_http_3030_arn" {
-  value = "${module.vault_aws.vault_tg_http_3030_arn}"
-}
-
-output "vault_tg_https_3030_arn" {
-  value = "${module.vault_aws.vault_tg_https_3030_arn}"
 }

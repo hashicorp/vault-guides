@@ -37,7 +37,7 @@ variable "network_tags" {
 # ---------------------------------------------------------------------------------------------------------------------
 variable "consul_servers"  { default = -1 }
 variable "consul_instance" { default = "t2.micro" }
-variable "consul_version"  { default = "1.2.0" }
+variable "consul_version"  { default = "1.2.3" }
 variable "consul_url"      { default = "" }
 variable "consul_image_id" { default = "" }
 
@@ -64,7 +64,7 @@ variable "consul_tags_list" {
 # ---------------------------------------------------------------------------------------------------------------------
 variable "vault_servers"  { default = -1 }
 variable "vault_instance" { default = "t2.micro" }
-variable "vault_version"  { default = "0.10.3" }
+variable "vault_version"  { default = "0.11.3" }
 variable "vault_url"      { default = "" }
 variable "vault_image_id" { default = "" }
 

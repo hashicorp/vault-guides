@@ -22,7 +22,7 @@
 # Consul Variables
 # ---------------------------------------------------------------------------------------------------------------------
 # consul_install = true # Install Consul
-# consul_version = "1.2.0" # Consul Version for runtime install, defaults to 1.2.0
+# consul_version = "1.2.3" # Consul Version for runtime install, defaults to 1.2.3
 # consul_url     = "" # Consul Enterprise download URL for runtime install, defaults to Consul OSS
 
 # consul_config_override = <<EOF
@@ -37,7 +37,7 @@
 # ---------------------------------------------------------------------------------------------------------------------
 # vault_servers  = 3
 # vault_instance = "t2.micro"
-# vault_version  = "0.10.3" # Vault Version for runtime install, defaults to 0.10.3
+# vault_version  = "0.11.3" # Vault Version for runtime install, defaults to 0.11.3
 # vault_url      = "" # Vault Enterprise download URL for runtime install, defaults to Vault OSS
 # vault_image_id = "" # AMI ID override, defaults to base RHEL AMI
 

@@ -29,6 +29,7 @@ resource "google_compute_instance" "vault" {
 
   allow_stopping_for_update = true
 
+  // Service account with Cloud KMS roles for the Compute Instance 
   service_account {
     email = "${var.service_acct_email}"
     scopes = ["cloud-platform", "compute-rw", "userinfo-email", "storage-ro"]

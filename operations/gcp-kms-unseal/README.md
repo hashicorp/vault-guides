@@ -70,7 +70,7 @@ KMS](https://www.vaultproject.io/guides/operations/autounseal-gcp-kms.html) guid
     $ terraform apply
     ```
 
-1. SSH into the EC2 machine
+1. [SSH into the compute instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
 
 1. Check the Vault server status
 

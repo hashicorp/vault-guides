@@ -1,7 +1,7 @@
 # Vault Auto-unseal using GCP Cloud KMS
 
 These assets are provided to perform the tasks described in the [Auto-unseal with Google Cloud
-KMS](https://www.vaultproject.io/guides/operations/autounseal-gcp-kms.html) guide.
+KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
 ---
 
@@ -9,7 +9,7 @@ KMS](https://www.vaultproject.io/guides/operations/autounseal-gcp-kms.html) guid
 
 1. Set this location as your working directory
 
-1. Provide necessary GCP account information in the `terraform.tfvars.example` and save it as `terraform.tfvars`.
+1. Provide necessary GCP account information in the `terraform.tfvars.example` and save it as `terraform.tfvars`. You must have a [service account for your Compute Engine instance](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances) with **Cloud KMS Admin** and **Cloud KMS CryptoKey Encrypter/Decrypter** roles. Provide its email as the `service_acct_email` value.
 
 1. This guide expects a Cloud KMS key ring and crypto key to already exists. If you **don't** have one to use for Vault auto-unseal, un-comment the key ring and key creation portion in the `main.tf` file:
 

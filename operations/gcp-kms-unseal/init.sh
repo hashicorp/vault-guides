@@ -32,16 +32,19 @@ sudo cat << EOF > /test/vault/config.hcl
 storage "file" {
   path = "/opt/vault"
 }
+
 listener "tcp" {
   address     = "127.0.0.1:8200"
   tls_disable = 1
 }
+
 seal "gcpckms" {
-  project     = "hc-training-test"
+  project     = "<PROJECT_ID>"
   region      = "global"
   key_ring    = "test"
   crypto_key  = "vault-test"
 }
+
 disable_mlock = true
 EOF
 

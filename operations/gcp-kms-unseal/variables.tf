@@ -18,10 +18,6 @@ variable account_file_path {
   description = "Path to GCP account file"
 }
 
-variable user_data {
-  default = "init.sh"
-}
-
 variable key_ring {
   description = "Cloud KMS key ring name to create"
   default = "test"

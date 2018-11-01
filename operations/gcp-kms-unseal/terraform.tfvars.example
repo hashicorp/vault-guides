@@ -1,0 +1,3 @@
+gcloud-project = "<PROJECT_ID>"
+account_file_path = "<ACCOUNT_FILE_PATH>"
+service_acct_email = "<SERVICE_ACCOUNT_NAME>@<PROJECT_ID>.iam.gserviceaccount.com"

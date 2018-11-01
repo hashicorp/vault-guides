@@ -16,14 +16,14 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
     ```plaintext
     ...
 
-    // Create a KMS key ring
+    # Create a KMS key ring
     resource "google_kms_key_ring" "key_ring" {
        project  = "${var.gcloud-project}"
        name     = "${var.key_ring}"
        location = "${var.keyring_location}"
     }
 
-    // Create a crypto key for the key ring
+    # Create a crypto key for the key ring
     resource "google_kms_crypto_key" "crypto_key" {
        name            = "${var.crypto-key}"
        key_ring        = "${google_kms_key_ring.key_ring.self_link}"
@@ -31,32 +31,8 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
     }
     ```
 
-    NOTE: By default, this will create a Cloud KMS key ring named, "test" in the global location, and a key named, "vault-test".
+    NOTE: By default, this will create a Cloud KMS key ring named, "test" in the **global** location, and a key named, "vault-test".
 
-1. Update the `init.sh` script with correct parameter values in the `seal` stanza (starting at line 39):
-
-    ```plaintext
-    ...
-
-    sudo cat << EOF > /test/vault/config.hcl
-    storage "file" {
-      path = "/opt/vault"
-    }
-    listener "tcp" {
-      address     = "127.0.0.1:8200"
-      tls_disable = 1
-    }
-    seal "gcpckms" {
-      project     = "<PROJECT_ID>"
-      region      = "global"
-      key_ring    = "test"
-      crypto_key  = "vault-test"
-    }
-    disable_mlock = true
-    EOF
-
-    ...
-    ```
 
 1. Terraform commands:
 
@@ -99,10 +75,7 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 1. Stop and start the Vault server
 
     ```shell
-    $ sudo systemctl stop vault
-
-    # Restart the Vault server
-    $ sudo systemctl start vault
+    $ sudo systemctl restart vault
     ```
 
 1. Check to verify that the Vault is auto-unsealed

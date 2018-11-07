@@ -35,11 +35,8 @@ $ vault status
 # Initialize Vault
 $ vault operator init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
 
-# Stop the Vault server
-$ sudo systemctl stop vault
-
 # Restart the Vault server
-$ sudo systemctl start vault
+$ sudo systemctl restart vault
 
 # Check to verify that the Vault is auto-unsealed
 $ vault status

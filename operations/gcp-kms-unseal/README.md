@@ -1,7 +1,7 @@
 # Vault Auto-unseal using GCP Cloud KMS
 
 These assets are provided to perform the tasks described in the [Auto-unseal with Google Cloud
-KMS](https://deploy-preview-189--hashicorp-learn.netlify.com/vault/operations/autounseal-gcp-kms) guide.
+KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
 ---
 

@@ -1,1 +1,1 @@
-vault_url = "http://s3.amazonaws.com/some/path/to/vault-enterprise.zip"
+vault_url = "https://releases.hashicorp.com/vault/1.0.0-beta1/vault_1.0.0-beta1_linux_amd64.zip"

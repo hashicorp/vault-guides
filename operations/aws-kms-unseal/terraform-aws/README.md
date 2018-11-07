@@ -1,6 +1,6 @@
 # Vault Auto-unseal using AWS KMS
 
-These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://www.vaultproject.io/guides/operations/autounseal-aws-kms.html) guide.
+These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://learn.hashicorp.com/vault/operations/ops-autounseal-aws-kms) guide.
 
 ---
 

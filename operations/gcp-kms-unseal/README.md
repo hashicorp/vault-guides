@@ -72,6 +72,11 @@ Provide its email as the `service_acct_email` value.
     ```
 
 1. [SSH into the compute instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
+    ```plaintext
+    $ export instance_id=$(terraform output vault_server_instance_id)
+    $ export project=$(terraform output project)
+    $ gcloud compute ssh ${instance_id} --project ${project}
+    ```
 
 1. Check the Vault server status
 

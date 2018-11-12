@@ -65,6 +65,14 @@ resource "google_compute_instance" "vault" {
   SCRIPT
 }
 
+output "project" {
+  value = "${google_compute_instance.vault.project}"
+}
+
+output "vault_server_instance_id" {
+  value = "${google_compute_instance.vault.self_link}"
+}
+
 # Create a KMS key ring
 # resource "google_kms_key_ring" "key_ring" {
 #   project  = "${var.gcloud-project}"

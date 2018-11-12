@@ -9,7 +9,22 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
 1. Set this location as your working directory
 
-1. Provide necessary GCP account information in the `terraform.tfvars.example` and save it as `terraform.tfvars`. You must have a [service account for your Compute Engine instance](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances) with **Cloud KMS Admin** and **Cloud KMS CryptoKey Encrypter/Decrypter** roles. Provide its email as the `service_acct_email` value.
+1. Provide necessary GCP account information in the `terraform.tfvars.example` and save it as `terraform.tfvars`. You must have a [service account for your Compute Engine instance](https://cloud.google.com/compute/docs/access/create-enable-service-accounts-for-instances) with **Cloud KMS Admin** and **Cloud KMS CryptoKey Encrypter/Decrypter** roles.
+
+You can create a service account with the correct roles with the following code:
+
+```
+resource "google_service_account" "vault_kms_service_account" {
+  account_id   = "vault-gcpkms"
+  display_name = "Vault KMS for auto-unseal"
+}
+
+output "vault_kms_service_account_email" {
+  value = "${google_service_account.vault_kms_service_account.email}"
+}
+```
+
+Provide its email as the `service_acct_email` value.
 
 1. This guide expects a Cloud KMS key ring and crypto key to already exists. If you **don't** have one to use for Vault auto-unseal, un-comment the key ring and key creation portion in the `main.tf` file:
 
@@ -28,6 +43,16 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
        name            = "${var.crypto-key}"
        key_ring        = "${google_kms_key_ring.key_ring.self_link}"
        rotation_period = "100000s"
+    }
+
+    # Add the service account to the Keyring
+    resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
+      key_ring_id = "${google_kms_key_ring.key_ring.id}"
+      role = "roles/owner"
+
+      members = [
+        "serviceAccount:${var.service_acct_email}",
+      ]
     }
     ```
 

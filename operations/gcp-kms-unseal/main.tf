@@ -36,7 +36,7 @@ resource "google_compute_instance" "vault" {
 
   # Service account with Cloud KMS roles for the Compute Instance
   service_account {
-    email = "${var.service_acct_email}"
+    email = "${google_service_account.vault_kms_service_account.email}"
     scopes = ["cloud-platform", "compute-rw", "userinfo-email", "storage-ro"]
   }
 
@@ -88,11 +88,12 @@ output "vault_server_instance_id" {
 # }
 
 # Add the service account to the Keyring
-# resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
-#   key_ring_id = "${google_kms_key_ring.key_ring.id}"
-#   role = "roles/owner"
+resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
+   # key_ring_id = "${google_kms_key_ring.key_ring.id}"
+   key_ring_id = "${var.gcloud-project}/${var.keyring_location}/${var.key_ring}"
+   role = "roles/owner"
 
-#   members = [
-#     "serviceAccount:${var.service_acct_email}",
-#   ]
-# }
+   members = [
+     "serviceAccount:${google_service_account.vault_kms_service_account.email}",
+   ]
+}

@@ -4,6 +4,11 @@ provider "google" {
   region      = "${var.gcloud-region}"
 }
 
+resource "google_service_account" "vault_kms_service_account" {
+  account_id   = "vault-gcpkms"
+  display_name = "Vault KMS for auto-unseal"
+}
+
 resource "google_compute_instance" "vault" {
   name         = "vault-test"
   machine_type = "n1-standard-1"
@@ -31,7 +36,7 @@ resource "google_compute_instance" "vault" {
 
   # Service account with Cloud KMS roles for the Compute Instance
   service_account {
-    email = "${var.service_acct_email}"
+    email = "${google_service_account.vault_kms_service_account.email}"
     scopes = ["cloud-platform", "compute-rw", "userinfo-email", "storage-ro"]
   }
 
@@ -60,6 +65,14 @@ resource "google_compute_instance" "vault" {
   SCRIPT
 }
 
+output "project" {
+  value = "${google_compute_instance.vault.project}"
+}
+
+output "vault_server_instance_id" {
+  value = "${google_compute_instance.vault.self_link}"
+}
+
 # Create a KMS key ring
 # resource "google_kms_key_ring" "key_ring" {
 #   project  = "${var.gcloud-project}"
@@ -73,3 +86,14 @@ resource "google_compute_instance" "vault" {
 #   key_ring        = "${google_kms_key_ring.key_ring.self_link}"
 #   rotation_period = "100000s"
 # }
+
+# Add the service account to the Keyring
+resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
+   # key_ring_id = "${google_kms_key_ring.key_ring.id}"
+   key_ring_id = "${var.gcloud-project}/${var.keyring_location}/${var.key_ring}"
+   role = "roles/owner"
+
+   members = [
+     "serviceAccount:${google_service_account.vault_kms_service_account.email}",
+   ]
+}

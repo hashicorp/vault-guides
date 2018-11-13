@@ -1,5 +1,5 @@
 variable vault_url {
-  default = "https://releases.hashicorp.com/vault/1.0.0-beta1/vault_1.0.0-beta1_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.0.0-beta2/vault_1.0.0-beta2_linux_amd64.zip"
 }
 
 variable gcloud-project {
@@ -21,10 +21,6 @@ variable account_file_path {
 variable key_ring {
   description = "Cloud KMS key ring name to create"
   default = "test"
-}
-
-variable service_acct_email {
-  description = "An email of the service account for instance"
 }
 
 variable crypto_key {

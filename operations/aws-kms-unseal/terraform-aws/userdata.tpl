@@ -103,6 +103,7 @@ listener "tcp" {
   tls_disable = 1
 }
 seal "awskms" {
+  region     = "${aws_region}"
   kms_key_id = "${kms_key}"
 }
 ui=true

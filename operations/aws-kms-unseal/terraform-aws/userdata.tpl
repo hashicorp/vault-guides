@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-apt-get install -y unzip libtool libltdl-dev
+apt-get install -y unzip
+# apt-get install -y libtool libltdl-dev 
 
 USER="vault"
 COMMENT="Hashicorp vault user"

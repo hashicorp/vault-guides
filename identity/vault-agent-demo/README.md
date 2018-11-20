@@ -4,6 +4,12 @@ These assets are provided to provision AWS resources to perform the steps descri
 
 ---
 
+**NOTE:** The example Terraform in this repository is created for the demo purpose, and not suitable for production use. For production deployment, refer the following examples:
+
+- [operations/provision-vault](https://github.com/hashicorp/vault-guides/tree/master/operations/provision-vault)
+- [Terraform Module Registry](https://registry.terraform.io/modules/hashicorp/vault/aws/0.10.3)
+
+
 ## Demo Steps
 
 1. Set this location as your working directory
@@ -90,25 +96,25 @@ These assets are provided to provision AWS resources to perform the steps descri
     ```shell
     # Create the Vault Agent configuration file
     $ tee /home/ubuntu/auto-auth-conf.hcl <<EOF
-      exit_after_auth = true
-      pid_file = "./pidfile"
+    exit_after_auth = true
+    pid_file = "./pidfile"
 
-      auto_auth {
-         method "aws" {
-             mount_path = "auth/aws"
-             config = {
-                 type = "iam"
-                 role = "dev-role-iam"
-             }
-         }
+    auto_auth {
+       method "aws" {
+           mount_path = "auth/aws"
+           config = {
+               type = "iam"
+               role = "dev-role-iam"
+           }
+       }
 
-         sink "file" {
-             config = {
-                 path = "/home/ubuntu/vault-token-via-agent"
-             }
-         }
-      }
-      EOF
+       sink "file" {
+           config = {
+               path = "/home/ubuntu/vault-token-via-agent"
+           }
+       }
+    }
+    EOF
 
 
     # Run Vault Agent
@@ -131,26 +137,26 @@ These assets are provided to provision AWS resources to perform the steps descri
     ```shell
     # Add 'wrap_ttl' in the sink block
     $ tee /home/ubuntu/auto-auth-conf.hcl <<EOF
-        exit_after_auth = true
-        pid_file = "./pidfile"
+    exit_after_auth = true
+    pid_file = "./pidfile"
 
-        auto_auth {
-            method "aws" {
-                mount_path = "auth/aws"
-                config = {
-                    type = "iam"
-                    role = "dev-role-iam"
-                }
-            }
-
-            sink "file" {
-                wrap_ttl = "5m"
-                config = {
-                    path = "/home/ubuntu/vault-token-via-agent"
-                }
+    auto_auth {
+        method "aws" {
+            mount_path = "auth/aws"
+            config = {
+                type = "iam"
+                role = "dev-role-iam"
             }
         }
-        EOF
+
+        sink "file" {
+            wrap_ttl = "5m"
+            config = {
+                path = "/home/ubuntu/vault-token-via-agent"
+            }
+        }
+    }
+    EOF
 
     # Re-run Vault Agent with updated configuration file
     $ vault agent -config=/home/ubuntu/auto-auth-conf.hcl -log-level=debug

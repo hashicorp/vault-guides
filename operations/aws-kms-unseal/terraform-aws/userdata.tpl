@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-apt-get install -y unzip libtool libltdl-dev
+apt-get install -y unzip
+# apt-get install -y libtool libltdl-dev 
 
 USER="vault"
 COMMENT="Hashicorp vault user"
@@ -102,6 +103,7 @@ listener "tcp" {
   tls_disable = 1
 }
 seal "awskms" {
+  region     = "${aws_region}"
   kms_key_id = "${kms_key}"
 }
 ui=true

@@ -25,7 +25,6 @@ namespace RewrapExample
                         "`state` VARCHAR(256) NOT NULL," +
                         "`postcode` VARCHAR(256) NOT NULL," +
                         "`email` VARCHAR(256) NOT NULL," +
-                        "`dob` VARCHAR(256) NULL," +
                         "PRIMARY KEY (user_id) " +
                         ") engine=InnoDB;";
                     cmd.CommandText = command;
@@ -47,7 +46,6 @@ namespace RewrapExample
                     string command = "CREATE DATABASE IF NOT EXISTS my_app";
                     cmd.CommandText = command;
 
-
                     await cmd.ExecuteNonQueryAsync();
                     Console.WriteLine("Created (if not exist) my_app DB");
                 }
@@ -64,15 +62,14 @@ namespace RewrapExample
                     
                     string command = "INSERT INTO `user_data` " + 
                     "(`user_name`, `first_name`, `last_name`, `address`, " +
-                    "`city`, `state`, `postcode`, `email`, `dob`) " +
+                    "`city`, `state`, `postcode`, `email`) " +
                     $"VALUES (\"{r.Login.Username}\", \"{r.Name.First}\", \"{r.Name.Last}\", " +
                     $"\"{r.Location.Street}\", \"{r.Location.City}\", \"{r.Location.State}\", " +
-                    $"\"{r.Location.Postcode}\", \"{r.Email}\", \"{r.DOB}\");";
+                    $"\"{r.Location.Postcode}\", \"{r.Email}\");";
                     
                     cmd.CommandText = command;
 
                     var rowsAffected = await cmd.ExecuteNonQueryAsync();
-                    //Console.WriteLine($"Created {rowsAffected} rows");
                 }
             }
         }
@@ -85,14 +82,13 @@ namespace RewrapExample
                 await db.Connection.OpenAsync();
                 using (var cmd = db.Connection.CreateCommand())
                 {
-                    
                     string command = "UPDATE `user_data` " + 
                     $"SET `address` = \"{r.Location.Street}\", " +
-                    $"`dob` = \"{r.DOB}\", " +
                     $"`email` = \"{r.Email}\" " +
                     $"WHERE `user_id` = {r.Id.Value}";
                     
                     cmd.CommandText = command;
+                    Console.WriteLine("Command: " + command);
 
                     await cmd.ExecuteNonQueryAsync();
                 }
@@ -110,13 +106,11 @@ namespace RewrapExample
                 using (var cmd = db.Connection.CreateCommand())
                 {
                     int count = 0;
-                    string command = "SELECT `user_id`, `email`,`dob`, `address` " +
+                    string command = "SELECT `user_id`, `email`, `address` " +
                     "FROM `user_data` " + 
-                    $"WHERE `dob` NOT LIKE \"vault:v{keyVersion}:%\" " +
-                    $"OR `email` NOT LIKE \"vault:v{keyVersion}:%\" " + 
+                    $"WHERE `email` NOT LIKE \"vault:v{keyVersion}:%\" " + 
                     $"OR `address` NOT LIKE \"vault:v{keyVersion}:%\" ";
-                    
-
+                        
                     cmd.CommandText = command;
 
                     var reader = await cmd.ExecuteReaderAsync();
@@ -126,7 +120,6 @@ namespace RewrapExample
                         count++;
                         var user_id = reader.GetInt32(0);
                         var email = reader.GetString(1);
-                        var dob = reader.GetString(2);
                         var address = reader.GetString(3);
                         
                         RewrapExample.Location addr = new Location();
@@ -137,7 +130,6 @@ namespace RewrapExample
                         Record r = new Record
                         {
                             Id = id,
-                            DOB = dob,
                             Email = email,
                             Location = addr,
                         };

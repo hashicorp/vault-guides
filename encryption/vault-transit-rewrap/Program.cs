@@ -55,7 +55,6 @@ namespace RewrapExample
             var tasks = new List<Task>();
             foreach (var record in apiResults.Records) {
                 ICollection<Task> encryptValues = new List<Task>();
-                record.DOB = await client.EncryptValue(record.DOB);
                 record.Location.Street = await client.EncryptValue(record.Location.Street);
                 record.Email = await client.EncryptValue(record.Email);
                 tasks.Add(DBHelper.InsertRecordAsyc(record));

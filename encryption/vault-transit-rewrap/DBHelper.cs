@@ -120,7 +120,7 @@ namespace RewrapExample
                         count++;
                         var user_id = reader.GetInt32(0);
                         var email = reader.GetString(1);
-                        var address = reader.GetString(3);
+                        var address = reader.GetString(2);
                         
                         RewrapExample.Location addr = new Location();
                         addr.Street = address;

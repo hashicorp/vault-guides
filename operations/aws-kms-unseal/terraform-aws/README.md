@@ -33,7 +33,7 @@ $ export VAULT_ADDR=http://127.0.0.1:8200
 $ vault status
 
 # Initialize Vault
-$ vault operator init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
+$ vault operator init -key-shares=1 -key-threshold=1
 
 # Restart the Vault server
 $ sudo systemctl restart vault

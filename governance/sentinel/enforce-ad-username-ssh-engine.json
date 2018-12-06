@@ -1,0 +1,25 @@
+import "strings"
+import "strings"
+
+username_match = func() {
+    # Make sure there is request data
+    if length(request.data else 0) is 0 {
+        return false
+    }
+
+    # Make sure request data includes username
+    if length(request.data.username else 0) is 0 {
+        return false
+    }
+
+    # Make sure the supplied username matches the user's name
+    if request.data.username != identity.entity.aliases[0].name {
+        return false
+    }
+
+    return true
+}
+
+main = rule {
+    strings.has_prefix(request.path, "ssh-client-signer/sign/my-role") and username_match()
+}

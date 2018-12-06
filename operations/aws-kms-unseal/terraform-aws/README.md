@@ -1,6 +1,6 @@
 # Vault Auto-unseal using AWS KMS
 
-These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://www.vaultproject.io/guides/operations/autounseal-aws-kms.html) guide.
+These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://learn.hashicorp.com/vault/operations/ops-autounseal-aws-kms) guide.
 
 ---
 
@@ -33,13 +33,10 @@ $ export VAULT_ADDR=http://127.0.0.1:8200
 $ vault status
 
 # Initialize Vault
-$ vault operator init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
-
-# Stop the Vault server
-$ sudo systemctl stop vault
+$ vault operator init -key-shares=1 -key-threshold=1
 
 # Restart the Vault server
-$ sudo systemctl start vault
+$ sudo systemctl restart vault
 
 # Check to verify that the Vault is auto-unsealed
 $ vault status

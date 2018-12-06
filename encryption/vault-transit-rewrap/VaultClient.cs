@@ -67,7 +67,6 @@ namespace RewrapExample
             {
                 count++;
                 user.Location.Street = await ReWrapValue(user.Location.Street);
-                user.DOB = await ReWrapValue(user.DOB);
                 user.Email = await ReWrapValue(user.Email);
                 
                 tasks.Add(DBHelper.UpdateRecordAsyc(user));

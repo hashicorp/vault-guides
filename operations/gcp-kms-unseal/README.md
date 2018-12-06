@@ -112,8 +112,7 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 1. Initialize Vault
 
     ```plaintext
-    $ vault operator init -stored-shares=1 -recovery-shares=1 \
-           -recovery-threshold=1 -key-shares=1 -key-threshold=1
+    $ vault operator init -key-shares=1 -key-threshold=1
     ```
 
 1. Stop and start the Vault server

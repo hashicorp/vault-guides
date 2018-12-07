@@ -1,6 +1,6 @@
-# Vault Agent Demo
+# Vault Agent with Kubernetes
 
-These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent](https://deploy-preview-290--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s) guide.
+These assets are provided to perform the steps described in the [Vault Agent with Kubernetes](https://deploy-preview-290--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s) guide.
 
 ---
 

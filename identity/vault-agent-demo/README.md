@@ -1,6 +1,6 @@
-# Vault Agent Demo
+# Vault Agent with AWS
 
-These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent](https://deploy-preview-257--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent) guide.
+These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent with AWS](https://deploy-preview-257--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-aws) guide.
 
 ---
 

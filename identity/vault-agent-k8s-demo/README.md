@@ -91,7 +91,7 @@ been created successfully.
 
 1. Optionally, you can view the HTML source:
 
-    ```shell
+    ```plaintext
     $ kubectl exec -it vault-agent-example --container nginx-container sh
 
     /# cat /usr/share/nginx/html/index.html

@@ -30,76 +30,10 @@ To perform the tasks described in this guide, you need:
     $ kubectl apply --filename vault-auth-service-account.yml
     ```
 
-1.  Create a read-only policy, `myapp-kv-ro` in Vault.
-
-    ```shell
-    # Create a policy file, myapp-kv-ro.hcl
-    $ tee myapp-kv-ro.hcl <<EOF
-    path "secret/myapp/*" {
-        capabilities = ["read", "list"]
-    }
-    EOF
-
-    # Create a policy named myapp-kv-ro
-    $ vault policy write myapp-kv-ro myapp-kv-ro.hcl
-    ```
-
-    **NOTE:** Since Consul Template does not support K/V v2 at the
-    moment, this guide assumes that [Key/Value **version
-    1**](https://www.vaultproject.io/api/secret/kv/kv-v1.html) secret engine is
-    enabled at `secret/`
-
-1.  Create test data in the `secret/myapp` path.
+1.  Run the `setup-k8s-auth.sh` script to set up the kubernetes auth method on your Vault server.
 
     ```plaintext
-    $ vault kv put secret/myapp/config username='appuser' \
-            password='suP3rsec(et!' \
-            ttl='30s'
-    ```
-
-1.  Create a user to test the `myapp-kv-ro` policy using `userpass` auth method.
-
-    ```shell
-    # Enable userpass auth method
-    $ vault auth enable userpass
-
-    # Create a user named "test-user"
-    $ vault write auth/userpass/users/test-user \
-            password=training \
-            policies=myapp-kv-ro
-    ```
-
-1.  Now, enable and [configure the Kubernetes auth method](https://www.vaultproject.io/docs/auth/kubernetes.html#configuration).
-
-    ```shell
-    # Set VAULT_SA_NAME to the service account you created earlier
-    $ export VAULT_SA_NAME=$(kubectl get sa vault-auth -o jsonpath="{.secrets[*]['name']}")
-
-    # Set SA_JWT_TOKEN value to the service account JWT used to access the TokenReview API
-    $ export SA_JWT_TOKEN=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data.token}" | base64 --decode; echo)
-
-    # Set SA_CA_CRT to the PEM encoded CA cert used to talk to Kubernetes API
-    $ export SA_CA_CRT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)
-
-    # Set K8S_HOST to minikube IP address
-    $ export K8S_HOST=$(minikube ip)
-
-    # Enable the Kubernetes auth method at the default path ("auth/kubernetes")
-    $ vault auth enable kubernetes
-
-    # Tell Vault how to communicate with the Kubernetes (Minikube) cluster
-    $ vault write auth/kubernetes/config \
-            token_reviewer_jwt="$SA_JWT_TOKEN" \
-            kubernetes_host="https://$K8S_HOST:8443" \
-            kubernetes_ca_cert="$SA_CA_CRT"
-
-    # Create a role named, 'example' to map Kubernetes Service Account to
-    #  Vault policies and default token TTL
-    $ vault write auth/kubernetes/role/example \
-            bound_service_account_names=vault-auth \
-            bound_service_account_namespaces=default \
-            policies=myapp-kv-ro \
-            ttl=24h
+    $ ./setup-k8s-auth.sh
     ```
 
 1. Now, create a Pod using ConfigMap named, `example-vault-agent-config` pulling files from `configs-k8s` directory:
@@ -116,7 +50,6 @@ To perform the tasks described in this guide, you need:
     ```
 
     This takes a minute or so for the Pod to become fully up and running.
-
 
 
 ### Verification
@@ -174,4 +107,4 @@ been created successfully.
       </html>
     ```
 
-For more detailed instruction, refer to the [Vault Agent with Kubernetes](https://deploy-preview-290--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s) guide. 
+For more detailed instruction, refer to the [Vault Agent with Kubernetes](https://deploy-preview-290--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s) guide.

@@ -1,6 +1,6 @@
 # Vault AppRole With Terraform & Chef Demo
 
-These assets are provided to perform the tasks described in the [Vault AppRole with Terraform and Chef Demo](https://www.vaultproject.io/guides/identity/approle-trusted-entities.html) guide.
+These assets are provided to perform the tasks described in the [Vault AppRole with Terraform and Chef Demo](https://learn.hashicorp.com/vault/identity-access-management/iam-approle-trusted-entities) guide.
 
 
 ----

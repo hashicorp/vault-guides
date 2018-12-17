@@ -29,7 +29,7 @@ Infosec will create ACLs, roles and tie together auth methods to policies.   The
 
 
 ## Challenge
-Using a vagrant image: 
+Using a vagrant image:
   * Start a minimal Vault/Consul cluster
   * Bootstrap the cluster to be secured with PKI certificates for internode communication
   * Create a short-lived TTL PKI Cert.  See it expire
@@ -55,7 +55,7 @@ Run a set of provisioning scripts against your Vault cluster.  This will create:
 
 ## Steps
 
-### Step 1: Clone this repo 
+### Step 1: Clone this repo
 ```
 git clone git@github.com:hashicorp/vault-guides.git
 ```
@@ -97,7 +97,7 @@ If you're using this guide over time, you may see messages like the following:
 ==> core-01: available! You currently have version '1745.4.0'. The latest is version
 ==> core-01: '1745.5.0'. Run `vagrant box update` to update.
 ```
-It's best to run the update so CoreOS functions properly. 
+It's best to run the update so CoreOS functions properly.
 
 ```
 vagrant box update
@@ -145,7 +145,7 @@ sudo /demo/demo2_short_ttls.sh
 This demostration renews the certificate that's not invalid on a regular basis. You should now see the certificate is valid in the window running demo2.  Leave this running in this window
 
 ```
-sudo /demo/demo3_renew_lease.sh 
+sudo /demo/demo3_renew_lease.sh
 ```
 
 ### Step 10: Run demo4_revoke_cert.sh in another window
@@ -175,7 +175,7 @@ After running this for 2-3 minutes (or however long you want), stop the demo usi
 
 **NOTE**
 
-Vault doesn't have the concept of blocking queries like Consul does.   This means that it doesn't have the capabilities of noticing changes to a particular secret you are monitoring.  However, in the case of PKI certs, consul-template will renew based on the lease for the certificate.   Keep this in mind of you're trying to use consul-template for automating retrieval of other Vault secrets. 
+Vault doesn't have the concept of blocking queries like Consul does.   This means that it doesn't have the capabilities of noticing changes to a particular secret you are monitoring.  However, in the case of PKI certs, consul-template will renew based on the lease for the certificate.   Keep this in mind of you're trying to use consul-template for automating retrieval of other Vault secrets.
 
 ### Step 12: Tear down the guide
 Congratulations!  You've taken a step into the wonderful world of PKI Provisioning with Vault!   To be complete, clean up your guide environment.   Also, remember that vagrant will ask for your sudo password to remove NFS entries from /etc/exports:

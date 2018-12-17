@@ -1,6 +1,6 @@
 # Java Sample App using Spring Cloud Vault
 
-These assets are provided to perform the tasks described in the [Java Sample App using Spring Cloud Vault](https://www.vaultproject.io/guides/encryption/spring-demo.html) guide.
+These assets are provided to perform the tasks described in the [Java Application Demo](https://learn.hashicorp.com/vault/developer/eaas-spring-demo) guide.
 
 
 Originally, this app was demonstrated during the [Manage secrets, access, and encryption in the public cloud

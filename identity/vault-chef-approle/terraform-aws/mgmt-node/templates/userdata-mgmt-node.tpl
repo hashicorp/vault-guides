@@ -21,6 +21,9 @@ USER_COMMENT="HashiCorp Vault user"
 USER_GROUP="vault"
 USER_HOME="/srv/vault"
 
+# AWS Region 
+AWS_REGION="${tpl_aws_region}"
+
 # S3 Bucket for demo
 S3_BUCKET="${tpl_s3_bucket_name}"
 
@@ -178,6 +181,7 @@ sudo chmod -R 0644 /etc/vault.d/*
 sudo tee -a /etc/environment <<EOF
 VAULT_ADDR=http://127.0.0.1:8200
 VAULT_SKIP_VERIFY=true
+AWS_DEFAULT_REGION=$${AWS_REGION}
 EOF
 
 source /etc/environment
@@ -243,6 +247,7 @@ sudo chef-server-ctl org-create $${CHEF_DEMO_ORG} 'Demo Organization' --associat
 # Copy user key to S3 for use by Terraform to bootstrap our Chef node
 # See https://www.terraform.io/docs/providers/aws/d/s3_bucket_object.html
 # for info about content-type
+export AWS_DEFAULT_REGION=$${AWS_REGION}
 aws s3 cp /tmp/$${CHEF_ADMIN_PEM} s3://$${S3_BUCKET}/$${CHEF_ADMIN_PEM} --content-type 'text/*'
 
 # Install Chef Manage and reconfgigure/restart services

@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Create a policy file, myapp-kv-ro.hcl
+# This assumes that the Vault server is running kv v1 (non-versioned kv)
 tee myapp-kv-ro.hcl <<EOF
 path "secret/myapp/*" {
     capabilities = ["read", "list"]

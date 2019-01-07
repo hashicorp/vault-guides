@@ -14,6 +14,7 @@ To perform the tasks described in this guide, you need:
 
 - [Minikube installed](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 - A running Vault environment reachable from your Kubernetes environment
+- [Key/value secrets engine version 1](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html) is mounted at `secret/`
 
 
 ## Demo Steps
@@ -35,6 +36,8 @@ To perform the tasks described in this guide, you need:
     ```plaintext
     $ ./setup-k8s-auth.sh
     ```
+
+    **NOTE:** This guide assumes that _version 1_ of `kv` secret engine is mounted at `secret/`.
 
 1. Now, create a Pod using ConfigMap named, `example-vault-agent-config` pulling files from `configs-k8s` directory:
 

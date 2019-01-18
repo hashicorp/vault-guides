@@ -1,5 +1,9 @@
-# Provide your tenant ID
-tenant_id="ARM_TENANT_ID"
+# Provide your tenant ID (Required)
+tenant_id="YOUR_TENANT_ID"
 
-# To overwrite the default 
+
+# To overwrite the default (Optional)
 location="westus"
+
+# To overwrite the default (Optional)
+environment = "autounseal"

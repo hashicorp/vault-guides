@@ -9,6 +9,8 @@ These assets are provided to perform the tasks described in the Auto-unseal with
 - Microsoft Azure account
 - [Terraform installed](https://www.terraform.io/downloads.html) and ready to use
 
+<br>
+
 **Terraform Azure Provider Prerequisites**
 
 A ***service principal*** is an application within Azure Active Directory which
@@ -17,7 +19,17 @@ using your own credentials. Follow the instruction in the [Terraform
 documentation](https://www.terraform.io/docs/providers/azurerm/auth/service_principal_client_certificate.html)
 to create a service principal and then configure in Terraform.
 
-To successfully execute this guide, you would need the following:
+Tips:
+
+- **Subscription ID**: Navigate to the [Subscriptions blade within the Azure
+ Portal](https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
+ and copy the **Subscription ID**  
+
+    > **NOTE**: Be sure to set the ARM_SUBSCRIPTION_ID environment variable
+
+    ```text
+    $ export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
+    ```
 
 - **Tenant ID**: Navigate to the [Azure Active Directory >
  Properties](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Properties)
@@ -48,7 +60,13 @@ To successfully execute this guide, you would need the following:
 
     # Output provides the SSH instruction
     $ terraform apply -auto-approve
+    ...
+    Outputs:
+
+    key_vault_name = Test-vault-cc6092c7
     ```
+
+    Notice that the generated Azure Key Vault name is displayed (e.g. `Test-vault-cc6092c7`). 
 
 1. Vault server configuration file (`config.hcl`) should look like:
 

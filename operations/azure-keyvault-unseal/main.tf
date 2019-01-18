@@ -33,7 +33,7 @@ resource "azurerm_key_vault" "vault" {
     object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
 
     certificate_permissions = [
-      "get", 
+      "get",
       "list",
       "create",
       "delete",
@@ -83,8 +83,4 @@ resource "azurerm_key_vault_key" "generated" {
 
 output "key_vault_name" {
   value = "${azurerm_key_vault.vault.name}"
-}
-
-output "object_id" {
-  value = "${data.azurerm_client_config.current.service_principal_object_id}"
 }

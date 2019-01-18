@@ -66,7 +66,7 @@ Tips:
     key_vault_name = Test-vault-cc6092c7
     ```
 
-    Notice that the generated Azure Key Vault name is displayed (e.g. `Test-vault-cc6092c7`). 
+    Notice that the generated Azure Key Vault name is displayed (e.g. `Test-vault-cc6092c7`).
 
 1. Vault server configuration file (`config.hcl`) should look like:
 
@@ -84,9 +84,9 @@ Tips:
     }
 
     seal "azurekeyvault" {
-      client_id="AZURE_CLIENT_ID"
-      client_secret = "AZURE_CLIENT_SECRET"
-      tenant_id="AZURE_TENANT_IDc"
+      client_id      = "AZURE_CLIENT_ID"
+      client_secret  = "AZURE_CLIENT_SECRET"
+      tenant_id      = "AZURE_TENANT_IDc"
       vault_name     = "Test-vault-xxxxx"
       key_name       = "generated-key"
     }

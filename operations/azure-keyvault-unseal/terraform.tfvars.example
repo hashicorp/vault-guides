@@ -1,0 +1,5 @@
+# Provide your tenant ID
+tenant_id="ARM_TENANT_ID"
+
+# To overwrite the default 
+location="westus"

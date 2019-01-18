@@ -34,8 +34,9 @@ To successfully execute this guide, you would need the following:
 
 1. Set this location as your working directory
 
-1. Provide tenant ID in the `terraform.tfvars.example` and save it as `terraform.tfvars`.
-    NOTE: Overwrite the Azure `location` or `environment` name in the `terraform.tfvars` as desired.
+1. Provide tenant ID in the `terraform.tfvars.example` and save it as `terraform.tfvars`
+
+    > NOTE: Overwrite the Azure `location` or `environment` name in the `terraform.tfvars` as desired.
 
 1. Run the Terraform commands:
 
@@ -51,26 +52,26 @@ To successfully execute this guide, you would need the following:
 
 1. Vault server configuration file (`config.hcl`) should look like:
 
-```
-ui = true
+    ```
+    ui = true
 
-storage "consul" {
-  address = "127.0.0.1:8500"
-  path = "vault"
-}
+    storage "consul" {
+      address = "127.0.0.1:8500"
+      path = "vault"
+    }
 
-listener "tcp" {
-  address     = "127.0.0.1:8200"
-  tls_disable = 1
-}
+    listener "tcp" {
+      address     = "127.0.0.1:8200"
+      tls_disable = 1
+    }
 
-seal "azurekeyvault" {
-  client_id="AZURE_CLIENT_ID"
-  client_secret = "AZURE_CLIENT_SECRET"
-  tenant_id="AZURE_TENANT_IDc"
-  vault_name     = "Test-vault-xxxxx"
-  key_name       = "generated-key"
-}
+    seal "azurekeyvault" {
+      client_id="AZURE_CLIENT_ID"
+      client_secret = "AZURE_CLIENT_SECRET"
+      tenant_id="AZURE_TENANT_IDc"
+      vault_name     = "Test-vault-xxxxx"
+      key_name       = "generated-key"
+    }
 
-disable_mlock = true
-```
+    disable_mlock = true
+    ```

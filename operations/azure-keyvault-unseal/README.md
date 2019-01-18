@@ -52,7 +52,7 @@ To successfully execute this guide, you would need the following:
 
 1. Vault server configuration file (`config.hcl`) should look like:
 
-    ```
+    ```text
     ui = true
 
     storage "consul" {

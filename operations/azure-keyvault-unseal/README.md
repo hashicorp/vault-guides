@@ -25,12 +25,6 @@ Tips:
  Portal](https://portal.azure.com/#blade/Microsoft_Azure_Billing/SubscriptionsBlade)
  and copy the **Subscription ID**  
 
-    > **NOTE**: Be sure to set the ARM_SUBSCRIPTION_ID environment variable
-
-    ```text
-    $ export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
-    ```
-
 - **Tenant ID**: Navigate to the [Azure Active Directory >
  Properties](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ActiveDirectoryMenuBlade/Properties)
  in the Azure Portal, and copy the **Directory ID** which is your tenant ID  

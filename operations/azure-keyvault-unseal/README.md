@@ -1,4 +1,4 @@
-# Vault Auto-unseal using Azure Key Vault
+# Auto-unseal using Azure Key Vault
 
 These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://deploy-preview-346--hashicorp-learn.netlify.com/vault/operations/autounseal-azure-keyvault) guide.
 
@@ -40,7 +40,7 @@ Tips:
 
 1. Set this location as your working directory
 
-1. Provide tenant ID in the `terraform.tfvars.example` and save it as `terraform.tfvars`
+1. Provide Azure credentials in the `terraform.tfvars.example` and save it as `terraform.tfvars`
 
     > NOTE: Overwrite the Azure `location` or `environment` name in the `terraform.tfvars` as desired.
 
@@ -61,8 +61,6 @@ Tips:
     key_vault_name = Test-vault-a414d041
     ssh_link = ssh azureuser@52.168.108.142
     ```
-
-    Notice that the generated Azure Key Vault name is displayed (e.g. `Test-vault-cc6092c7`).
 
 1. SSH into the virtual machine:
 
@@ -91,7 +89,7 @@ Tips:
 1. Initialize Vault
 
     ```plaintext
-    $ vault operator init -key-shares=1 -key-threshold=1
+    $ vault operator init 
     ```
 
 1. Stop and start the Vault server

@@ -1,6 +1,6 @@
 # Vault Auto-unseal using Azure Key Vault
 
-These assets are provided to perform the tasks described in the Auto-unseal with Azure Key Vault guide which is being developed.
+These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://deploy-preview-346--hashicorp-learn.netlify.com/vault/operations/autounseal-azure-keyvault) guide.
 
 ---
 

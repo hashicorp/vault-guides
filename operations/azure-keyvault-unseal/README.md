@@ -63,33 +63,92 @@ Tips:
     ...
     Outputs:
 
-    key_vault_name = Test-vault-cc6092c7
+    ip = 52.168.108.142
+    key_vault_name = Test-vault-a414d041
+    ssh_link = ssh azureuser@52.168.108.142
     ```
 
     Notice that the generated Azure Key Vault name is displayed (e.g. `Test-vault-cc6092c7`).
 
-1. Vault server configuration file (`config.hcl`) should look like:
+1. SSH into the virtual machine:
 
     ```text
-    ui = true
+    $ ssh azureuser@52.168.108.142
+    ```
 
-    storage "consul" {
-      address = "127.0.0.1:8500"
-      path = "vault"
+1. Check the current Vault status:
+
+    ```text
+    $ vault status
+    Key                      Value
+    ---                      -----
+    Recovery Seal Type       azurekeyvault
+    Initialized              false
+    Sealed                   true
+    Total Recovery Shares    0
+    Threshold                0
+    Unseal Progress          0/0
+    Unseal Nonce             n/a
+    Version                  n/a
+    HA Enabled               false
+    ```
+    Vault hasn't been initialized, yet.
+
+1. Initialize Vault
+
+    ```plaintext
+    $ vault operator init -key-shares=1 -key-threshold=1
+    ```
+
+1. Stop and start the Vault server
+
+    ```shell
+    $ sudo systemctl restart vault
+    ```
+
+1. Check to verify that the Vault is auto-unsealed
+
+    ```text
+    $ vault status
+    Key                      Value
+    ---                      -----
+    Recovery Seal Type       shamir
+    Initialized              true
+    Sealed                   false
+    Total Recovery Shares    5
+    Threshold                3
+    Version                  1.0.2
+    Cluster Name             vault-cluster-092ba5de
+    Cluster ID               8b173565-7d74-fe5b-a199-a2b56b7019ee
+    HA Enabled               false
+    ```
+
+1. Explorer the Vault configuration file
+
+    ```plaintext
+    $ cat /etc/vault.d/config.hcl
+
+    storage "file" {
+      path = "/opt/vault"
     }
-
     listener "tcp" {
-      address     = "127.0.0.1:8200"
+      address     = "0.0.0.0:8200"
       tls_disable = 1
     }
-
     seal "azurekeyvault" {
-      client_id      = "AZURE_CLIENT_ID"
-      client_secret  = "AZURE_CLIENT_SECRET"
-      tenant_id      = "AZURE_TENANT_IDc"
-      vault_name     = "Test-vault-xxxxx"
+      client_id      = "YOUR-AZURE-APP-ID"
+      client_secret  = "YOUR-AZURE-APP-PASSWORD"
+      tenant_id      = "YOUR-AZURE-TENANT-ID"
+      vault_name     = "Test-vault-xxxx"
       key_name       = "generated-key"
     }
-
+    ui=true
     disable_mlock = true
+    ```
+
+1. Clean up
+
+    ```plaintext
+    $ terraform destroy -auto-approve
+    $ rm -rf .terraform terraform.tfstate*
     ```

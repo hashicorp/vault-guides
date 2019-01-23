@@ -189,19 +189,43 @@ The `azure` auth method allows authentication against Vault using Azure Active D
 
      ...
 
-    Key                  Value
-    ---                  -----
-    token                s.kjS8K4VrrpejH1kuYKdqpdEG
-    token_accessor       iawFjCWPnVEowHIu9VRZ0yU0
-    token_duration       768h
-    token_renewable      true
-    token_policies       ["default"]
-    identity_policies    []
-    policies             ["default"]
-    token_meta_role      dev-role
+     Key                  Value
+     ---                  -----
+     token                s.xYqTKUSivsKiwNwXv6wz9LUJ
+     token_accessor       0dua5lTuYkAyQakJiy0oKJW5
+     token_duration       768h
+     token_renewable      true
+     token_policies       ["default"]
+     identity_policies    []
+     policies             ["default"]
+     token_meta_role      dev-role
     ```
 
     A valid service token is generated.
+
+    ```plaintext
+    $ vault token lookup s.xYqTKUSivsKiwNwXv6wz9LUJ
+    
+    Key                 Value
+    ---                 -----
+    accessor            0dua5lTuYkAyQakJiy0oKJW5
+    creation_time       1548279674
+    creation_ttl        768h
+    display_name        azure-cc47203d-6c51-4498-9c3d-5e2874eca6fb
+    entity_id           7009136d-2eee-0414-61f9-e705a9f299ef
+    expire_time         2019-02-24T21:41:14.231599224Z
+    explicit_max_ttl    0s
+    id                  s.xYqTKUSivsKiwNwXv6wz9LUJ
+    issue_time          2019-01-23T21:41:14.231598924Z
+    meta                map[role:dev-role]
+    num_uses            0
+    orphan              true
+    path                auth/azure/login
+    policies            [default]
+    renewable           true
+    ttl                 767h59m48s
+    type                service
+    ```
 
 ## Clean up
 

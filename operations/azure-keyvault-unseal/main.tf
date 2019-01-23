@@ -277,6 +277,12 @@ output "ip" {
     value = "${azurerm_public_ip.tf_publicip.ip_address}"
 }
 
-output "ssh_link" {
-    value = "ssh azureuser@${azurerm_public_ip.tf_publicip.ip_address}"
+output "ssh-addr" {
+    value = <<SSH
+
+    Connect to your virtual machine via SSH:
+
+    $ ssh azureuser@${azurerm_public_ip.tf_publicip.ip_address}
+    
+    SSH
 }

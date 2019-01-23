@@ -2,6 +2,7 @@
 
 These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://deploy-preview-346--hashicorp-learn.netlify.com/vault/operations/autounseal-azure-keyvault) guide.
 
+In addition, a script is provided so that you can enable and test `azure` auth method. (_Optional_)
 ---
 
 ## Prerequisites
@@ -36,7 +37,7 @@ Tips:
  (credential)](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ApplicationsListBlade)
  set on your application
 
-## Steps
+## Auto-unseal Steps
 
 1. Set this location as your working directory
 
@@ -93,6 +94,19 @@ Tips:
 
     ```plaintext
     $ vault operator init
+
+    Recovery Key 1: PfPiNcKeZRVigLJxqyCPHezqLbLLz8q4PAzeSAueFnvK
+    Recovery Key 2: MLLZQL1hsT9Pjp5KYw5f22/q5ia3/A9lf+XpEoEKjiMR
+    Recovery Key 3: GLVGur9KTUdOEGSxB8byOZTreRZnHX9fl+F32sxhLsav
+    Recovery Key 4: n3I5h2yNOx9sEJ2vej9n4GacYi9Si4RGE8zcssahFlQ+
+    Recovery Key 5: 9qG+L8Z5uoyKJMbBPtcXyYw00XJMxLry6h5U5wjl356f
+
+    Initial Root Token: s.bRyEk2vIPrKfeldFZD5xFvUL
+
+    Success! Vault is initialized
+
+    Recovery key initialized with 5 key shares and a key threshold of 3. Please
+    securely distribute the key shares printed above.
     ```
 
 1. Stop and start the Vault server
@@ -141,9 +155,54 @@ Tips:
     disable_mlock = true
     ```
 
-1. Clean up
+## Azure Auth Method Steps
+
+The `azure` auth method allows authentication against Vault using Azure Active Directory credentials.
+
+1. First, log into Vault using the generated initial root token:
 
     ```plaintext
-    $ terraform destroy -auto-approve
-    $ rm -rf .terraform terraform.tfstate*
+    $ vault login s.bRyEk2vIPrKfeldFZD5xFvUL
     ```
+
+1. Explorer the `/tmp/azure_auth.sh` file
+
+    ```plaintext
+    $ cat /tmp/azure_auth.sh
+    ```
+
+    This script performs the following:
+
+    - Enable the Azure auth method at `azure`
+    - Configure the Azure auth method
+    - Create a role named `dev-role` with `default` policy
+    - Finally, log into Vault using as `dev-role` to obtain a Vault client token
+
+1. Execute the script
+
+    ```plaintext
+    $ ./azure_auth.sh
+
+     ...
+
+    Key                  Value
+    ---                  -----
+    token                s.kjS8K4VrrpejH1kuYKdqpdEG
+    token_accessor       iawFjCWPnVEowHIu9VRZ0yU0
+    token_duration       768h
+    token_renewable      true
+    token_policies       ["default"]
+    identity_policies    []
+    policies             ["default"]
+    token_meta_role      dev-role
+    ```
+
+    A valid service token is generated.
+
+## Clean up
+
+```plaintext
+$ terraform destroy -auto-approve
+
+$ rm -rf .terraform terraform.tfstate*
+```

@@ -3,6 +3,7 @@
 These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://deploy-preview-346--hashicorp-learn.netlify.com/vault/operations/autounseal-azure-keyvault) guide.
 
 In addition, a script is provided so that you can enable and test `azure` auth method. (_Optional_)
+
 ---
 
 ## Prerequisites
@@ -61,15 +62,18 @@ Tips:
     ...
     Outputs:
 
-    ip = 52.168.108.142
-    key_vault_name = Test-vault-a414d041
-    ssh_link = ssh azureuser@52.168.108.142
+    ip = 13.82.62.56
+    key_vault_name = Test-vault-1e5a88de
+    ssh-addr =
+        Connect to your virtual machine via SSH:
+
+        $ ssh azureuser@13.82.62.562
     ```
 
 1. SSH into the virtual machine:
 
-    ```text
-    $ ssh azureuser@52.168.108.142
+    ```plaintext
+    $ ssh azureuser@13.82.62.562
     ```
 
 1. Check the current Vault status:
@@ -200,6 +204,8 @@ The `azure` auth method allows authentication against Vault using Azure Active D
     A valid service token is generated.
 
 ## Clean up
+
+Run `terraform destroy` when you are done exploring:
 
 ```plaintext
 $ terraform destroy -auto-approve

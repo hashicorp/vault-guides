@@ -54,6 +54,9 @@ Tips:
 
     # Output provides the SSH instruction
     $ terraform apply -auto-approve
+
+    # Refresh to fetch the IP address
+    $ terraform refresh
     ...
     Outputs:
 
@@ -89,7 +92,7 @@ Tips:
 1. Initialize Vault
 
     ```plaintext
-    $ vault operator init 
+    $ vault operator init
     ```
 
 1. Stop and start the Vault server

@@ -115,7 +115,7 @@ resource "azurerm_public_ip" "tf_publicip" {
     name                         = "ip-${random_id.keyvault.hex}"
     location                     = "${var.location}"
     resource_group_name          = "${azurerm_resource_group.vault.name}"
-    public_ip_address_allocation = "dynamic"
+    allocation_method            = "Dynamic"
 
     tags {
         environment = "${var.environment}-${random_id.keyvault.hex}"

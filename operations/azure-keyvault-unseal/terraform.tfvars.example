@@ -1,3 +1,7 @@
+#------------
+# Required
+#------------
+
 # Provide your tenant ID (Required)
 tenant_id="YOUR_TENANT_ID"
 
@@ -14,8 +18,12 @@ client_secret = "AZURE-APP-PASSWORD"
 subscription_id = "YOUR-AZURE-SUBSCRIPTION-ID"
 
 
-# To overwrite the default (Optional)
-location="westus"
+#------------
+# Optional
+#------------
 
 # To overwrite the default (Optional)
-environment = "test"
+# location="westus"
+
+# To overwrite the default (Optional)
+# environment = "test"

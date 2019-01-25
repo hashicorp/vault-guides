@@ -38,6 +38,8 @@ Tips:
  (credential)](https://portal.azure.com/#blade/Microsoft_AAD_IAM/ApplicationsListBlade)
  set on your application
 
+> **IMPORTANT:** Ensure that your Service Principal has appropriate permissions to provision virtual machines, networks, as well as **Azure Key Vault**. Refer to the [Azure documentation](https://docs.microsoft.com/en-us/azure/role-based-access-control/role-assignments-portal).
+
 ## Auto-unseal Steps
 
 1. Set this location as your working directory
@@ -56,9 +58,6 @@ Tips:
 
     # Output provides the SSH instruction
     $ terraform apply -auto-approve
-
-    # Refresh to fetch the IP address
-    $ terraform refresh
     ...
     Outputs:
 
@@ -205,7 +204,7 @@ The `azure` auth method allows authentication against Vault using Azure Active D
 
     ```plaintext
     $ vault token lookup s.xYqTKUSivsKiwNwXv6wz9LUJ
-    
+
     Key                 Value
     ---                 -----
     accessor            0dua5lTuYkAyQakJiy0oKJW5

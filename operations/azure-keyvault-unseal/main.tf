@@ -37,7 +37,7 @@ resource "azurerm_key_vault" "vault" {
     object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
 
     certificate_permissions = [
-      "get", 
+      "get",
       "list",
       "create",
       "delete",
@@ -187,7 +187,8 @@ resource "azurerm_network_interface" "tf_nic" {
 }
 
 resource "random_id" "tf_random_id" {
-    keepers = {
+    keepers =
+    {
         # Generate a new ID only when a new resource group is defined
         resource_group = "${azurerm_resource_group.vault.name}"
     }
@@ -210,7 +211,8 @@ resource "azurerm_storage_account" "tf_storageaccount" {
 data "template_file" "setup" {
   template = "${file("${path.module}/setup.tpl")}"
 
-  vars = {
+  vars =
+  {
     resource_group_name = "${var.environment}-vault-rg"
     vm_name = "${var.vm_name}"
     vault_download_url = "${var.vault_download_url}"
@@ -230,8 +232,9 @@ resource "azurerm_virtual_machine" "tf_vm" {
     resource_group_name   = "${azurerm_resource_group.vault.name}"
     network_interface_ids = ["${azurerm_network_interface.tf_nic.id}"]
     vm_size               = "Standard_DS1_v2"
-    
-    identity = {
+
+    identity =
+    {
       type = "SystemAssigned"
     }
 
@@ -271,18 +274,24 @@ resource "azurerm_virtual_machine" "tf_vm" {
     tags {
         environment = "${var.environment}-${random_id.keyvault.hex}"
     }
+
+}
+
+data "azurerm_public_ip" "tf_publicip" {
+  name                = "${azurerm_public_ip.tf_publicip.name}"
+  resource_group_name = "${azurerm_virtual_machine.tf_vm.resource_group_name}"
 }
 
 output "ip" {
-    value = "${azurerm_public_ip.tf_publicip.ip_address}"
+  value = "${data.azurerm_public_ip.tf_publicip.ip_address}"
 }
 
 output "ssh-addr" {
-    value = <<SSH
+  value = <<SSH
 
     Connect to your virtual machine via SSH:
 
-    $ ssh azureuser@${azurerm_public_ip.tf_publicip.ip_address}
-    
+    $ ssh azureuser@${data.azurerm_public_ip.tf_publicip.ip_address}
+
     SSH
 }

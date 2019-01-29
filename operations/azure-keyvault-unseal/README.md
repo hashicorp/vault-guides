@@ -1,6 +1,6 @@
 # Auto-unseal using Azure Key Vault
 
-These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://deploy-preview-346--hashicorp-learn.netlify.com/vault/operations/autounseal-azure-keyvault) guide.
+These assets are provided to perform the tasks described in the [Auto-unseal with Azure Key Vault](https://learn.hashicorp.com/vault/operations/autounseal-azure-keyvault) guide.
 
 In addition, a script is provided so that you can enable and test `azure` auth method. (_Optional_)
 

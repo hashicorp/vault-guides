@@ -36,14 +36,6 @@ resource "azurerm_key_vault" "vault" {
     #object_id = "${var.object_id}"
     object_id = "${data.azurerm_client_config.current.service_principal_object_id}"
 
-    certificate_permissions = [
-      "get",
-      "list",
-      "create",
-      "delete",
-      "update",
-    ]
-
     key_permissions = [
       "get",
       "list",
@@ -52,13 +44,6 @@ resource "azurerm_key_vault" "vault" {
       "update",
       "wrapKey",
       "unwrapKey",
-    ]
-
-    secret_permissions = [
-      "get",
-      "list",
-      "set",
-      "delete",
     ]
   }
 

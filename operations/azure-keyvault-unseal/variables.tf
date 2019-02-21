@@ -42,7 +42,7 @@ variable "vm_name" {
 }
 
 variable "vault_download_url" {
-    default = "https://releases.hashicorp.com/vault/1.0.2/vault_1.0.2_linux_amd64.zip"
+    default = "https://releases.hashicorp.com/vault/1.0.3/vault_1.0.3_linux_amd64.zip"
 }
 
 variable "resource_group_name" {

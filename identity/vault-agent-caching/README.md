@@ -18,6 +18,8 @@ These assets are provided to provision AWS resources to perform the steps descri
 
 1. Set the Terraform variable values in a file named `terraform.tfvars` (use `terraform.tfvars.example` as a base)
 
+    **Example:**
+    
     ```shell
     # SSH key name to access EC2 instances (should already exist)
     key_name = "vault-test"

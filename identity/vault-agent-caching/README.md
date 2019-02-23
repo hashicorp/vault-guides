@@ -112,19 +112,19 @@ These assets are provided to provision AWS resources to perform the steps descri
 
     **NOTE:** Notice the `cache` block. The TCP listener is configured to listen to port 8200 on the client host.
 
-1. Run Vault Agent:
+1. Run Vault Agent
 
     ```plaintext
     $ vault agent -config=/home/ubuntu/auto-auth-conf.hcl -log-level=debug
     ```
 
-1. Open another client host SSH terminal and verify that a token has been acquired:
+1. Open another client host SSH terminal and verify that a token has been acquired
 
     ```plaintext
     $ more vault-token-via-agent
     ```
 
-1. Verify that you can get an AWS credentials:
+1. Verify that you can get an AWS credentials
 
     ```plaintext
     $ curl -s --header "X-Vault-Token: $(cat /home/ubuntu/vault-token-via-agent)" \
@@ -142,7 +142,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     [DEBUG] cache.leasecache: pass-through lease response; token not managed by agent: path=/v1/aws/creds/readonly method=GET
     ```
 
-1. Clear all cache:
+1. Clear all cache
 
     ```plaintext
     curl --request POST --data '{ "type": "all" }' http://127.0.0.1:8300/v1/agent/cache-clear
@@ -154,9 +154,15 @@ These assets are provided to provision AWS resources to perform the steps descri
     [DEBUG] cache.leasecache: successfully cleared matching cache entries
     ```
 
-1. Clean up
+1. Clean up the **server**
 
     ```plaintext
-    $ terraform destroy -force
+    $ vault lease revoke -prefix aws/creds
+    ```
+
+1. Clean up the cloud resources
+
+    ```plaintext
+    $ terraform destroy -auto-approve
     $ rm -rf .terraform terraform.tfstate* private.key
     ```

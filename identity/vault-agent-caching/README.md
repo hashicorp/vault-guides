@@ -19,7 +19,7 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. Set the Terraform variable values in a file named `terraform.tfvars` (use `terraform.tfvars.example` as a base)
 
     **Example:**
-    
+
     ```shell
     # SSH key name to access EC2 instances (should already exist)
     key_name = "vault-test"
@@ -129,10 +129,11 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. Verify that you can get an AWS credentials
 
     ```plaintext
-    $ curl -s --header "X-Vault-Token: $(cat /home/ubuntu/vault-token-via-agent)" \
-            http://127.0.0.1:8300/v1/aws/creds/readonly | jq
+    $ curl -s http://127.0.0.1:8300/v1/aws/creds/readonly | jq
     ```
 
+    Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8300).
+    
     On the terminal where Vault Agent is running, the log should indicate that the request was properly routed to the Vault server and the retrieved lease is cashed.
 
     ```plaintext

@@ -1,4 +1,4 @@
-# Vault Agent Caching
+# [Vault 1.1 Beta] Vault Agent Caching
 
 These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Caching](https://learn.hashicorp.com/vault/) guide.
 

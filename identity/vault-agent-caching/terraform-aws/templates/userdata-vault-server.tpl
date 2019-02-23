@@ -405,13 +405,16 @@ vault secrets enable kv
 
 echo "path \"kv/*\" {
     capabilities = [\"create\", \"read\", \"update\", \"delete\"]
-    }
-    path \"aws/creds/*\" {
-      capabilities = [\"read\", \"update\"]
-    }
-    path \"sys/lease/renew\" {
-      capabilities = [\"update\"]
-    }" | vault policy write myapp -
+}
+path \"aws/creds/*\" {
+    capabilities = [\"read\", \"update\"]
+}
+path \"sys/leases/*\" {
+    capabilities = [\"create\", \"update\"]
+}
+path \"auth/token/*\" {
+    capabilities = [\"create\", \"update\"]
+}" | vault policy write myapp -
 
 vault auth enable aws
 vault write -force auth/aws/config/client

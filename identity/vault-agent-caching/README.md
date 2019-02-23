@@ -52,20 +52,20 @@ These assets are provided to provision AWS resources to perform the steps descri
     # Initialize Vault
     $ vault operator init > key.txt
 
-    # Log in with initial root token
-    $ vault login $(grep 'Initial Root Token:' key.txt | awk '{print $NF}')
-
     # Check the Vault server status
     $ vault status
+
+    # Log in with initial root token
+    $ vault login $(grep 'Initial Root Token:' key.txt | awk '{print $NF}')    
     ```
 
-1. Run aws_auth.sh script to enable and configure AWS auth method
+1. Run `aws_auth.sh` script to enable and configure AWS auth method
 
     ```plaintext
     $ ./aws_auth.sh
     ```
 
-1. Also, run auth_secret.sh script to enable and configure AWS secrets engine
+1. Also, run `auth_secret.sh` script to enable and configure AWS secrets engine
 
     ```plaintext
     $ ./aws_secrets.sh

@@ -47,15 +47,12 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. On the **server** instance, run the following commands:
 
     ```shell
-    # At this point, Vault hasn't been initialized
-    $ vault status
-
     # Initialize Vault
     $ vault operator init -stored-shares=1 -recovery-shares=1 \
             -recovery-threshold=1 -key-shares=1 -key-threshold=1 > key.txt
 
-    # Auto-unseal with AWS KMS is configured.  So, just re-start the server
-    $ sudo systemctl restart vault
+    # Vault should've been initialized and unsealed
+    $ vault status
 
     # Log in with initial root token
     $ vault login $(grep 'Initial Root Token:' key.txt | awk '{print $NF}')

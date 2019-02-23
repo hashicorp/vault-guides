@@ -88,7 +88,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     cache {
        use_auto_auth_token = true
        listener "tcp" {
-          address = "127.0.0.1:8200"
+          address = "127.0.0.1:8300"
           tls_disable = true
        }
     }
@@ -145,7 +145,13 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. Clear all cache:
 
     ```plaintext
-    curl --request POST --data '{ "type": "all" }' http://127.0.0.1:8300/v1/agent/cache-clear 
+    curl --request POST --data '{ "type": "all" }' http://127.0.0.1:8300/v1/agent/cache-clear
+    ```
+
+    ```plaintext
+    [DEBUG] cache.leasecache: received cache-clear request: type=all namespace= value=
+    [DEBUG] cache.leasecache: cancelling base context
+    [DEBUG] cache.leasecache: successfully cleared matching cache entries
     ```
 
 1. Clean up

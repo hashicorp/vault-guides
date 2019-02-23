@@ -312,7 +312,7 @@ sudo mkdir -pm 0755 /etc/ssl/vault
 logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 
 sudo tee -a /etc/environment <<EOF
-export VAULT_ADDR=http://${tpl_vault_server_addr}:8300
+export VAULT_ADDR=http://${tpl_vault_server_addr}:8200
 export VAULT_SKIP_VERIFY=true
 EOF
 

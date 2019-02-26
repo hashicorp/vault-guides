@@ -1,0 +1,8 @@
+# Set this to your Service Principal's App ID
+client_id = "<APP_ID>"
+
+# Set this to your Service Principal's secret
+client_secret = "<CLIENT_SECRET>"
+
+# (Optional) Prefix for AKS cluster name. The default is "demo" and the cluster name becomes "demo-aks"
+prefix = "education"

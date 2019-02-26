@@ -16,6 +16,7 @@ To perform the tasks described in this guide, you need:
 - A running Vault environment reachable from your Kubernetes environment
 - [Key/value secrets engine version 1](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html) is mounted at `secret/`
 
+> If you want to test against Azure Kubernetes Service (AKS) cluster instead, you can use the Terraform files under the `terraform-azure` folder to create an AKS cluster.
 
 ## Demo Steps
 

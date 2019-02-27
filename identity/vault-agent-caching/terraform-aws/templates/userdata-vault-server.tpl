@@ -420,6 +420,9 @@ vault auth enable aws
 vault write -force auth/aws/config/client
 
 vault write auth/aws/role/app-role auth_type=iam bound_iam_principal_arn="arn:aws:iam::${account_id}:role/${role_name}" policies=myapp ttl=24h
+
+vault auth enable userpass
+vault write auth/userpass/users/student password="pAssw0rd" policies="myapp" ttl=48h
 EOF
 
 

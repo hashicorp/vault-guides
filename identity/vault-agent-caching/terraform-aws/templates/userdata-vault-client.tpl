@@ -209,7 +209,7 @@ else
 fi
 
 sudo systemctl enable consul
-sudo systemctl start consul
+# sudo systemctl start consul
 
 ##--------------------------------------------------------------------
 ## Configure DNS Forwarding for Consul

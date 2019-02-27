@@ -1,16 +1,16 @@
 # [Vault 1.1 Beta] Vault Agent Caching
 
-These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Caching](https://learn.hashicorp.com/vault/) guide.
+These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Caching](https://www.vaultproject.io/docs/agent/caching/index.html).
+
+**NOTE:** Currently, Vault 1.1 is in _beta_.
 
 ---
 
-**NOTE:** The example Terraform in this repository is created for the demo purpose, and not suitable for production use. For production deployment, refer the following examples:
-
-- [operations/provision-vault](https://github.com/hashicorp/vault-guides/tree/master/operations/provision-vault)
-- [Terraform Module Registry](https://registry.terraform.io/modules/hashicorp/vault)
-
 
 ## Demo Steps
+
+>**NOTE:** The example Terraform in this repository is created for the demo purpose, and not suitable for production use.
+
 
 1. Set this location as your working directory
 
@@ -21,7 +21,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     **Example:**
 
     ```shell
-    # SSH key name to access EC2 instances (should already exist)
+    # SSH key name to access EC2 instances (should already exist) in the region you are using
     key_name = "vault-test"
 
     # All resources will be tagged with this
@@ -61,7 +61,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ vault login $(grep 'Initial Root Token:' key.txt | awk '{print $NF}')    
     ```
 
-1. Run `aws_auth.sh` script to enable and configure AWS auth method
+1. Run `aws_auth.sh` script to create `myapp` policy, enable and configure AWS auth method, and create a `student` user in `userpass` auth method
 
     ```plaintext
     $ ./aws_auth.sh
@@ -120,10 +120,42 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ vault agent -config=/home/ubuntu/auto-auth-conf.hcl -log-level=debug
     ```
 
-1. Open another client host SSH terminal and verify that a token has been acquired
+1. Open **another terminal** and SSH into the client host. The `auto_auth` token should be written in the `/home/ubuntu/vault-token-via-agent` file
 
     ```plaintext
     $ more vault-token-via-agent
+    ```
+
+1. Log in as `student` user
+
+    ```shell
+    # Login with username 'student' and password is "pAssw0rd"
+    $ curl --request POST --data '{"password": "pAssw0rd"}' \
+           http://127.0.0.1:8300/v1/auth/userpass/login/student | jq
+    {
+      ...
+      "auth": {
+        "client_token": "s.3vfZXvNcgiIGdJM5gqdSkOlo",        
+        ...
+    }
+
+    # Store the acquired token in VAULT_TOKEN environment variable
+    $ export VAULT_TOKEN="s.3vfZXvNcgiIGdJM5gqdSkOlo"
+    ```
+
+    >**NOTE:** You send the API request via agent proxy (`http://127.0.0.1:8330`) rather than `VAULT_ADDR`.
+
+    Examine the agent log in the other terminal:
+
+    ```plaintext
+    ...
+    [INFO]  cache: received request: path=/v1/auth/userpass/login/student method=POST
+    [DEBUG] cache: using auto auth token: path=/v1/auth/userpass/login/student method=POST
+    [DEBUG] cache.leasecache: forwarding request: path=/v1/auth/userpass/login/student method=POST
+    [INFO]  cache.apiproxy: forwarding request: path=/v1/auth/userpass/login/student method=POST
+    [DEBUG] cache.leasecache: processing auth response: path=/v1/auth/userpass/login/student method=POST
+    [DEBUG] cache.leasecache: storing response into the cache: path=/v1/auth/userpass/login/student method=POST
+    ...
     ```
 
 1. Verify that you can get an AWS credentials
@@ -133,31 +165,62 @@ These assets are provided to provision AWS resources to perform the steps descri
     ```
 
     Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8300).
-    
-    On the terminal where Vault Agent is running, the log should indicate that the request was properly routed to the Vault server and the retrieved lease is cashed.
+
+    >**NOTE:**  In Vault 1.1-beta, the resulting secrets from these auto-auth token calls are ***not*** cached. They **will be** in the non-beta version.
+
+    To _workaround_ this, pass the `student` token in the header with Vault 1.1-beta
+
+    ```plaintext
+    $ curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8300/v1/aws/creds/readonly | jq
+    ```
+
+1. Create a token to see the agent behavior:
+
+    ```plaintext
+    $ curl --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8300/v1/auth/token/create | jq
+    ```
+
+## Cache Eviction
+
+Cache eviction can be forced via `v1/agent/cache-clear` endpoint, or via lease/token revocation.
+
+1. Revoke a cached token
+
+    ```plaintext
+    $ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST \
+           --data '{"token": "s.AvjnUWFQ3RNa6IzkM9WProxS"}' \
+           http://127.0.0.1:8300/v1/auth/token/revoke
+    ```    
+
+    Examine the agent log:
 
     ```plaintext
     ...
-    [INFO]  cache: received request: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: forwarding request: path=/v1/aws/creds/readonly method=GET
-    [INFO]  cache.apiproxy: forwarding request: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: processing lease response: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: pass-through lease response; token not managed by agent: path=/v1/aws/creds/readonly method=GET
-    ```
-
-1. Clear all cache
-
-    ```plaintext
-    curl --request POST --data '{ "type": "all" }' http://127.0.0.1:8300/v1/agent/cache-clear
-    ```
-
-    ```plaintext
-    [DEBUG] cache.leasecache: received cache-clear request: type=all namespace= value=
-    [DEBUG] cache.leasecache: cancelling base context
+    [INFO]  cache: received request: path=/v1/auth/token/revoke method=POST
+    [DEBUG] cache.leasecache: forwarding request: path=/v1/auth/token/revoke method=POST
+    [INFO]  cache.apiproxy: forwarding request: path=/v1/auth/token/revoke method=POST
+    [DEBUG] cache.leasecache: cancelling context of index attached to token
     [DEBUG] cache.leasecache: successfully cleared matching cache entries
+    [DEBUG] cache.leasecache: triggered caching eviction from revocation request
+    [DEBUG] cache.leasecache: context cancelled; stopping renewer: path=/v1/auth/token/create
+    [DEBUG] cache.leasecache: evicting index from cache: id=b5715bdca771174... path=/v1/auth/token/create method=POST
     ```
 
-1. Clean up the **server**
+1. Clear AWS secret lease
+
+    ```plaintext
+    curl --request POST --data '{ "type": "lease", "value": "aws/creds/readonly" }' \
+         http://127.0.0.1:8300/v1/agent/cache-clear
+    ```
+    The agent log should show:
+
+    ```plaintext
+    [DEBUG] cache.leasecache: received cache-clear request: type=lease namespace= value=aws/creds/readonly
+    ```
+
+## Clean up
+
+1. Revoke all AWS leases
 
     ```plaintext
     $ vault lease revoke -prefix aws/creds

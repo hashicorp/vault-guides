@@ -25,5 +25,4 @@ If you wish to test the Kubernetes auth method against an Azure Kubernetes Servi
     $ kubectl cluster-info
     ```
 
-**NOTE:** In `setup-k8s-spec.sh` file, be sure to replace _Line 34_ to point to the AKS cluster address rather than
-`export K8S_HOST=$(minikube ip)`. 
+**NOTE:** Refer to the [Azure Kubernetes Service Cluster](https://deploy-preview-391--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s#azure-kubernetes-service-cluster) section in the guide.

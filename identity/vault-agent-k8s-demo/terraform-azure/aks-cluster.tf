@@ -19,8 +19,12 @@ provider "azurerm" {
   version = "~> 1.20.0"
 }
 
+resource "random_id" "vault" {
+  byte_length = 4
+}
+
 resource "azurerm_resource_group" "default" {
-  name     = "${var.prefix}-rg"
+  name     = "${var.prefix}-${random_id.vault.hex}-rg"
   location = "West US 2"
 
   tags {
@@ -29,10 +33,10 @@ resource "azurerm_resource_group" "default" {
 }
 
 resource "azurerm_kubernetes_cluster" "default" {
-  name                = "${var.prefix}-aks"
+  name                = "${var.prefix}-${random_id.vault.hex}-aks"
   location            = "${azurerm_resource_group.default.location}"
   resource_group_name = "${azurerm_resource_group.default.name}"
-  dns_prefix          = "${var.prefix}-k8s"
+  dns_prefix          = "${var.prefix}-${random_id.vault.hex}-k8s"
 
   agent_pool_profile {
     name            = "default"

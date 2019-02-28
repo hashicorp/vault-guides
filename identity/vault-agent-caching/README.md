@@ -90,7 +90,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     cache {
        use_auto_auth_token = true
        listener "tcp" {
-          address = "127.0.0.1:8300"
+          address = "127.0.0.1:8400"
           tls_disable = true
        }
     }
@@ -112,7 +112,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     }
     ```
 
-    **NOTE:** Notice the `cache` block. The TCP listener is configured to listen to port 8200 on the client host.
+    **NOTE:** Notice the `cache` block. The TCP listener is configured to listen to port 8400 on the client host.
 
 1. Run Vault Agent
 
@@ -131,7 +131,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     ```shell
     # Login with username 'student' and password is "pAssw0rd"
     $ curl --request POST --data '{"password": "pAssw0rd"}' \
-           http://127.0.0.1:8300/v1/auth/userpass/login/student | jq
+           http://127.0.0.1:8400/v1/auth/userpass/login/student | jq
     {
       ...
       "auth": {
@@ -143,7 +143,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ export VAULT_TOKEN="s.3vfZXvNcgiIGdJM5gqdSkOlo"
     ```
 
-    >**NOTE:** You send the API request via agent proxy (`http://127.0.0.1:8330`) rather than `VAULT_ADDR`.
+    >**NOTE:** You send the API request via agent proxy (`http://127.0.0.1:8400`) rather than `VAULT_ADDR`.
 
     Examine the agent log in the other terminal:
 
@@ -161,23 +161,23 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. Verify that you can get an AWS credentials
 
     ```plaintext
-    $ curl -s http://127.0.0.1:8300/v1/aws/creds/readonly | jq
+    $ curl -s http://127.0.0.1:8400/v1/aws/creds/readonly | jq
     ```
 
-    Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8300).
+    Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8400).
 
     >**NOTE:**  In Vault 1.1-beta, the resulting secrets from these auto-auth token calls are ***not*** cached. They **will be** in the non-beta version.
 
     To _workaround_ this, pass the `student` token in the header with Vault 1.1-beta
 
     ```plaintext
-    $ curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8300/v1/aws/creds/readonly | jq
+    $ curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8400/v1/aws/creds/readonly | jq
     ```
 
 1. Create a token to see the agent behavior:
 
     ```plaintext
-    $ curl --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8300/v1/auth/token/create | jq
+    $ curl --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8400/v1/auth/token/create | jq
     ```
 
 ## Cache Eviction
@@ -189,7 +189,7 @@ Cache eviction can be forced via `v1/agent/cache-clear` endpoint, or via lease/t
     ```plaintext
     $ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST \
            --data '{"token": "s.AvjnUWFQ3RNa6IzkM9WProxS"}' \
-           http://127.0.0.1:8300/v1/auth/token/revoke
+           http://127.0.0.1:8400/v1/auth/token/revoke
     ```    
 
     Examine the agent log:
@@ -210,7 +210,7 @@ Cache eviction can be forced via `v1/agent/cache-clear` endpoint, or via lease/t
 
     ```plaintext
     curl --request POST --data '{ "type": "lease", "value": "aws/creds/readonly" }' \
-         http://127.0.0.1:8300/v1/agent/cache-clear
+         http://127.0.0.1:8400/v1/agent/cache-clear
     ```
     The agent log should show:
 

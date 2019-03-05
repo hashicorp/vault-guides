@@ -27,7 +27,6 @@ vault3 () {
   VAULT_ADDR=http://127.0.0.1:8204 vault $@
 }
 
-
 vault4 () {
   VAULT_ADDR=http://127.0.0.1:8206 vault $@
 }
@@ -430,6 +429,7 @@ FAILBACK - Option 2 - relevant for Vault >= 0.9.1
 This scenario assumes the primary was demoted
 ```
 # Promote original Vault instance back to disaster recovery primary
+##TODO - Get new dr_operation_token
 vault write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
 vault write -f /sys/replication/dr/primary/enable
 NEW_PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )

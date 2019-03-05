@@ -17,6 +17,7 @@ NOTE: the commands in here are specific to Vault version >= 0.8
 alias vrd='VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8200 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8200 -dev-ha -dev-transactional'
 alias vrd2="VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8202 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8202 -dev-ha -dev-transactional"
 alias vrd3="VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8204 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8204 -dev-ha -dev-transactional"
+alias vrd4="VAULT_UI=true VAULT_REDIRECT_ADDR=http://127.0.0.1:8206 vault server -log-level=trace -dev -dev-root-token-id=root -dev-listen-address=127.0.0.1:8206 -dev-ha -dev-transactional"
 
 vault2 () {
   VAULT_ADDR=http://127.0.0.1:8202 vault $@
@@ -26,6 +27,11 @@ vault3 () {
   VAULT_ADDR=http://127.0.0.1:8204 vault $@
 }
 
+
+vault4 () {
+  VAULT_ADDR=http://127.0.0.1:8206 vault $@
+}
+
 ```
 
 Spin it up locally on laptop in three separate terminals
@@ -33,6 +39,7 @@ Spin it up locally on laptop in three separate terminals
 vrd
 vrd2
 vrd3
+vrd4
 ```
 
 Make sure you write down the unseal key of "vrd" for DR setup command.
@@ -41,6 +48,7 @@ Vault UI links:
 http://127.0.0.1:8200  
 http://127.0.0.1:8202  
 http://127.0.0.1:8204  
+http://127.0.0.1:8206  
 
 Ensure you have the following environment variables configured
 
@@ -72,12 +80,12 @@ Model is as follows
 
 setup performance replication (vault->vault2)
 ```sh
-vault auth root
+vault login root
 vault write -f sys/replication/performance/primary/enable
 sleep 10
 PRIMARY_PERF_TOKEN=$(vault write -format=json sys/replication/performance/primary/secondary-token id=vault2 \
   | jq --raw-output '.wrap_info .token' )
-vault2 auth root
+vault2 login root
 vault2 write sys/replication/performance/secondary/enable token=${PRIMARY_PERF_TOKEN}
 
 ```
@@ -130,11 +138,11 @@ curl     http://127.0.0.1:8202/v1/sys/replication/status
 
 setup DR replication (vault -> vault3)
 ```sh
-vault auth root
+vault login root
 vault write -f /sys/replication/dr/primary/enable
 sleep 10
-PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
-vault3 auth root
+PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id="vault3" | jq --raw-output '.wrap_info .token' )
+vault3 login root
 vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ```
@@ -201,7 +209,7 @@ export VAULT_ADDR3=http://127.0.0.1:8204
 curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt
 
 ## Generate one time password (otp) 
-DR_OTP=$(vault3 operator generate-root -generate-otp)
+DR_OTP=$(vault3 operator generate-root -dr-token -generate-otp)
 
 ## Initiate DR token generation, create nonce
 NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
@@ -247,7 +255,6 @@ ENCODED_TOKEN=$(curl \
 ## }
 ##
 
-ENCODED_TOKEN=
 
 DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN})
 ```
@@ -255,7 +262,7 @@ DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCOD
 
 create admin  user
 ```sh
-vault auth root
+vault login root
 # setup vault admin user
 vault auth-enable userpass
 # create vault user policy
@@ -270,7 +277,7 @@ vault write auth/userpass/users/vault password=vault policies=vault-admin
 
 create regular user and write some data
 ```sh
-vault auth root
+vault login root
 vault write auth/userpass/users/drtest password=drtest policies=user
 
 echo '
@@ -410,11 +417,11 @@ vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/performance/primary/disable
 
 # enable vault as DR secondary to vault3
-vault3 auth root
+vault3 login root
 vault3 write -f /sys/replication/dr/primary/enable
 PRIMARY_DR_TOKEN=$(vault3 write -format=json /sys/replication/dr/primary/secondary-token id=vault | jq --raw-output '.wrap_info .token' )
 sleep 10
-vault auth root
+vault login root
 vault write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 sleep 10  
 ```

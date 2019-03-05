@@ -3,7 +3,7 @@ Vault is a lightweight binary that runs as a single process. This allows multipl
 
 The first Vault will be the primary, both for performance and for DR replications. The second Vault will be the secondary for performance, while the third will be the secondary for DR. 
 
-More information on performance and DR replication can be found HERE 
+More information on performance and DR replication can be found https://www.vaultproject.io/docs/enterprise/replication/index.html 
 
 Note: Requires Vault Enterprise binary in your local OS flavor. Instructions assume bash and common shell operations.
 
@@ -403,7 +403,7 @@ The environment looks like the following at this step:
 
 
 FAILBACK - Option 1  - relevant for Vault 0.8-0.9
-Note that this is not an idea situation today, as we must first sync DR replication set back to vault, then perform another failover such that vault is the perf primary/dr primary.
+Note that this is not an ideal situation today, as we must first sync DR replication set back to vault, then perform another failover such that vault is the perf primary/dr primary.
 ```
 # Disable replication on vault (if not already done)
 vault write -f /sys/replication/dr/primary/disable

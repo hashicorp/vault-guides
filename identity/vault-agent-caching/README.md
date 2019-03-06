@@ -126,12 +126,18 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ more vault-token-via-agent
     ```
 
-1. Log in as `student` user
+1. Also, verify that `VAULT_AGENT_ADDR` has been set correctly: `echo $VAULT_AGENT_ADDR`
+
+1. Log in as `student` user:
 
     ```shell
-    # Login with username 'student' and password is "pAssw0rd"
+    # Login with username 'student' and password is "pAssw0rd" via CLI
+    $ vault login -method=userpass username="student" password="pAssw0rd"
+
+
+    # Or, login via API
     $ curl --request POST --data '{"password": "pAssw0rd"}' \
-           http://127.0.0.1:8007/v1/auth/userpass/login/student | jq
+           $VAULT_AGENT_ADDR/v1/auth/userpass/login/student | jq
     {
       ...
       "auth": {
@@ -143,7 +149,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ export VAULT_TOKEN="s.3vfZXvNcgiIGdJM5gqdSkOlo"
     ```
 
-    >**NOTE:** You send the API request via agent proxy (`http://127.0.0.1:8007`) rather than `VAULT_ADDR`.
+    >**NOTE:** You send the API request via agent proxy (`$VAULT_AGENT_ADDR`) rather than `VAULT_ADDR`.
 
     Examine the agent log in the other terminal:
 
@@ -160,36 +166,54 @@ These assets are provided to provision AWS resources to perform the steps descri
 
 1. Verify that you can get an AWS credentials
 
-    ```plaintext
-    $ curl -s http://127.0.0.1:8007/v1/aws/creds/readonly | jq
+    ```shell
+    # CLI command
+    $ vault read aws/creds/readonly
+
+    # API call using cURL
+    $ curl -s $VAULT_AGENT_ADDR/v1/aws/creds/readonly | jq
     ```
 
     Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8007).
 
-    >**NOTE:**  In Vault 1.1-beta, the resulting secrets from these auto-auth token calls are ***not*** cached. They **will be** in the non-beta version.
-
-    To _workaround_ this, pass the `student` token in the header with Vault 1.1-beta
+    Examine the agent log in the other terminal:
 
     ```plaintext
-    $ curl -s --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8007/v1/aws/creds/readonly | jq
+    ...
+    [INFO]  cache: received request: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache: using auto auth token: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: forwarding request: path=/v1/aws/creds/readonly method=GET
+    [INFO]  cache.apiproxy: forwarding request: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: processing lease response: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: storing response into the cache: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: initiating renewal: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: secret renewed: path=/v1/aws/creds/readonly
     ```
 
 1. Create a token to see the agent behavior:
 
-    ```plaintext
-    $ curl --header "X-Vault-Token: $VAULT_TOKEN" http://127.0.0.1:8007/v1/auth/token/create | jq
+    ```shell
+    # CLI command
+    $ vault token create
+
+    # API call using cURL
+    $ curl --header "X-Vault-Token: $VAULT_TOKEN" $VAULT_AGENT_ADDR/v1/auth/token/create | jq
     ```
 
 ## Cache Eviction
 
-Cache eviction can be forced via `v1/agent/cache-clear` endpoint, or via lease/token revocation.
+Cache eviction can be forced via `/agent/v1/cache-clear` endpoint, or via lease/token **revocation**.
 
 1. Revoke a cached token
 
-    ```plaintext
+    ```shell
+    # CLI command
+    $ vault token revoke s.AvjnUWFQ3RNa6IzkM9WProxS
+
+    # API call using cURL
     $ curl --header "X-Vault-Token: $VAULT_TOKEN" --request POST \
            --data '{"token": "s.AvjnUWFQ3RNa6IzkM9WProxS"}' \
-           http://127.0.0.1:8007/v1/auth/token/revoke
+           $VAULT_AGENT_ADDR/v1/auth/token/revoke
     ```    
 
     Examine the agent log:
@@ -210,7 +234,7 @@ Cache eviction can be forced via `v1/agent/cache-clear` endpoint, or via lease/t
 
     ```plaintext
     curl --request POST --data '{ "type": "lease", "value": "aws/creds/readonly" }' \
-         http://127.0.0.1:8007/v1/agent/cache-clear
+         $VAULT_AGENT_ADDR/agent/v1/cache-clear
     ```
     The agent log should show:
 

@@ -77,7 +77,11 @@ These assets are provided to provision AWS resources to perform the steps descri
 
 1. SSH into the Vault **client** instance: `ssh -i <path_to_key> ubuntu@<public_ip_of_client>`
 
-1. Ensure that VAULT_ADDR has been set: `echo $VAULT_ADDR`
+1. Ensure that VAULT_ADDR has been set:
+
+    ```plaintext
+    $ echo $VAULT_ADDR
+    ```
 
 1. On the **client** instance, examine the Vault Agent file, `vault-agent.hcl`:
 
@@ -126,7 +130,11 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ more vault-token-via-agent
     ```
 
-1. Also, verify that `VAULT_AGENT_ADDR` has been set correctly: `echo $VAULT_AGENT_ADDR`
+1. Also, verify that `VAULT_AGENT_ADDR` has been set correctly:
+
+    ```plaintext
+    $ echo $VAULT_AGENT_ADDR`
+    ```
 
 1. Log in as `student` user:
 

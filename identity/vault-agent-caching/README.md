@@ -133,7 +133,7 @@ These assets are provided to provision AWS resources to perform the steps descri
 1. Also, verify that `VAULT_AGENT_ADDR` has been set correctly:
 
     ```plaintext
-    $ echo $VAULT_AGENT_ADDR`
+    $ echo $VAULT_AGENT_ADDR
     ```
 
 1. Log in as `student` user:
@@ -252,7 +252,7 @@ Cache eviction can be forced via `/agent/v1/cache-clear` endpoint, or via lease/
 
 ## Clean up
 
-1. Revoke all AWS leases
+1. Revoke all AWS leases from the **server** host:
 
     ```plaintext
     $ vault lease revoke -prefix aws/creds

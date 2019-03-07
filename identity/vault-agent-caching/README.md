@@ -1,6 +1,6 @@
 # [Vault 1.1 Beta] Vault Agent Caching
 
-These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Caching](https://www.vaultproject.io/docs/agent/caching/index.html).
+These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Caching](https://learn.hashicorp.com/vault/identity-access-management/agent-caching).
 
 **NOTE:** Currently, Vault 1.1 is in _beta_.
 

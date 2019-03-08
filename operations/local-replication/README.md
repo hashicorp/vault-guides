@@ -227,7 +227,8 @@ PRIMARY_UNSEAL_KEY= PASTE UNSEAL KEY HERE
 
 ## Initiate DR token generation, provide unseal keys (1 unseal key in our example)
 ## THIS IS BROKEN IN 0.9.5,0.9.6 AND WILL BE FIXED IN 0.10
-ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} )
+ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep -i encoded | awk '{print $3}'  )
+
 ## API workaround for above:
 
 ## create payload.json
@@ -367,6 +368,11 @@ diff ~/.vault-token ~/.vault-token-DRTEST
 ## Promote DR secondary to primary
 vault3 write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
 
+## Make vault DR secondary to vault3 (primary)
+PRIMARY_DR_TOKEN=$(vault3 write -format=json /sys/replication/dr/primary/secondary-token id=vault | jq --raw-output '.wrap_info .token' )
+vault login root
+vault write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+
 # check status
 vault3 read -format=json sys/replication/status
 
@@ -428,10 +434,22 @@ sleep 10
 FAILBACK - Option 2 - relevant for Vault >= 0.9.1
 This scenario assumes the primary was demoted
 ```
+#Enable vault as DR secondary to vault3
+vault3 login root
+vault3 write -f /sys/replication/dr/primary/enable
+PRIMARY_DR_TOKEN=$(vault3 write -format=json /sys/replication/dr/primary/secondary-token id=vault | jq --raw-output '.wrap_info .token' )
+vault login root
+vault write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+
 # Promote original Vault instance back to disaster recovery primary
-##TODO - Get new dr_operation_token
+DR_OTP=$(vault operator generate-root -dr-token -generate-otp)
+NONCE=$(vault operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
+ENCODED_TOKEN=$(vault operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep -i encoded | awk '{print $3}'  )
+DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCODED_TOKEN})
 vault write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
 vault write -f /sys/replication/dr/primary/enable
+
+#Demote vault 3 to secondary to return to original setup 
 NEW_PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
 vault3 write -f /sys/replication/dr/primary/demote
 vault3 write /sys/replication/dr/secondary/update-primary primary_api_addr=127.0.0.1:8200 token=${NEW_PRIMARY_DR_TOKEN}
@@ -453,18 +471,18 @@ The environment looks like the following at this step:
 ```
 +---------------------------------+                    +------------------------------------+
 | vault                           |                    | vault2 port: 8202.                 |
-| DR secondary replication        |                    | Performance secondary replication  |
+| DR secondary replication        | +-------------->   | Performance secondary replication  |
 | vault3->vault                   |                    | vault3 --> vault2                  |
 |                                 |                    |                                    |
 +---------------------------------+                    +------------------------------------+
 
-              ^                                                           ^
-              |                                                           |
-              |                                                           |
-              +                                                           |
-+---------------------------------+                                       |
-| vault3 port:8204                |                                       |
-| DR primary replication          |  +------------------------------------+
+              ^                                                           
+              |                                                           
+              |                                                           
+              +                                                           
++---------------------------------+                                       
+| vault3 port:8204                |                                       
+| DR primary replication          |  
 | Performance primary replication |
 | vault3 --> vault2               |
 +---------------------------------+

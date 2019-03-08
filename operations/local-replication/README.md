@@ -146,6 +146,17 @@ vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ```
 
+## Optional 4th cluster to provide DR performance secondary (vault2) 
+setup DR replication (vault2 -> vault4)
+```sh
+vault2 login root 
+vault2 write -f sys/replication/dr/primary/enable
+PRIMARY_DR_TOKEN=$(vault2 write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
+vault4 login root
+vault4 write sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
+
+```
+
 Validation:
 ```sh
 curl     http://127.0.0.1:8200/v1/sys/replication/status
@@ -356,7 +367,6 @@ vault write -f /sys/replication/performance/primary/demote
 
 ## demoting dr primary to secondary puts it in cold standby
 # vault write -f /sys/replication/dr/primary/demote
-
 
 # check performance secondary for access to secrets etc
 vault2 auth -method=userpass username=drtest password=drtest

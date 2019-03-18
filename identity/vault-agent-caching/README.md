@@ -77,12 +77,6 @@ These assets are provided to provision AWS resources to perform the steps descri
 
 1. SSH into the Vault **client** instance: `ssh -i <path_to_key> ubuntu@<public_ip_of_client>`
 
-1. Ensure that VAULT_ADDR has been set:
-
-    ```plaintext
-    $ echo $VAULT_ADDR
-    ```
-
 1. On the **client** instance, examine the Vault Agent file, `vault-agent.hcl`:
 
     ```shell
@@ -90,14 +84,6 @@ These assets are provided to provision AWS resources to perform the steps descri
 
     exit_after_auth = false
     pid_file = "./pidfile"
-
-    cache {
-       use_auto_auth_token = true
-       listener "tcp" {
-          address = "127.0.0.1:8007"
-          tls_disable = true
-       }
-    }
 
     auto_auth {
        method "aws" {
@@ -114,9 +100,22 @@ These assets are provided to provision AWS resources to perform the steps descri
            }
        }
     }
+
+    cache {
+       use_auto_auth_token = true       
+    }
+
+    listener "tcp" {
+       address = "127.0.0.1:8200"
+       tls_disable = true
+    }
+
+    vault {
+       address = "http://<vault-server-host>:8200"
+    }
     ```
 
-    **NOTE:** Notice the `cache` block. The TCP listener is configured to listen to port 8007 on the client host.
+    **NOTE:** Notice the `cache` block. The TCP listener is configured to listen to port 8200 on the client host.
 
 1. Run Vault Agent
 
@@ -134,6 +133,32 @@ These assets are provided to provision AWS resources to perform the steps descri
 
     ```plaintext
     $ echo $VAULT_AGENT_ADDR
+    ```
+
+1. Verify that you can get an AWS credentials
+
+    ```shell
+    # CLI command
+    $ vault read aws/creds/readonly
+
+    # API call using cURL
+    $ curl -s $VAULT_AGENT_ADDR/v1/aws/creds/readonly | jq
+    ```
+
+    Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8200).
+
+    Examine the agent log in the other terminal:
+
+    ```plaintext
+    ...
+    [INFO]  cache: received request: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache: using auto auth token: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: forwarding request: path=/v1/aws/creds/readonly method=GET
+    [INFO]  cache.apiproxy: forwarding request: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: processing lease response: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: storing response into the cache: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: initiating renewal: path=/v1/aws/creds/readonly method=GET
+    [DEBUG] cache.leasecache: secret renewed: path=/v1/aws/creds/readonly
     ```
 
 1. Log in as `student` user:
@@ -170,32 +195,6 @@ These assets are provided to provision AWS resources to perform the steps descri
     [DEBUG] cache.leasecache: processing auth response: path=/v1/auth/userpass/login/student method=POST
     [DEBUG] cache.leasecache: storing response into the cache: path=/v1/auth/userpass/login/student method=POST
     ...
-    ```
-
-1. Verify that you can get an AWS credentials
-
-    ```shell
-    # CLI command
-    $ vault read aws/creds/readonly
-
-    # API call using cURL
-    $ curl -s $VAULT_AGENT_ADDR/v1/aws/creds/readonly | jq
-    ```
-
-    Since the `use_auto_auth_token` was set to **true** in the Vault Agent's configuration, you can send the request straight through the proxy (http://127.0.0.1:8007).
-
-    Examine the agent log in the other terminal:
-
-    ```plaintext
-    ...
-    [INFO]  cache: received request: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache: using auto auth token: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: forwarding request: path=/v1/aws/creds/readonly method=GET
-    [INFO]  cache.apiproxy: forwarding request: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: processing lease response: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: storing response into the cache: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: initiating renewal: path=/v1/aws/creds/readonly method=GET
-    [DEBUG] cache.leasecache: secret renewed: path=/v1/aws/creds/readonly
     ```
 
 1. Create a token to see the agent behavior:

@@ -23,7 +23,7 @@ variable vault_server_count {
 
 # URL for Vault OSS binary
 variable vault_zip_file {
-    default = "https://releases.hashicorp.com/vault/1.1.0-beta2/vault_1.1.0-beta2_linux_amd64.zip"
+    default = "https://releases.hashicorp.com/vault/1.1.0/vault_1.1.0_linux_amd64.zip"
 }
 
 # URL for Consul OSS binary

@@ -313,7 +313,7 @@ logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 
 sudo tee -a /etc/environment <<EOF
 export VAULT_ADDR=http://${tpl_vault_server_addr}:8200
-export VAULT_AGENT_ADDR=http://127.0.0.1:8007
+export VAULT_AGENT_ADDR=http://127.0.0.1:8200
 export VAULT_SKIP_VERIFY=true
 EOF
 
@@ -327,14 +327,6 @@ EOF
 cat << EOF > /home/ubuntu/vault-agent.hcl
 exit_after_auth = false
 pid_file = "./pidfile"
-
-cache {
-   use_auto_auth_token = true
-   listener "tcp" {
-      address = "127.0.0.1:8007"
-      tls_disable = true
-   }
-}
 
 auto_auth {
    method "aws" {
@@ -350,6 +342,19 @@ auto_auth {
            path = "/home/ubuntu/vault-token-via-agent"
        }
    }
+}
+
+cache {
+   use_auto_auth_token = true
+}
+
+listener "tcp" {
+   address = "127.0.0.1:8200"
+   tls_disable = true
+}
+
+vault {
+   address = "http://${tpl_vault_server_addr}:8200"
 }
 EOF
 

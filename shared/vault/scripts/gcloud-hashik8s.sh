@@ -41,7 +41,7 @@ watch -n 5 -g kubectl get all --all-namespaces
 helm install --name myconsul https://github.com/hashicorp/consul-helm/archive/v0.6.0.tar.gz
 
 # Install community vault chart via repo.
-helm install incubator/vault --name helm-vault --set vault.dev=false --set vault.config.storage.consul.address="myconsul:8500",vault.config.storage.consul.path="vault"
+helm install incubator/vault --name helm-vault --set vault.dev=false --set vault.config.storage.consul.address="myconsul-server:8500",vault.config.storage.consul.path="vault"
 
 # Expose another service for public LoadBalancer
 kubectl expose deployment helm-vault --target-port=8200 --type=LoadBalancer --name=vault-internal

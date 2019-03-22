@@ -15,7 +15,7 @@ variable "location" {
 }
 
 variable "environment" {
-    default = "Test"
+    default = "learn"
 }
 
 # ---------------------------
@@ -42,7 +42,7 @@ variable "vm_name" {
 }
 
 variable "vault_download_url" {
-    default = "https://releases.hashicorp.com/vault/1.0.3/vault_1.0.3_linux_amd64.zip"
+    default = "https://releases.hashicorp.com/vault/1.1.0/vault_1.1.0_linux_amd64.zip"
 }
 
 variable "resource_group_name" {

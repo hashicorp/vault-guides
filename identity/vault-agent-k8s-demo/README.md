@@ -40,6 +40,40 @@ To perform the tasks described in this guide, you need:
 
     **NOTE:** This guide assumes that _version 1_ of `kv` secret engine is mounted at `secret/`.
 
+1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value if different (line 43 and 74).
+
+    ```plaintext
+    ...
+    initContainers:
+      # Vault container
+      - name: vault-agent-auth
+        image: vault
+
+        ...
+
+        # This assumes Vault running on local host and K8s running in Minikube using VirtualBox
+        env:
+          - name: VAULT_ADDR
+            value: http://192.0.2.5:8200
+      ...
+
+      containers:
+        # Consul Template container
+        - name: consul-template
+          image: hashicorp/consul-template:alpine
+          imagePullPolicy: Always
+
+          ...
+
+          env:
+            - name: HOME
+              value: /home/vault
+
+            - name: VAULT_ADDR
+              value: http://192.0.2.5:8200
+        ...
+    ```
+
 1. Now, create a Pod using ConfigMap named, `example-vault-agent-config` pulling files from `configs-k8s` directory:
 
     ```shell

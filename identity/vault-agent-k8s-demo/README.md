@@ -42,6 +42,8 @@ To perform the tasks described in this guide, you need:
 
 1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value if different (line 43 and 74).
 
+    **Example:**
+
     ```plaintext
     ...
     initContainers:

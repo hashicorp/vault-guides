@@ -3,7 +3,13 @@
 # Create a policy file, myapp-kv-ro.hcl
 # This assumes that the Vault server is running kv v1 (non-versioned kv)
 tee myapp-kv-ro.hcl <<EOF
+# For K/V v1 secrets engine
 path "secret/myapp/*" {
+    capabilities = ["read", "list"]
+}
+
+# For K/V v2 secrets engine
+path "secret/data/myapp/*" {
     capabilities = ["read", "list"]
 }
 EOF

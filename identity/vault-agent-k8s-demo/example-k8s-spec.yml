@@ -26,17 +26,16 @@ spec:
     - name: shared-data
       emptyDir: {}
 
-  containers:
+  initContainers:
     # Vault container
     - name: vault-agent-auth
       image: vault
 
       volumeMounts:
-        - name: vault-token
-          mountPath: /home/vault
-
         - name: config
           mountPath: /etc/vault
+        - name: vault-token
+          mountPath: /home/vault
 
       # This assumes Vault running on local host and K8s running in Minikube using VirtualBox
       env:
@@ -51,9 +50,10 @@ spec:
           #"-log-level=debug",
         ]
 
+  containers:
     # Consul Template container
     - name: consul-template
-      image: hashicorp/consul-template
+      image: hashicorp/consul-template:alpine
       imagePullPolicy: Always
 
       volumeMounts:

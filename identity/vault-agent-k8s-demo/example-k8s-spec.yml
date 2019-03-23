@@ -40,7 +40,7 @@ spec:
       # This assumes Vault running on local host and K8s running in Minikube using VirtualBox
       env:
         - name: VAULT_ADDR
-          value: http://104.42.158.251:8200
+          value: http://10.0.2.2:8200
 
       # Run the Vault agent
       args:
@@ -71,7 +71,7 @@ spec:
           value: /home/vault
 
         - name: VAULT_ADDR
-          value: http://104.42.158.251:8200
+          value: http://10.0.2.2:8200
 
       # Consul-Template looks in $HOME/.vault-token, $VAULT_TOKEN, or -vault-token (via CLI)
       args:

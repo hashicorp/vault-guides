@@ -253,7 +253,7 @@ configure_systemd_resolved() {
   echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
   sudo apt-get install iptables-persistent
-  
+
   sudo systemctl restart systemd-resolved
 }
 
@@ -312,10 +312,70 @@ sudo mkdir -pm 0755 /etc/ssl/vault
 logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 
 sudo tee -a /etc/environment <<EOF
-export VAULT_ADDR=$$VAULT_ADDR
+export VAULT_ADDR="http://${tpl_vault_server_addr}:8200"
 export VAULT_SKIP_VERIFY=true
 EOF
 
 source /etc/environment
+
+##--------------------------------------------------------------------
+## Shortcut script
+##--------------------------------------------------------------------
+cat << EOF > /home/ubuntu/vault-agent.hcl
+exit_after_auth = true
+pid_file = "./pidfile"
+
+auto_auth {
+   method "aws" {
+       mount_path = "auth/aws"
+       config = {
+           type = "iam"
+           role = "dev-role-iam"
+       }
+   }
+
+   sink "file" {
+       config = {
+           path = "/home/ubuntu/vault-token-via-agent"
+       }
+   }
+}
+
+vault {
+   address = "http://${tpl_vault_server_addr}:8200"
+}
+EOF
+
+sudo chmod 0775 /home/ubuntu/vault-agent.hcl
+
+
+cat << EOF > /home/ubuntu/vault-agent-wrapped.hcl
+exit_after_auth = true
+pid_file = "./pidfile"
+
+auto_auth {
+   method "aws" {
+       mount_path = "auth/aws"
+       config = {
+           type = "iam"
+           role = "dev-role-iam"
+       }
+   }
+
+   sink "file" {
+       wrap_ttl = "5m"
+       config = {
+           path = "/home/ubuntu/vault-token-via-agent"
+       }
+   }
+}
+
+vault {
+   address = "http://${tpl_vault_server_addr}:8200"
+}
+EOF
+
+sudo chmod 0775 /home/ubuntu/vault-agent-wrapped.hcl
+
 
 logger "Complete"

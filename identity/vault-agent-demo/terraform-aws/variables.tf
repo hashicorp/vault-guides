@@ -23,12 +23,12 @@ variable vault_server_count {
 
 # URL for Vault OSS binary
 variable vault_zip_file {
-    default = "https://releases.hashicorp.com/vault/1.0.1/vault_1.0.1_linux_amd64.zip"
+    default = "https://releases.hashicorp.com/vault/1.1.0/vault_1.1.0_linux_amd64.zip"
 }
 
 # URL for Consul OSS binary
 variable consul_zip_file {
-  default = "https://releases.hashicorp.com/consul/1.4.0/consul_1.4.0_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip"
 }
 
 # Instance size

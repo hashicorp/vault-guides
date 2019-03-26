@@ -31,7 +31,6 @@ data "template_file" "vault-client" {
     tpl_consul_zip_file    = "${var.consul_zip_file}"
     tpl_consul_dc          = "${var.consul_dc}"
     tpl_vault_service_name = "vault-${var.environment_name}"
-
     tpl_vault_server_addr  = "${aws_instance.vault-server.0.private_ip}"
   }
 }

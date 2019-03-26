@@ -39,7 +39,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     $ terraform plan
 
     # Output provides the SSH instruction
-    $ terraform apply
+    $ terraform apply -auto-approve
     ```
 
 1. SSH into the Vault **server** instance: `ssh -i <path_to_key> ubuntu@<public_ip_of_server>`

@@ -1,4 +1,5 @@
-vault_url = "https://releases.hashicorp.com/vault/1.0.1/vault_1.0.1_linux_amd64.zip"
-
+#------------------------------------------------
+# Modify the region to use different AWS region
+#------------------------------------------------
 aws_region = "us-west-1"
 aws_zone = "us-west-1a"

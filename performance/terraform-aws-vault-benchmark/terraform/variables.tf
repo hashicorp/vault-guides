@@ -1,0 +1,15 @@
+variable "owner" {}
+variable "ttl" {}
+variable "env" {}
+
+variable "consul_ami" {}
+variable "vault_ami" {}
+
+
+variable "vault_ips" {
+    default = {
+        "0" = "10.0.1.15"
+        "1" = "10.0.2.16"
+        "2" = "10.0.3.17"
+    }
+}

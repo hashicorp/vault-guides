@@ -1,5 +1,9 @@
 # terraform-aws-vault-benchmark
 
+## Disclaimer
+This repo is intended to provide guidance and will not be officially maintained by HashiCorp.
+
+## Overview
 This repo sets up a Vault cluster in AWS that reflects our [reference architecture](https://learn.hashicorp.com/vault/operations/ops-reference-architecture).  The goal of this repo is to provide a batteries included Terraform environment to capture key performance metrics and telemetry when benchmarking Vault.
 
 This environment contains the following servers:

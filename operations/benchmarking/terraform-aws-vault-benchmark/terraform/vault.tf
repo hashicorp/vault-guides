@@ -59,5 +59,6 @@ data "template_file" "vault" {
     cert = "${tls_locally_signed_cert.vault.cert_pem}"
     key  = "${tls_private_key.vault.private_key_pem}"
     ca   = "${tls_self_signed_cert.root.cert_pem}"
+    region = "${var.region}"
   }
 }

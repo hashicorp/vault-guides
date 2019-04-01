@@ -27,7 +27,7 @@ sudo sed '1 i nameserver 127.0.0.1' -i /etc/resolv.conf
 
 cat <<EOF> /etc/consul.d/consul.json
 {
-  "datacenter": "us-east-1",
+  "datacenter": "dc1",
   "advertise_addr": "$${local_ipv4}",
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
@@ -63,7 +63,7 @@ listener "tcp" {
 }
 
 seal "awskms" {
-  region     = "us-east-1"
+  region     = "${region}"
   kms_key_id = "${kms_id}"
 }
 
@@ -113,7 +113,7 @@ sudo  cat <<EOF | sudo tee /etc/telegraf/telegraf.conf
 
 [global_tags]
   role = "vault-server"
-  datacenter = "us-east-1"
+  datacenter = "dc1"
 
 [agent]
   interval = "10s"

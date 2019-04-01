@@ -38,7 +38,7 @@ This repo is designed to work with the following tools:
 * https://github.com/wg/wrk
 * https://github.com/giltene/wrk2
 
-For more detailed test scripts see: https://github.com/hashicorp/vault-guides/tree/master/operations/benchmarking/wrk-core-vault-operations
+For more detailed test scripts can be found [here](../wrk-core-vault-operations).
 
 Depending on the level of concurrency you use you may need to adjust the **ulimit** when running wrk/wrk2 on either the benchmark server or your remote machine. Using both of these tools together can provide a holistic assessment of both stress and load capabilities of your cluster.
 

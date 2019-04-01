@@ -25,7 +25,7 @@ rm -f /etc/consul.d/consul-server.json
 
 cat <<EOF> /etc/consul.d/consul.json
 {
-  "datacenter": "us-east-1",
+  "datacenter": "dc1",
   "advertise_addr": "$${local_ipv4}",
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",

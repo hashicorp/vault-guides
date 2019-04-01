@@ -23,7 +23,7 @@ sudo sed '1 i nameserver 127.0.0.1' -i /etc/resolv.conf
 
 cat <<EOF> /etc/consul.d/consul.json
 {
-  "datacenter": "us-east-1",
+  "datacenter": "dc1",
   "advertise_addr": "$${local_ipv4}",
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",
@@ -65,6 +65,24 @@ sudo cat <<EOF> /etc/consul.d/grafana-service.json
       "id": "grafana",
       "name": "grafana TCP Check",
       "tcp": "localhost:3000",
+      "interval": "10s",
+      "timeout": "1s"
+      }
+    ]
+  }
+}
+EOF
+
+sudo cat <<EOF> /etc/consul.d/prometheus-service.json
+{
+  "service": {
+    "name": "prometheus",
+    "port": 9090,
+    "checks": [
+      {
+      "id": "prometheus",
+      "name": "prometheus TCP Check",
+      "tcp": "localhost:9090",
       "interval": "10s",
       "timeout": "1s"
       }

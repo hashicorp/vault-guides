@@ -2,6 +2,9 @@ variable "owner" {}
 variable "ttl" {}
 variable "env" {}
 
+variable "azs" { type = "list" }
+variable "region" {}
+
 variable "consul_ami" {}
 variable "vault_ami" {}
 

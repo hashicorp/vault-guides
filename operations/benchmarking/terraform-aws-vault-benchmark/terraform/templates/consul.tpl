@@ -25,7 +25,7 @@ rm -f /etc/consul.d/consul-server.json
 
 cat <<EOF> /etc/consul.d/consul.json
 {
-  "datacenter": "us-east-1",
+  "datacenter": "dc1",
   "bootstrap_expect": 3,
   "server": true,
   "advertise_addr": "$${local_ipv4}",
@@ -58,7 +58,7 @@ sudo  cat <<EOF | sudo tee /etc/telegraf/telegraf.conf
 
 [global_tags]
   role = "consul-server"
-  datacenter = "us-east-1"
+  datacenter = "dc1"
 
 [agent]
   interval = "10s"

@@ -22,7 +22,7 @@ sudo sed '1 i nameserver 127.0.0.1' -i /etc/resolv.conf
 
 cat <<EOF> /etc/consul.d/consul.json
 {
-  "datacenter": "us-east-1",
+  "datacenter": "dc1",
   "advertise_addr": "$${local_ipv4}",
   "data_dir": "/opt/consul/data",
   "client_addr": "0.0.0.0",

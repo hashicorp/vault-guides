@@ -1,4 +1,9 @@
 # Vault Benchmarking Scripts
+
+## Disclaimer
+This repo is intended to provide guidance and will not be officially maintained by HashiCorp.
+
+## Overview
 This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine.
 
 ## Scripts

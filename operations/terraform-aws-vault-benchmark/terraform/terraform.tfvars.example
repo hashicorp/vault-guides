@@ -1,0 +1,5 @@
+owner="me@hashicorp.com"
+ttl="8"
+env="vault-benchmark"
+consul_ami="ami-00000000000000000"
+vault_ami="ami-00000000000000000"

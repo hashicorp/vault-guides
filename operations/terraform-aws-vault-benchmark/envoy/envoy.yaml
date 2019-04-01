@@ -1,0 +1,113 @@
+admin:
+  access_log_path: /tmp/admin_access.log
+  address:
+    socket_address: { address: 0.0.0.0, port_value: 9901 }
+stats_sinks:
+  - name: envoy.dog_statsd
+    config:
+      address:
+        socket_address:
+          address: 127.0.0.1
+          port_value: 8125
+static_resources:
+  listeners:
+  - name: vault_0
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 8080 }
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: vault_http
+          codec_type: AUTO
+          route_config:
+            name: vault_route
+            virtual_hosts:
+            - name: vault_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: "vault_service"
+                  retry_policy: {num_retries: 3, per_try_timeout: 5s, retry_on: '5xx'}
+          http_filters:
+          - name: envoy.router
+  - name: vault_1
+    address:
+      socket_address: { address: 0.0.0.0, port_value: 8443 }
+    filter_chains:
+    - filters:
+      - name: envoy.http_connection_manager
+        config:
+          stat_prefix: vault_https
+          codec_type: AUTO
+          route_config:
+            name: vault_route
+            virtual_hosts:
+            - name: vault_service
+              domains: ["*"]
+              routes:
+              - match:
+                  prefix: "/"
+                route:
+                  cluster: "vault_service"
+                  retry_policy: {num_retries: 3, per_try_timeout: 5s, retry_on: '5xx'}
+          http_filters:
+          - name: envoy.router
+      tls_context:
+        common_tls_context:
+          tls_certificates:
+            - certificate_chain:
+                filename: "/etc/envoy/envoy.crt"
+              private_key:
+                filename: "/etc/envoy/envoy.key"
+  clusters:
+  - name: vault_service
+    connect_timeout: 10s
+    circuit_breakers:
+      thresholds:
+        - priority: DEFAULT
+          max_connections: 30000
+          max_requests: 30000
+          max_pending_requests: 30000
+          max_retries: 5000
+        - priority: HIGH
+          max_connections: 30000
+          max_requests: 30000
+          max_pending_requests: 30000
+          max_retries: 5000
+    type: STATIC
+    lb_policy: ROUND_ROBIN
+    tls_context:
+      common_tls_context:
+        alpn_protocols: ["h2"]
+    http2_protocol_options: { "max_concurrent_streams": 250 }
+    health_checks:
+      - timeout: 1s
+        interval: 10s
+        interval_jitter: 1s
+        unhealthy_threshold: 3
+        healthy_threshold: 3
+        http_health_check:
+          path: "/v1/sys/health?performancestandbycode=200"
+          use_http2: true
+    load_assignment:
+      cluster_name: vault_service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: 10.0.1.15
+                port_value: 8200
+        - endpoint:
+            address:
+              socket_address:
+                address: 10.0.2.16
+                port_value: 8200
+        - endpoint:
+            address:
+              socket_address:
+                address: 10.0.3.17
+                port_value: 8200

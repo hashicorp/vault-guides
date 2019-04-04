@@ -1,0 +1,8 @@
+gcloud-project = "<PROJECT_ID>"
+account_file_path = "<ACCOUNT_FILE_PATH>"
+
+# gcloud-region = "us-east1"
+# gcloud-zone = "us-east1-b"
+# key_ring = "test"
+# crypto_key = "vault-test"
+# keyring_location = "global"

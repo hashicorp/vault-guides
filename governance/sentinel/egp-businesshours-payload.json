@@ -1,0 +1,5 @@
+{
+  "policy": "aW1wb3J0ICJ0aW1lIgoKIyBXZSBleHBlY3QgcmVxdWVzdHMgdG8gb25seSBoYXBwZW4gZHVyaW5nIHdvcmsgZGF5cyAoMCBmb3IgU3VuZGF5LCA2IGZvciBTYXR1cmRheSkKd29ya2RheXMgPSBydWxlIHsKICAgIHRpbWVzcGFjZS53ZWVrZGF5ID4gMCBhbmQgdGltZXNwYWNlLndlZWtkYXkgPCA2IAp9CgojIFdlIGV4cGVjdCByZXF1ZXN0cyB0byBvbmx5IGhhcHBlbiBkdXJpbmcgd29yayBob3Vycwp3b3JraG91cnMgPSBydWxlIHsKICAgIHRpbWVzcGFjZS5ob3VyID4gNyBhbmQgdGltZXNwYWNlLmhvdXIgPCAxOCAKfQoKbWFpbiA9IHJ1bGUgewogICAgd29ya2RheXMgYW5kIHdvcmtob3Vycwp9",
+  "paths": [ "secret/accounting/*" ],
+  "enforcement_level": "hard-mandatory"
+}

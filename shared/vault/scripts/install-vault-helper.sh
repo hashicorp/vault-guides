@@ -8,7 +8,7 @@ logger() {
 
 logger "Running"
 
-VAULT_HELPER_VERSION="0.1.3"
+VAULT_HELPER_VERSION="0.1.4"
 VAULT_HELPER_ZIP="vault-ssh-helper_${VAULT_HELPER_VERSION}_linux_amd64.zip"
 VAULT_HELPER_URL="https://releases.hashicorp.com/vault-ssh-helper/${VAULT_HELPER_VERSION}/vault-ssh-helper_${VAULT_HELPER_VERSION}_linux_amd64.zip"
 

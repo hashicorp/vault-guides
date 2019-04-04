@@ -1,0 +1,7 @@
+owner="me@hashicorp.com"
+ttl="8"
+region="us-east-1"
+azs=["us-east-1a", "us-east-1b", "us-east-1c"]
+env="vault-benchmark"
+consul_ami="ami-00000000000000000"
+vault_ami="ami-00000000000000000"

@@ -1,0 +1,139 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Networking
+private_ip = ENV['PRIVATE_IP'] || "192.168.50.152"
+
+# Base box selection
+base_box = ENV['BASE_BOX'] || "bento/ubuntu-16.04"
+
+# Consul variables
+consul_install = ["true", "1"].include?((ENV['CONSUL_INSTALL'] || true).to_s.downcase)
+consul_host_port = ENV['CONSUL_HOST_PORT'] || 8500
+consul_version = ENV['CONSUL_VERSION'] || "1.2.3"
+consul_ent_url = ENV['CONSUL_ENT_URL']
+consul_group = "consul"
+consul_user = "consul"
+consul_comment = "Consul"
+consul_home = "/srv/consul"
+
+# Vault variables
+vault_host_port = ENV['VAULT_HOST_PORT'] || 8200
+vault_version = ENV['VAULT_VERSION'] || "0.11.3"
+vault_ent_url = ENV['VAULT_ENT_URL']
+vault_group = "vault"
+vault_user = "vault"
+vault_comment = "Vault"
+vault_home = "/srv/vault"
+
+Vagrant.configure("2") do |config|
+  # Use vagrant insecure public key, comment this out to restrict access
+  config.ssh.insert_key = false
+
+  # Setup networking
+  config.vm.network :private_network, ip: private_ip
+  config.vm.network "private_network", type: "dhcp"
+
+  # Use base_box set at the top of this file
+  config.vm.box = base_box
+  config.vm.hostname = "vault"
+
+  # Bootstrap the vm
+  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
+
+  if (consul_install)
+    # Forward Consul port
+    config.vm.network :forwarded_port, guest: 8500, host: consul_host_port, auto_correct: true
+
+    # Setup Consul user
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
+      env: {
+        "GROUP" => consul_group,
+        "USER" => consul_user,
+        "COMMENT" => consul_comment,
+        "HOME" => consul_home,
+      }
+
+    # Install Consul
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul.sh | bash",
+      env: {
+        "VERSION" => consul_version,
+        "URL" => consul_ent_url,
+        "USER" => consul_user,
+        "GROUP" => consul_group,
+      }
+
+    config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/consul/scripts/install-consul-systemd.sh | bash"
+  end
+
+  # Forward Vault port
+  config.vm.network :forwarded_port, guest: 8200, host: vault_host_port, auto_correct: true
+
+  # Setup Vault user
+  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
+    env: {
+      "GROUP" => vault_group,
+      "USER" => vault_user,
+      "COMMENT" => vault_comment,
+      "HOME" => vault_home,
+    }
+
+  # Install Vault
+  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault.sh | bash",
+    env: {
+      "VERSION" => vault_version,
+      "URL" => vault_ent_url,
+      "USER" => vault_user,
+      "GROUP" => vault_group,
+    }
+
+  config.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/vault/scripts/install-vault-systemd.sh | bash"
+
+  # Increase memory for Parallels Desktop
+  config.vm.provider "parallels" do |p, o|
+    p.memory = "1024"
+  end
+
+  # Increase memory for Virtualbox
+  config.vm.provider "virtualbox" do |vb|
+    vb.memory = "1024"
+  end
+
+  # Increase memory for VMware
+  ["vmware_fusion", "vmware_workstation"].each do |p|
+    config.vm.provider p do |v|
+      v.vmx["memsize"] = "1024"
+    end
+  end
+
+   config.vm.post_up_message = "
+Your Vault dev cluster has been successfully provisioned!
+
+To SSH into a Vault host, run the below command.
+
+  $ vagrant ssh
+
+You can interact with Vault using any of the CLI (https://www.vaultproject.io/docs/commands/index.html)
+or API (https://www.vaultproject.io/api/index.html) commands.
+
+  # The Root token for your Vault -dev instance is set to `root` and placed in /srv/vault/.vault-token,
+  # the `VAULT_TOKEN` environment variable has already been set for you
+  $ echo $VAULT_TOKEN
+  $ sudo cat /srv/vault/.vault-token
+
+  # Use the CLI to write and read a generic secret
+  $ vault kv put secret/cli foo=bar
+  $ vault kv get secret/cli
+
+  # Use the API to write and read a generic secret
+  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" -X POST -d '{\"data\": {\"bar\":\"baz\"}}' http://127.0.0.1:8200/v1/secret/data/api | jq '.'
+  $ curl -H \"X-Vault-Token: $VAULT_TOKEN\" http://127.0.0.1:8200/v1/secret/data/api | jq '.'
+
+Visit the Vault UI: http://#{private_ip}:#{vault_host_port}
+#{consul_install ? 'Visit the Consul UI: http://'+ private_ip + ':' + consul_host_port.to_s : ''}
+
+Don't forget to tear your VM down after.
+
+  $ vagrant destroy
+"
+end

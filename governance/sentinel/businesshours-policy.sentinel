@@ -1,0 +1,15 @@
+import "time"
+
+# We expect requests to only happen during work days (0 for Sunday, 6 for Saturday)
+workdays = rule {
+    time.now.weekday > 0 and time.now.weekday < 6 
+}
+
+# We expect requests to only happen during work hours
+workhours = rule {
+    time.now.hour > 7 and time.now.hour < 18 
+}
+
+main = rule {
+    workdays and workhours
+}

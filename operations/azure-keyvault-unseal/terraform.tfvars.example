@@ -1,0 +1,29 @@
+#------------
+# Required
+#------------
+
+# Provide your tenant ID (Required)
+tenant_id="YOUR_TENANT_ID"
+
+# Public SSH key (Required)
+public_key = "ssh-rsa <rsa_public_key>"
+
+# Azure Client ID (Required)
+client_id = "AZURE-APP-ID"
+
+# Azure Client secret (Required)
+client_secret = "AZURE-APP-PASSWORD"
+
+# Azure account subscription ID (Required)
+subscription_id = "YOUR-AZURE-SUBSCRIPTION-ID"
+
+
+#------------
+# Optional
+#------------
+
+# To overwrite the default (Optional)
+# location="westus"
+
+# To overwrite the default (Optional)
+# environment = "test"

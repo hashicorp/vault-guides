@@ -1,3 +1,0 @@
-[Unit]
-Description=Consul Online
-RefuseManualStart=true

@@ -1,0 +1,31 @@
+aws_region = "us-east-1"
+
+# All resources will be tagged with this
+environment_name = "vault-chef-approle-demo"
+
+# Instance size
+instance_type = "t2.micro"
+
+# VPC ID in which to create security group(s)
+vpc_id = "vpc-123456"
+
+# Subnet ID in which to install
+subnet_id = "subnet-123456"
+
+# EC2 SSH key name to attach to instance
+key_name = "my-key-name"
+
+# S3 bucket for demo
+s3_bucket_name = "my-s3-bucket-name"
+
+# File path to EC2 SSH key (for Chef provisioner connection)
+ec2_pem = "/path/to/EC2/private_key.pem"
+
+# Chef Server IP address (public if you want to access from outside your VPC)
+chef_server_address = "https://10.0.0.0/organizations/demo-org"
+
+# Vault Server IP address (public if you want to access from outside your VPC)
+vault_address = "http://10.0.0.0:8200"
+
+# Token that Terraform will use to retrieve AppRole RoleID from Vault
+vault_token = "InsertRoleIdTokenHere"

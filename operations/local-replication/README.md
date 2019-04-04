@@ -92,6 +92,8 @@ vault2 write sys/replication/performance/secondary/enable token=${PRIMARY_PERF_T
 Validation:
 ```
 curl     http://127.0.0.1:8200/v1/sys/replication/status | jq
+
+```sh
 # Response:
 {  
    ...
@@ -112,7 +114,9 @@ curl     http://127.0.0.1:8200/v1/sys/replication/status | jq
    ...
 }
 
+
 curl     http://127.0.0.1:8202/v1/sys/replication/status | jq
+
 # Response:
 {  
    ...
@@ -148,10 +152,12 @@ vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ## Optional 4th cluster to provide DR performance secondary (vault2) 
 setup DR replication (vault2 -> vault4)
+
 ```
 vault2 login root 
 vault2 write -f sys/replication/dr/primary/enable
 PRIMARY_DR_TOKEN=$(vault2 write -format=json /sys/replication/dr/primary/secondary-token id=vault4 | jq --raw-output '.wrap_info .token' )
+
 vault4 login root
 vault4 write sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
@@ -198,6 +204,7 @@ DR_OTP=$(vault3 operator generate-root -dr-token -generate-otp)
 NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
 
 ## Validate process has started
+
 curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt | jq
 
 
@@ -249,6 +256,7 @@ create admin  user
 vault login root
 # setup vault admin user
 vault auth enable userpass
+
 # create vault user policy
 echo '
 path "*" {
@@ -274,7 +282,6 @@ vault write supersecret/drtest username=harold password=baines
 
 Perform a failover test
 ```
-
 # auth to vault with regular user
 vault login -method=userpass username=drtest password=drtest
 
@@ -290,6 +297,7 @@ diff ~/.vault-token ~/.vault-token-DRTEST
 # OPTION 1 - Disable replication
 # disable replication on primary
 vault login root
+
 vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/performance/primary/disable
 
@@ -483,8 +491,6 @@ vault3 write -f /sys/replication/performance/primary/disable
 # now setup vault as DR primary to vault3
 vault login root
 vault write -f /sys/replication/dr/secondary/promote key=<<PASTE KEY HERE FROM VAULT here>>
-
-vault login root
 vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/dr/primary/enable
 PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )

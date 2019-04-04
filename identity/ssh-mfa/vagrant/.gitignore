@@ -1,0 +1,6 @@
+vars.yaml
+notes
+bin/*
+CA_certificate
+trusted-user-ca-keys.pem
+vault

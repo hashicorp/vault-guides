@@ -90,8 +90,8 @@ vault2 write sys/replication/performance/secondary/enable token=${PRIMARY_PERF_T
 ```
 
 Validation:
-```sh
-curl     http://127.0.0.1:8200/v1/sys/replication/status
+```
+curl     http://127.0.0.1:8200/v1/sys/replication/status | jq
 # Response:
 {  
    ...
@@ -112,7 +112,7 @@ curl     http://127.0.0.1:8200/v1/sys/replication/status
    ...
 }
 
-curl     http://127.0.0.1:8202/v1/sys/replication/status
+curl     http://127.0.0.1:8202/v1/sys/replication/status | jq
 # Response:
 {  
    ...
@@ -148,75 +148,48 @@ vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ## Optional 4th cluster to provide DR performance secondary (vault2) 
 setup DR replication (vault2 -> vault4)
-```sh
+```
 vault2 login root 
 vault2 write -f sys/replication/dr/primary/enable
-PRIMARY_DR_TOKEN=$(vault2 write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
+PRIMARY_DR_TOKEN=$(vault2 write -format=json /sys/replication/dr/primary/secondary-token id=vault4 | jq --raw-output '.wrap_info .token' )
 vault4 login root
 vault4 write sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 ```
 
 Validation:
-```sh
-curl     http://127.0.0.1:8200/v1/sys/replication/status
+```
+curl     http://127.0.0.1:8206/v1/sys/replication/status | jq
 # Response:
-{  
-   ...
-   "data":{  
-      "dr":{  
-         "cluster_id":"23e8768a-d173-70b5-3e10-560aecfe4d2a",
-         "known_secondaries":[  
-            "vault3"
-         ],
-         ...
-         "mode":"primary",
-         "primary_cluster_addr":""
-      },
-      "performance":{  
-         "cluster_id":"b0e7cfb8-d453-0919-48b2-9c2f33bdfee7",
-         "known_secondaries":[  
-            "vault2"
-         ],
-         ...
-         "mode":"primary",
-         "primary_cluster_addr":""
-      }
-   },
-   ...
-}
-
-curl     http://127.0.0.1:8204/v1/sys/replication/status
-# Response:
-{  
-   ...
-   "data":{  
-      "dr":{  
-         "cluster_id":"23e8768a-d173-70b5-3e10-560aecfe4d2a",
-         "known_primary_cluster_addrs":[  
-            "https://127.0.0.1:8201"
-         ],
-         ...
-         "mode":"secondary",
-         "primary_cluster_addr":"https://127.0.0.1:8201",
-         "secondary_id":"vault3",
-         "state":"stream-wals"
-      },
-      "performance":{  
-         "mode":"disabled"
-      }
-   },
-   ...
-}
-
+{
+  ...
+  "data": {
+    "dr": {
+      "cluster_id": "5bbaa867-9ff1-0c6c-ca12-ce2229ab2492",
+      "known_primary_cluster_addrs": [
+        "https://127.0.0.1:8203"
+      ],
+      "last_reindex_epoch": "1554346757",
+      "last_remote_wal": 373,
+      "merkle_root": "9efcabe3e1c31f25ffd8b0336740d4126afd4868",
+      "mode": "secondary",
+      "primary_cluster_addr": "https://127.0.0.1:8203",
+      "secondary_id": "vault4",
+      "state": "stream-wals"
+    },
+    "performance": {
+      "mode": "disabled"
+    }
+  },
+  ...
 ```
 Now let's test DR. First we need to securely share a root token useable for Vault 3. The secure share is allowed by using "one time password"
 
 generate DR operation token (used to promote DR secondary)
-```sh
+```
 export VAULT_ADDR3=http://127.0.0.1:8204
 ## Validate process hasn't started
-curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt
+curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt | jq
 
 ## Generate one time password (otp) 
 DR_OTP=$(vault3 operator generate-root -dr-token -generate-otp)
@@ -225,7 +198,7 @@ DR_OTP=$(vault3 operator generate-root -dr-token -generate-otp)
 NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
 
 ## Validate process has started
-curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt
+curl     $VAULT_ADDR3/v1/sys/replication/dr/secondary/generate-operation-token/attempt | jq
 
 
 ## Generate the encoded token using the unseal key from DR primary 
@@ -272,38 +245,38 @@ DR_OPERATION_TOKEN=$(vault operator generate-root -otp=${DR_OTP} -decode=${ENCOD
 
 
 create admin  user
-```sh
+```
 vault login root
 # setup vault admin user
-vault auth-enable userpass
+vault auth enable userpass
 # create vault user policy
 echo '
 path "*" {
     capabilities = ["create", "read", "update", "delete", "list", "sudo"]
-}' | vault policy-write vault-admin -
+}' | vault policy write vault-admin -
 
 vault write auth/userpass/users/vault password=vault policies=vault-admin
 
 ```
 
 create regular user and write some data
-```sh
+```
 vault login root
 vault write auth/userpass/users/drtest password=drtest policies=user
 
 echo '
 path "supersecret/*" {
   capabilities = ["list", "read"]
-}' | vault policy-write user -
-vault mount -path=supersecret generic
+}' | vault policy write user -
+vault secrets enable -path=supersecret generic
 vault write supersecret/drtest username=harold password=baines
 ```
 
 Perform a failover test
-```sh
+```
 
 # auth to vault with regular user
-vault auth -method=userpass username=drtest password=drtest
+vault login -method=userpass username=drtest password=drtest
 
 vault read supersecret/drtest
 # save the ephemeral token for verification
@@ -311,17 +284,18 @@ cp ~/.vault-token ~/.vault-token-DRTEST
 diff ~/.vault-token ~/.vault-token-DRTEST
 
 ### STOP primary vault instance  - in dev mode this blows away all cluster information
-### pkill -fl 8200
+### cntrl + c in the terminal windowd that you used to run vrd,  or pkill -fl 8200 
+### This will kill the primary Vault cluster, but you probably want to use the Option 1 or 2 below
 
 # OPTION 1 - Disable replication
 # disable replication on primary
-vault auth root
+vault login root
 vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/performance/primary/disable
 
 # Response
-```sh
-curl http://127.0.0.1:8200/v1/sys/replication/status
+```sh 
+curl http://127.0.0.1:8200/v1/sys/replication/status | jq
 # Response
 {  
    ...
@@ -336,7 +310,7 @@ curl http://127.0.0.1:8200/v1/sys/replication/status
    ...
 }
 
-curl     http://127.0.0.1:8202/v1/sys/replication/status
+curl     http://127.0.0.1:8202/v1/sys/replication/status | jq
 # Response:
 {  
    ...
@@ -369,7 +343,7 @@ vault write -f /sys/replication/performance/primary/demote
 # vault write -f /sys/replication/dr/primary/demote
 
 # check performance secondary for access to secrets etc
-vault2 auth -method=userpass username=drtest password=drtest
+vault2 login -method=userpass username=drtest password=drtest
 vault2 read supersecret/drtest
 
 # note that the .vault-token has changed
@@ -379,12 +353,13 @@ diff ~/.vault-token ~/.vault-token-DRTEST
 vault3 write -f /sys/replication/dr/secondary/promote dr_operation_token=${DR_OPERATION_TOKEN}
 
 ## Make vault DR secondary to vault3 (primary)
+vault3 login root
 PRIMARY_DR_TOKEN=$(vault3 write -format=json /sys/replication/dr/primary/secondary-token id=vault | jq --raw-output '.wrap_info .token' )
 vault login root
 vault write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 
 # check status
-vault3 read -format=json sys/replication/status
+vault3 read -format=json sys/replication/status | jq
 
 # let's check our token status
 cp ~/.vault-token-DRTEST ~/.vault-token
@@ -506,15 +481,15 @@ vault3 write -f /sys/replication/dr/primary/disable
 vault3 write -f /sys/replication/performance/primary/disable
 
 # now setup vault as DR primary to vault3
-vault auth root
+vault login root
 vault write -f /sys/replication/dr/secondary/promote key=<<PASTE KEY HERE FROM VAULT here>>
 
-vault auth root
+vault login root
 vault write -f /sys/replication/dr/primary/disable
 vault write -f /sys/replication/dr/primary/enable
 PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
 sleep 10
-vault3 auth root
+vault3 login root
 vault3 write /sys/replication/dr/secondary/enable token=${PRIMARY_DR_TOKEN}
 sleep 10  
 ```
@@ -522,9 +497,9 @@ sleep 10
 
 check status on all 3
 ```
-vault read -format=json sys/replication/status
-vault2 read -format=json sys/replication/status
-vault3 read -format=json sys/replication/status
+vault read -format=json sys/replication/status | jq
+vault2 read -format=json sys/replication/status | jq
+vault3 read -format=json sys/replication/status | jq
 ```
 
 Clean up

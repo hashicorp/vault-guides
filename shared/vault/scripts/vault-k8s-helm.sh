@@ -1,7 +1,7 @@
 #!/bin/bash -x
 # jboero@hashicorp.com - 9-APR-2019
-# A Q&D script to stand up K8s cluster + helm + consul + vault on GKE
-# Prereqs - Requires gcloud, kubectl, helm, kubeadm to be installed.
+# A Q&D script to stand up K8s cluster + helm + consul + vault locally on single-node K8s
+# Prereqs - Requires kubectl, helm, kubeadm to be installed.
 # To use the Cockpit visualization, must install cockpit-kubernetes and google-chrome-stable or browser of your choice.
 # WARNING - this will overwrite your ~/.kube/config, so make sure to backup if necessary.
 

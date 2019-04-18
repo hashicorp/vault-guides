@@ -19,16 +19,19 @@ If you wish to test the Kubernetes auth method against an Google Kubernetes Engi
     $ terraform apply -auto-approve
     ```
 
-1. Now, you should be able to start working with the AKS cluster:
+1. Now, you should be able to start working with the GKE cluster:
 
     ```shell
-    # To authenticate for the cluster, run the following command
-    $ gcloud container clusters $(terraform output gcp_cluster_name)
+    # Connect to your GKE cluster
+    $ gcloud container clusters get-credentials $(terraform output gcp_cluster_name) \
+            --zone $(terraform output gcp_zone) \
+            --project $(terraform output gcp_project)
 
-    # To get the K8S cluster address
+    # Now, you should be able to get the cluster info via kubectl
     $ kubectl cluster-info
 
-    Kubernetes master is running at https://192.0.2.19
+    Kubernetes master is running at https://198.51.100.24
+    GLBCDefaultBackend is running at https://198.51.100.24/api/v1/namespaces/...
     ...
     ```
 

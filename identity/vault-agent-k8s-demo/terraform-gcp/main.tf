@@ -1,12 +1,12 @@
 provider "google" {
   credentials = "${file(var.account_file_path)}"
   project     = "${var.project}"
-  region      = "${var.region}"
+  region      = "${var.gcloud-region}"
 }
 
 resource "google_container_cluster" "gcp_kubernetes" {
   name               = "${var.cluster_name}"
-  zone               = "${var.gcloud-zone}"
+  location               = "${var.gcloud-zone}"
   initial_node_count = "${var.gcp_cluster_count}"
 
   master_auth {
@@ -43,4 +43,12 @@ output "gcp_cluster_name" {
 
 output "gcp_ssh_command" {
   value = "ssh ${var.linux_admin_username}@${google_container_cluster.gcp_kubernetes.endpoint}"
+}
+
+output "gcp_zone" {
+  value = "${google_container_cluster.gcp_kubernetes.location}"
+}
+
+output "gcp_project" {
+  value = "${var.project}"
 }

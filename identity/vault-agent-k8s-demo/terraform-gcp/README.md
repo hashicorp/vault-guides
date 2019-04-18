@@ -19,7 +19,7 @@ If you wish to test the Kubernetes auth method against an Google Kubernetes Engi
     $ terraform apply -auto-approve
     ```
 
-1. Now, you should be able to start working with the AKS cluster:
+1. Now, you should be able to start working with the GKE cluster:
 
     ```shell
     # Connect to your GKE cluster

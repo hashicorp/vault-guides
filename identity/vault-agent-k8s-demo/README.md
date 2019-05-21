@@ -14,33 +14,23 @@ To perform the tasks described in this guide, you need:
 
 - [Minikube installed](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 - A running Vault environment reachable from your Kubernetes environment
-- [Key/value secrets engine version 1](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html) is mounted at `secret/`
+- [Key/Value secrets engine version 1](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html) is mounted at `secret/`
 
-> If you want to test against Azure Kubernetes Service (AKS) cluster instead, you can use the Terraform files under the `terraform-azure` folder to create an AKS cluster.
+> If you want to test against Azure Kubernetes Service (AKS) cluster or Google Kubernetes Engine (GKE) cluster instead, you can use the Terraform files under the `terraform-azure` folder to create an AKS cluster or the `terraform-gcp` folder for a GKE cluster. Refer to the [guide](https://learn.hashicorp.com/vault/identity-access-management/vault-agent-k8s#azure-kubernetes-service-cluster) for more detail.
 
 ## Demo Steps
 
 1. Make sure that Minikube has been started: `minikube start`
 
-1. Create a Kubernetes Service Account to use for this guide:
-
-    ```shell
-    # Create a service account, 'vault-auth'
-    $ kubectl create serviceaccount vault-auth
-
-    # Update the 'vault-auth' service account
-    $ kubectl apply --filename vault-auth-service-account.yml
-    ```
-
 1.  Run the `setup-k8s-auth.sh` script to set up the kubernetes auth method on your Vault server.
+
+    **NOTE:** This guide assumes that _version 1_ of `kv` secret engine is mounted at `secret/`. If it is not enabled, un-comment the line 27 in the `setup-k8s-auth.sh` file.
 
     ```plaintext
     $ ./setup-k8s-auth.sh
     ```
 
-    **NOTE:** This guide assumes that _version 1_ of `kv` secret engine is mounted at `secret/`.
-
-1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value if different (line 43 and 74).
+1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value ***if*** your Vault server is NOT running locally (line 43 and 74).
 
     **Example:**
 
@@ -109,7 +99,6 @@ been created successfully.
 
     In a web browser, go to `localhost:8080`
 
-
     Notice that the `username` and `password` values were successfully read from
     `secret/myapp/config`.
 
@@ -147,4 +136,49 @@ been created successfully.
       </html>
     ```
 
-For more detailed instruction, refer to the [Vault Agent with Kubernetes](https://deploy-preview-290--hashicorp-learn.netlify.com/vault/identity-access-management/vault-agent-k8s) guide.
+## Troubleshooting
+
+If `localhost:8080` returns an error, check the following:
+
+1. Verify that the `kubernetes` auth method is working
+1. Verify that the `consul-template` can read the token from `/home/vault/.vault-token`
+
+### Kubernetes auth method verification
+
+Follow the steps documented in the [Step 3: Verify the Kubernetes auth method configuration](https://learn.hashicorp.com/vault/identity-access-management/vault-agent-k8s#step-3-verify-the-kubernetes-auth-method-configuration).
+
+
+### Examine the consul-template container
+
+Open a shell of `consul-template` container:
+
+```plaintext
+$ kubectl exec -it vault-agent-example --container consul-template sh
+```
+
+Remember that the Vault Agent's `sink` is set to `/home/vault/.vault-token`.
+To view the token stored in the sink:
+
+```plaintext
+/# echo $(cat /home/vault/.vault-token)
+s.7MQZzFZxUTBQMrtfy98wTGkZ
+```
+
+If it fails to read a token, this may be related to an [issue](https://github.com/hashicorp/vault-guides/issues/100) reported. Some suggested to use a different `consul-template` Docker image [tag](https://hub.docker.com/r/hashicorp/consul-template/tags):
+
+- `hashicorp/consul-template:0.19.6-dev-alpine`
+- `registry.hub.docker.com/sethvargo/consul-template:0.19.5.dev-alpine`
+
+To run a different image, modify line 56 in the `example-k8s-spec.yml` file to load a different `consul-template` image:
+
+**Example:**
+
+```plaintext
+...
+containers:
+  # Consul Template container
+  - name: consul-template
+    image: hashicorp/consul-template:0.19.6-dev-alpine
+    imagePullPolicy: Always
+...
+```

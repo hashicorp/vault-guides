@@ -13,7 +13,7 @@ webinar.
 
 ## Demo Instruction
 
-To keep it simple and lightweight, the [Java Sample App using Spring Cloud Vault](https://www.vaultproject.io/guides/encryption/spring-demo.html) guide used **Vagrant** to demonstrate the app.  This repository also provides example deployments on various platforms:
+To keep it simple and lightweight, the [Java Sample App using Spring Cloud Vault](https://learn.hashicorp.com/vault/developer/eaas-spring-demo) guide used **Vagrant** to demonstrate the app.  This repository also provides example deployments on various platforms:
 
 - [Nomad](nomad)
 - [Kubernetes](kubernetes)

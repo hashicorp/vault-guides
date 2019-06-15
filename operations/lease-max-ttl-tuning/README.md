@@ -52,7 +52,7 @@ export VAULT_ADDR=http://0.0.0.0:8200
 export VAULT_TOKEN=password
 
 # This will install, run and configure MySQL, and configure Vault to use the dynamic database credentials functionality
-cd /vagrant 
+cd /vagrant
 ./install-database.sh
 
 # Mount database backend
@@ -112,7 +112,7 @@ max_lease_ttl    	30 #<---------------------------------------------------------
 ```
 vault read database/creds/readonly
 
-# Output - see how now the lease duration is 30s, constrained by the new mount max_ttl. 
+# Output - see how now the lease duration is 30s, constrained by the new mount max_ttl.
 # Remember, the leases inside a mount cant be greater than either the mount or the system default.
 Key            	Value
 ---            	-----
@@ -142,7 +142,7 @@ _________________________________________
 ```
 vault read database/creds/readonly
 
-# Output - see how now the lease duration is 30s, constrained by the new mount max_ttl. 
+# Output - see how now the lease duration is 30s, constrained by the new mount max_ttl.
 # Remember, the leases inside a mount cant be greater than either the mount or the system default.
 Key            	Value
 ---            	-----
@@ -154,7 +154,7 @@ username       	v-read-hjuhjveyf
 ```
 ### Step 8: Change system max_lease_ttl:
 ```
-# Now let's change the system max_ttl, which is done in the Vault configuration file. 
+# Now let's change the system max_ttl, which is done in the Vault configuration file.
 # In order to do that, we need to first stop the process running vault:
  ps aux | grep vault
 # Output:
@@ -162,7 +162,7 @@ root      5266  0.0  4.8  62364 24224 ?        Sl   13:43   0:00 /usr/local/bin/
 # Now we kill the process:
 sudo kill -9 5266
 
-# Now edit your Vault config, reference for possible values here: https://www.vaultproject.io/docs/configuration/index.html. 
+# Now edit your Vault config, reference for possible values here: https://www.vaultproject.io/docs/configuration/index.html.
 # For example:
 -------------------------------------------
 vault.hcl:
@@ -212,7 +212,7 @@ lease_renewable	true
 password       	A1a-ss1z6s92v168qrv9
 username       	v-read-88rqxx3p0
 
-# Even though in the configuration we have 30 mins. 
+# Even though in the configuration we have 30 mins.
 vault read database/roles/readonly
 
 # Output
@@ -222,7 +222,7 @@ creation_statements  	CREATE USER '{{name}}'@'%' IDENTIFIED BY '{{password}}';GR
 db_name              	mysql
 default_ttl          	1800 #1800 seconds = 30 mins
 max_ttl              	86400 #<------------------------------------------------------------ #Note this value!!!
-renew_statements 
+renew_statements
 revocation_statements
 rollback_statements
 
@@ -230,6 +230,5 @@ rollback_statements
 ```
 
 ## Additional References:
-A complete guide for token and leases (including periodic tokens) can be found here:
-https://www.vaultproject.io/guides/identity/lease.html
-
+A complete guide for token (including periodic tokens) can be found here:
+https://learn.hashicorp.com/vault/identity-access-management/tokens

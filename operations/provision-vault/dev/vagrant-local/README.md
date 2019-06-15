@@ -52,4 +52,4 @@ $ vagrant up
 
 ## Next Steps
 
-Now that you've provisioned and configured a development Vault cluster, start walking through the [Vault Guides](https://www.vaultproject.io/guides/)
+Now that you've provisioned and configured a best practices Vault & Consul cluster, visit our [learn](https://learn.hashicorp.com/vault/?track=secrets-management#secrets-managemen) site.

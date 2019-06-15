@@ -10,7 +10,7 @@
 ----
 # Vault-Guides
 
-This repository provides the technical content to support the [Vault Guides](https://www.vaultproject.io/guides/index.html) site.
+This repository provides the technical content to support the [Vault learn](https://learn.hashicorp.com/vault/) site.
 
 ## Operations
 

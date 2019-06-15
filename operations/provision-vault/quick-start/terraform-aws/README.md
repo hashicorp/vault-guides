@@ -89,4 +89,4 @@ $ terraform apply
 
 ## Next Steps
 
-Now that you've provisioned and configured a quick start Vault & Consul cluster, start walking through the [Vault Guides](https://www.vaultproject.io/guides/index.html).
+Now that you've provisioned and configured a best practices Vault & Consul cluster, visit our [learn](https://learn.hashicorp.com/vault/?track=secrets-management#secrets-managemen) site.

@@ -1,6 +1,6 @@
 # Java Sample App using Spring Cloud Vault (Vagrant)
 
-Refer to the [Java Sample App using Spring Cloud Vault](https://www.vaultproject.io/guides/encryption/spring-demo.html) guide for step-by-step instruction.
+Refer to the [Java Sample App using Spring Cloud Vault](https://learn.hashicorp.com/vault/developer/eaas-spring-demo) guide for step-by-step instruction.
 
 ----
 

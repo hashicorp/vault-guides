@@ -8,16 +8,16 @@ These assets are provided to perform the tasks described in the [Transit Secret 
 
 The following files are provided as demo scripts:
 
-- `demo_setup.sh` performs [Step 1 through 3](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#steps) in the guide
+- `demo_setup.sh` performs [Step 1 through 3](https://learn.hashicorp.com/vault/encryption-as-a-service/eaas-transit-rewrap) in the guide
   * Pull and run mysql server 5.7 docker container
   * Enable transit secret engine
   * Create `my_app_key` encryption key
   * Create `rewrap_example` policy
   * Generate a token to be used by the app
-- `run_app.sh` performs [Step 4](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#step4) in the guide
+- `run_app.sh` performs [Step 4](https://learn.hashicorp.com/vault/encryption-as-a-service/eaas-transit-rewrap) in the guide
   * Runs the example app
   * Prints out the commends to explore the MySQL DB
-- `rewrap_example.sh` performs [Step 5](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#step-5-rotate-the-encryption-keys) in the guide
+- `rewrap_example.sh` performs [Step 5](https://learn.hashicorp.com/vault/encryption-as-a-service/eaas-transit-rewrap) in the guide
   * Read the `my_app_key` details BEFORE the key rotation
   * Rotate the `my_app_key` encryption key
   * Read the `my_app_key` details AFTER the key rotation
@@ -27,7 +27,7 @@ The following files are provided as demo scripts:
 
 ### Demo Workflow
 
-> **NOTE:** DON'T FORGET that this demo requires [.NET Core and Docker](https://www.vaultproject.io/guides/encryption/transit-rewrap.html#prerequisites) to run the sample app.
+> **NOTE:** DON'T FORGET that this demo requires [.NET Core and Docker](https://learn.hashicorp.com/vault/encryption-as-a-service/eaas-transit-rewrap) to run the sample app.
 
 1. Run `demo_setup.sh`
 

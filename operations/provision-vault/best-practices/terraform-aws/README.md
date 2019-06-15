@@ -8,7 +8,7 @@ The goal of this guide is to allows users to easily provision a best practices V
 - [Terraform Docs](https://www.terraform.io/docs/index.html)
 - [Consul Getting Started](https://www.consul.io/intro/getting-started/install.html)
 - [Consul Docs](https://www.consul.io/docs/index.html)
-- [Vault Getting Started](https://www.vaultproject.io/intro/getting-started/install.html)
+- [Vault Getting Started](https://learn.hashicorp.com/vault/)
 - [Vault Docs](https://www.vaultproject.io/docs/index.html)
 
 ## Estimated Time to Complete

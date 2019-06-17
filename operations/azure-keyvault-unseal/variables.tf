@@ -2,20 +2,21 @@
 # Azure Key Vault
 # ---------------------------
 variable "tenant_id" {
-    default = ""
+  default = ""
 }
 
 variable "key_name" {
-    description = "Azure Key Vault key name"
-    default = "generated-key"
+  description = "Azure Key Vault key name"
+  default     = "generated-key"
 }
+
 variable "location" {
-    description = "Azure location where the Key Vault resource to be created"
-    default = "eastus"
+  description = "Azure location where the Key Vault resource to be created"
+  default     = "eastus"
 }
 
 variable "environment" {
-    default = "learn"
+  default = "learn"
 }
 
 # ---------------------------
@@ -26,25 +27,26 @@ variable "public_key" {
 }
 
 variable "subscription_id" {
-    default = ""
+  default = ""
 }
 
 variable "client_id" {
-    default = ""
+  default = ""
 }
 
 variable "client_secret" {
-    default = ""
+  default = ""
 }
 
 variable "vm_name" {
-    default = "azure-auth-demo-vm"
+  default = "azure-auth-demo-vm"
 }
 
 variable "vault_download_url" {
-    default = "https://releases.hashicorp.com/vault/1.1.2/vault_1.1.2_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.1.2/vault_1.1.2_linux_amd64.zip"
 }
 
 variable "resource_group_name" {
-    default = "vault-demo-azure-auth"
+  default = "vault-demo-azure-auth"
 }
+

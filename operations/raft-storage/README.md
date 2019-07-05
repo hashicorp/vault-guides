@@ -6,10 +6,15 @@ These assets are provided to perform the tasks described in the [Vault HA with R
 
 This guide provides two options to explore the raft storage backend:
 
-- **Option 1:** Create a Vault HA cluster locally on your machine --> Use the scripts in the **`local-test`** folder.
-- **Option 2:** Create a Vault HA cluster on AWS using Terraform --> Use the Terraform files in the **`terraform-aws`** folder.
+- **Option 1:** Create a Vault HA cluster locally on your machine
+- **Option 2:** Create a Vault HA cluster on AWS using Terraform
 
+| Folder                     | Description                                      |
+|----------------------------|--------------------------------------------------|
+| `local-test`               | Scripts to create a Vault HA cluster locally on your machine |
+| `terraform-aws`            | Terraform files to create a Vault HA cluster on AWS using Terraform  |
 
+<br>
 
 ## Taking a Vault data snapshot
 
@@ -83,24 +88,4 @@ Now, `node3` is removed from the HA cluster.
 
 ```plaintext
 $ vault operator raft configuration -format=json | jq
-{
-  ...
-      "servers": [
-        {
-          "address": "127.0.0.2:8201",
-          "leader": true,
-          "node_id": "node2",
-          "protocol_version": "3",
-          "voter": true
-        },
-        {
-          "address": "127.0.0.4:8201",
-          "leader": false,
-          "node_id": "node4",
-          "protocol_version": "3",
-          "voter": true
-        }
-      ]
-    ...
-}
 ```

@@ -69,9 +69,6 @@ variable.
 
     ```plaintext
     $ vault operator raft join http://127.0.0.2:8200
-    Key       Value
-    ---       -----
-    Joined    true
     ```
 
 1. Similarly, open another terminal and add `vault_4` to the HA cluster:
@@ -80,56 +77,21 @@ variable.
     $ export VAULT_ADDR=http://127.0.0.4:8200
 
     $ vault operator raft join http://127.0.0.2:8200
-    Key       Value
-    ---       -----
-    Joined    true
     ```
 
 1. Execute the `raft configuration` command to list the cluster members:
 
     ```plaintext
     $ vault operator raft configuration -format=json | jq
-    {
-      ...
-      "data": {
-        "config": {
-          "index": 94,
-          "servers": [
-            {
-              "address": "127.0.0.2:8201",
-              "leader": true,
-              "node_id": "node2",
-              "protocol_version": "3",
-              "voter": true
-            },
-            {
-              "address": "127.0.0.3:8201",
-              "leader": false,
-              "node_id": "node3",
-              "protocol_version": "3",
-              "voter": true
-            },
-            {
-              "address": "127.0.0.4:8201",
-              "leader": false,
-              "node_id": "node4",
-              "protocol_version": "3",
-              "voter": true
-            }
-          ]
-        }
-      },
-      "warnings": null
-    }
     ```
 
 Now, you have a cluster with 3 nodes.
 
 
 
-## Clean up
+# Clean up
 
-When you are done exploring, you can clean up your environment by terminating all Vault processes:
+Execute the following to terminate all Vault processes:
 
 ```plaintext
 $ pkill vault

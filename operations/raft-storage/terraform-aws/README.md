@@ -28,27 +28,9 @@
     $ terraform plan
 
     $ terraform apply -auto-approve
-    ...
-    Apply complete! Resources: 20 added, 0 changed, 0 destroyed.
-
-    Outputs:
-
-    endpoints =
-    Auto-unseal Provider IP (public):  13.57.200.247
-    Auto-unseal Provider IP (private): 10.0.101.11
-
-    For example:
-      ssh -i vault-test.pem ubuntu@13.57.200.247
-
-    Server node IPs (public):  54.215.244.175, 54.193.26.177, 54.153.90.97
-    Server node IPs (private): 10.0.101.53, 10.0.101.15, 10.0.101.73
-
-    For example:
-       ssh -i vault-test.pem ubuntu@54.215.244.175
     ```
 
-    The Terraform output will display the IP addresses of the provisioned Vault
-    nodes.
+    The Terraform output will display the IP addresses of the provisioned Vault nodes.
 
 
 1.  There are three Vault server nodes provisioned by Terraform. The Terraform output displays three server node IP addresses as well as private IP addresses.
@@ -73,32 +55,6 @@
 
     ```plaintext
     $ sudo cat /etc/vault.d/vault.hcl
-
-    storage "raft" {
-      path    = "/vault/storage1"
-      node_id = "node1"
-    }
-
-    listener "tcp" {
-      address     = "0.0.0.0:8200"
-      cluster_address     = "0.0.0.0:8201"
-      tls_disable = true
-    }
-
-    seal "transit" {
-      address            = "http://10.0.101.11:8200"
-      token              = "root"
-      disable_renewal    = "false"
-
-      // Key configuration
-      key_name           = "unseal_key"
-      mount_path         = "transit/"
-    }
-
-    api_addr = "http://54.215.244.175:8200"
-    cluster_addr = "http://10.0.101.53:8201"
-    disable_mlock = true
-    ui=true
     ```
 
     To use the integrated storage, the `storage` stanza must be set to **`raft`**. The `path` specifies the path where Vault data will be stored (`/vault/storage1`). The `seal` stanza is configured to use [Transit Auto-unseal](/vault/operations/autounseal-transit) which is provided by the _Auto-unseal Provider_ instance.
@@ -143,22 +99,6 @@
 
     ```plaintext
     $ vault operator raft configuration -format=json | jq
-    {
-      ...
-      "data": {
-        "config": {
-          "index": 1,
-          "servers": [
-            {
-              "address": "10.0.101.53:8201",
-              "leader": false,
-              "node_id": "node1",
-              "protocol_version": "3",
-              "voter": true
-            }
-          ]
-        ...
-    }
     ```
 
 1.  Open a new terminal and SSH into another Vault server node.
@@ -197,10 +137,6 @@
 
     ```plaintext
     $ vault operator raft join http://54.215.244.175:8200
-
-    Key       Value
-    ---       -----
-    Joined    true
     ```
 
 1.  Similarly, open another terminal and SSH into the third node:
@@ -245,40 +181,13 @@
 
     ```plaintext
     $ vault operator raft configuration -format=json | jq
-    {
-      ...
-          "servers": [
-            {
-              "address": "10.0.101.53:8201",
-              "leader": true,
-              "node_id": "node1",
-              "protocol_version": "3",
-              "voter": true
-            },
-            {
-              "address": "10.0.101.15:8201",
-              "leader": false,
-              "node_id": "node2",
-              "protocol_version": "3",
-              "voter": true
-            },
-            {
-              "address": "10.0.101.73:8201",
-              "leader": false,
-              "node_id": "node3",
-              "protocol_version": "3",
-              "voter": true
-            }
-          ]
-        ...
-    }
     ```
 
     You should see all three nodes in the HA cluster.
 
 
 
-## Clean up the cloud resources
+# Clean up the cloud resources
 
 When you are done exploring, execute the `terraform destroy` command to terminal all AWS elements:
 

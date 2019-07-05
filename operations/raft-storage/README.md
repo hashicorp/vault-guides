@@ -6,8 +6,8 @@ These assets are provided to perform the tasks described in the [Vault HA with R
 
 This guide provides two options to explore the raft storage backend:
 
-- **Option 1:** Create a Vault HA cluster locally on your machine --> use the scripts in the `local-test` folder.
-- **Option 2:** Create a Vault HA cluster on AWS using Terraform --> use the Terraform files in the `terraform-aws` folder.
+- **Option 1:** Create a Vault HA cluster locally on your machine --> Use the scripts in the **`local-test`** folder.
+- **Option 2:** Create a Vault HA cluster on AWS using Terraform --> Use the Terraform files in the **`terraform-aws`** folder.
 
 
 

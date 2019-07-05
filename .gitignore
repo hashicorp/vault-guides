@@ -21,3 +21,6 @@
 
 *.DS_Store
 *.vagrant
+
+# Generated private key
+*.key

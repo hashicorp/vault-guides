@@ -55,7 +55,7 @@ resource "google_compute_instance" "vault" {
 
     sudo chmod 0664 /lib/systemd/system/vault.service
 
-    sudo echo -e 'alias v="vault"\nalias vualt="vault"\nexport VAULT_ADDR="http://127.0.0.1:8200"\n' > /etc/profile.d/vault.sh
+    sudo echo -e 'alias v="vault"\nalias vault="vault"\nexport VAULT_ADDR="http://127.0.0.1:8200"\n' > /etc/profile.d/vault.sh
 
     source /etc/profile.d/vault.sh
 

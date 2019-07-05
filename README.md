@@ -14,7 +14,7 @@ This repository provides the technical content to support the [Vault learn](http
 
 ## Operations
 
-This area will contain instructions to operatioanlize Vault.
+This area will contain instructions to operationalize Vault.
 
 - [Provision a Dev Vault Cluster locally with Vagrant](operations/provision-vault/dev/vagrant-local)
 - [Provision a Dev Vault Cluster on AWS with Terraform](operations/provision-vault/dev/terraform-aws)

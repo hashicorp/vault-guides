@@ -20,7 +20,7 @@ variable "vault_server_count" {
 # URL for Vault OSS binary
 variable "vault_zip_file" {
   #default = "https://releases.hashicorp.com/vault/1.2.0-beta1/vault_1.2.0-beta1_linux_amd64.zip"
-  default = "https://education-yh.s3-us-west-1.amazonaws.com/test/vault_1.2.0.zip"
+  default = "https://releases.hashicorp.com/vault/1.2.0-beta2/vault_1.2.0-beta2_linux_amd64.zip"
 }
 
 # Instance size

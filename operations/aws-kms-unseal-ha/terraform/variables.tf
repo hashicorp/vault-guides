@@ -14,4 +14,5 @@ variable "vpc_cidr" {
 
 variable "vault_url" {
   description = "URL to download Vault Enterprise"
+  default     = "https://releases.hashicorp.com/vault/1.1.2/vault_1.1.2_linux_amd64.zip"
 }

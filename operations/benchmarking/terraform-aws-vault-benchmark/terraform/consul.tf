@@ -10,10 +10,10 @@ data "aws_ami" "consul" {
 }
 
 resource "aws_instance" "consul" {
-  count             = 3
+  count             = "${var.consul_cluster_size}"
   ami               = "${data.aws_ami.consul.id}"
   instance_type     = "m5.4xlarge"
-  subnet_id         = "${module.vpc.private_subnets[count.index]}"
+  subnet_id         = "${element(module.vpc.private_subnets, count.index)}"
   key_name          = "${aws_key_pair.aws.key_name}"
   associate_public_ip_address = false
   ebs_optimized     = "true"

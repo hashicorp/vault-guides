@@ -13,11 +13,16 @@ The following are the main test scripts:
 1. [write-delete-secrets.lua](./write-delete-secrets.lua): This script sequentially writes and deletes secrets. It must be run with one thread (`-t1`) and one connection (`-c1`) to ensure deletes do not reach the Vault server before the corresponding writes. However, multiple instances of this script can be run at the same time by passing an extra argument `-- <n>` after the URL, being sure to use a different value of \<n\> for each instance. Secrets for instance \<n\> of the script will be written in a sequential loop to the secret/write-delete-test path and will be named "test\<n\>-secret-\<x\>" where \<x\> is between 1 and N (default 100). This naming convention allows multiple instances of this script as well as other scripts to be run at the same time without conflict. By default, each secret has one key with 10-20 bytes and a second key with 100 bytes.  The number of distinct secrets, N, can be changed by adding an extra argument after the script identifier. In this case, you would add "-- \<identifier\> \<N\>" after the URL, using integers for both of these arguments. The number and size of the keys could be changed, but you would need to edit the script.  There is no need to pre-populate Vault with any data for this test. The last secret written might not be deleted if the final request is a write.  
 1. [list-secrets.lua](./list-secrets.lua): This script repeatedly lists all secrets on the path secret/list-test. Use the write-list.lua script to populate that path with secrets. By default, that script writes 100 secrets to that path with each secret having one key with 10 bytes. If you want to print the secrets found in each list, add "-- true" after the URL.
 1. [authenticate-and-revoke.lua](.authenticate-and-revoke.lua): This script repeatedly authenticates a user ("loadtester") against Vault's [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method and then revokes the acquired lease. (See below for instructions to enable it.)
+1. [authenticate.lua](.authenticate.lua): This script repeatedly authenticates a user ("loadtester") against Vault's [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method. It does not issue any revocations. This can be useful for comparing authentications with batch and service token types. 
+
 
 We also have the following utility scripts used to populate or delete secrets used by the test scripts:
 1. [write-secrets.lua](./write-secrets.lua): This script writes secrets meant to be read by the read-secrets.lua script. It writes a fixed number of secrets (default 1,000) and then stops. Each secret has one key with 10-20 bytes and a second key with 100 bytes.  The number of secrets written can be changed by adding "-- \<N\>" after the URL where \<N\> is the number of secrets you want to write. The number and size of the keys could also be changed, but you would need to edit the script.
+   - Note: you may want to verify that all the secrets were successfully written by reading the last secret using Vault CLI. E.g. `vault read secret/read-test/secret-1000`. If all writes were not completed successfully, you will get errors when running `read-secrets.lua`.
+
 1. [write-list.lua](./write-list.lua): This script writes a list of secrets each having one key with 10 bytes to the path secret/list-test. These secrets are read by the list-secrets.lua script. By default it writes 100 secrets, but you can change this by adding "-- \<N\>" after the URL where \<N\> is the number of secrets you want to write.
 1. [delete-secrets.lua](./delete-secrets.lua): This deletes a sequence of secrets from under a specified path. Pass the path from which you want to delete secrets by adding something like "-- secret/read-test" after the Vault URL. Do not start your path with "/v1/" or add a final "/" at the end of it since the script does this for you. The default path is "secret/test".
+   - Note: deleting secrets can also be performed by disabling and enabling the secrets engine: `vault secrets disable secret && vault secrets enable -path=secret/ -version=1 kv`.
 
 Finally, [json.lua](./json.lua) is used by some of the other scripts to decode the JSON responses from the Vault HTTP API.
 
@@ -29,12 +34,20 @@ In its default configuration, the run_tests.sh script is designed to run a mixtu
 In general, you will want to edit the run_tests.sh script or create modified versions of it before running it so you can change the duration of the tests (with the `-d` parameter) and change the names of the log files.
 
 ## Setting up userpass Auth Method
-In order to run the authenticate-and-revoke.lua script, you need to set up the Vault [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method on your Vault cluster and add a user called "loadtester" with password "benchmark".  Use these commands to do this:
 
+In order to run the authenticate-and-revoke.lua and authenticate.lua scripts, you need to set up the Vault [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method and add a user called "loadtester" with password "benchmark". The userpass Auth Method can be enabled with service or batch tokens. 
+
+Service tokens are applicable for the `authenticate-and-revoke.lua` scripts. Use the commands below to enable using service tokens:
 ```
 vault auth enable userpass
 vault write auth/userpass/users/loadtester password=benchmark policies=default
 ```
+Batch tokens are applicable for the `authenticate.lua` script. Use the commands below to enable using batch tokens:
+```
+vault auth enable -token-type="batch" userpass
+vault write auth/userpass/users/loadtester password=benchmark policies=default
+```
+  - Note: be careful not to run `authenticate.lua` script with service tokens. You will then end up with 1000s of outsanding leases. If this happens, please use this command to delete all outstanding leases: `vault auth disable userpass`; it may take a long time to complete. You will then need to re-setup the Auth method.
 
 ## Configuration of wrk Client Nodes
 
@@ -66,12 +79,19 @@ Here are example of running the utility scripts to populate and delete secrets n
 
 ```
 # Command to write 1,000 secrets needed by the read-secrets.lua script:
-wrk -t1 -c1 -d1m -H "X-Vault-Token: $VAULT_TOKEN" -s write-secrets.lua http://<vault_url>:8200 -- 1000
+wrk -t1 -c1 -d5m -H "X-Vault-Token: $VAULT_TOKEN" -s write-secrets.lua http://<vault_url>:8200 -- 1000
+
+# Command to validate that the last secret was written. If needed, substitute 1000 for the number of secrets you supplied to write-secrets.lua script. If you get an error, you may need to run the write-secrets.lua script for a longer time.
+vault read secret/read-test/secret-1000
 
 # Command to write secrets needed by the list-secrets.lua script:
-wrk -t1 -c1 -d1m -H "X-Vault-Token: $VAULT_TOKEN" -s write-list.lua http://<vault_url>:8200 -- 100
+wrk -t1 -c1 -d5m -H "X-Vault-Token: $VAULT_TOKEN" -s write-list.lua http://<vault_url>:8200 -- 100
 
-# Command to delete secrets (from secret/read-test)
-wrk -t1 -c1 -d1m -H "X-Vault-Token: $VAULT_TOKEN" -s delete-secrets.lua http://<vault_url>:8200 -- secret/read-test
+# Command to delete secrets (from secret/read-test) by disabling and enabling secrets engine
+vault secrets disable secret
+vault secrets enable -path=secret/ -version=1 kv
+
+# Command to delete secrets (from secret/read-test) using delete-secrets.lua
+wrk -t1 -c1 -d5m -H "X-Vault-Token: $VAULT_TOKEN" -s delete-secrets.lua http://<vault_url>:8200 -- secret/read-test
 ```
 Note that you should specify the path from which you want to delete secrets when running the delete-secrets.lua script by adding it after the URL. The default value is "secret/test".

@@ -8,6 +8,9 @@ variable "region" {}
 variable "consul_ami" {}
 variable "vault_ami" {}
 
+variable "consul_cluster_size" {
+    default = "3"
+}
 
 variable "vault_ips" {
     default = {

@@ -54,50 +54,14 @@ Initializing modules...
   Getting source "github.com/hashicorp-modules/ssh-keypair-aws"
 - module.consul_auto_join_instance_role
   Getting source "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
-- module.root_tls_self_signed_ca
-  Getting source "github.com/hashicorp-modules/tls-self-signed-cert"
-- module.leaf_tls_self_signed_cert
-  Getting source "github.com/hashicorp-modules/tls-self-signed-cert"
-- module.network_aws
-  Getting source "github.com/hashicorp-modules/network-aws"
-- module.consul_aws
-  Getting source "github.com/hashicorp-modules/consul-aws"
-- module.vault_aws
-  Getting source "github.com/hashicorp-modules/vault-aws"
-- module.network_aws.consul_auto_join_instance_role
-  Getting source "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
-- module.network_aws.ssh_keypair_aws
-  Getting source "github.com/hashicorp-modules/ssh-keypair-aws"
-- module.network_aws.bastion_consul_client_sg
-  Getting source "github.com/hashicorp-modules/consul-client-ports-aws"
-- module.network_aws.ssh_keypair_aws.tls_private_key
-  Getting source "github.com/hashicorp-modules/tls-private-key"
-- module.consul_aws.consul_auto_join_instance_role
-  Getting source "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
-- module.consul_aws.consul_server_sg
-  Getting source "github.com/hashicorp-modules/consul-server-ports-aws"
-- module.consul_aws.consul_lb_aws
-  Getting source "github.com/hashicorp-modules/consul-lb-aws"
-- module.consul_aws.consul_server_sg.consul_client_ports_aws
-  Getting source "github.com/hashicorp-modules/consul-client-ports-aws"
-- module.vault_aws.consul_auto_join_instance_role
-  Getting source "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
-- module.vault_aws.vault_server_sg
-  Getting source "github.com/hashicorp-modules/vault-server-ports-aws"
-- module.vault_aws.consul_client_sg
-  Getting source "github.com/hashicorp-modules/consul-client-ports-aws"
-- module.vault_aws.vault_lb_aws
-  Getting source "github.com/hashicorp-modules/vault-lb-aws"
-- module.ssh_keypair_aws_override.tls_private_key
-  Getting source "github.com/hashicorp-modules/tls-private-key"
+  [...]
+  [...]
 
 Initializing provider plugins...
 - Checking for available provider plugins on https://releases.hashicorp.com...
 - Downloading plugin for provider "aws" (2.8.0)...
-- Downloading plugin for provider "template" (2.1.2)...
-- Downloading plugin for provider "random" (2.1.2)...
-- Downloading plugin for provider "tls" (2.0.1)...
-- Downloading plugin for provider "null" (2.1.2)...
+  [...]
+  [...]
 
 The following providers do not have any version constraints in configuration,
 so the latest version was installed.

@@ -11,8 +11,8 @@ This guide provides two options to explore the raft storage backend:
 
 | Folder                     | Description                                      |
 |----------------------------|--------------------------------------------------|
-| `local-test`               | Scripts to create a Vault HA cluster locally on your machine |
-| `terraform-aws`            | Terraform files to create a Vault HA cluster on AWS using Terraform  |
+| `local-test`               | Scripts to create a Vault HA cluster locally on your machine ([Option 1](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/local-test)) |
+| `terraform-aws`            | Terraform files to create a Vault HA cluster on AWS using Terraform ([Option 2](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/terraform-aws)) |
 
 <br>
 

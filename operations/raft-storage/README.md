@@ -1,6 +1,6 @@
 # Vault HA Cluster with Integrated Storage (Raft)
 
-**[TECH PREVIEW]** Currently, Vault's Integrated Storage is a _Technical Preview (BETA)_ feature. To explore this new persistent storage, [download Vault 1.2 or later](https://releases.hashicorp.com/vault/).
+**[TECH PREVIEW]** Currently, Vault's Integrated Storage is a _Technical Preview_ feature. To explore this new persistent storage, [download Vault 1.2 or later](https://releases.hashicorp.com/vault/).
 
 These assets are provided to perform the tasks described in the [Vault HA with Raft Storage Backend](https://learn.hashicorp.com/vault/operations/raft-storage) guide.
 

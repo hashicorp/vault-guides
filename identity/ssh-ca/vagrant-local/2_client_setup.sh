@@ -17,4 +17,4 @@ cat /home/vagrant/.ssh/id_rsa.pub | \
 chmod 0400 /home/vagrant/.ssh/id_rsa-cert.pub
 
 echo "To use the new cert you can use the following command"
-echo "ssh vault.example.com"
+echo "ssh vault"

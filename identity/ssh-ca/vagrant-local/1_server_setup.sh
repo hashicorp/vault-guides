@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
-
 # Authenticate to Vault
-vault auth password
+vault login password
 
 # Mount a backend's instance for signing host keys
 vault secrets enable -path ssh-host-signer ssh

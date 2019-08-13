@@ -3,7 +3,7 @@
 # vi: set ft=ruby :
 
 # Vault variable defaults
-vault_version = ENV['VAULT_VERSION'] || "0.10.0"
+vault_version = ENV['VAULT_VERSION'] || "1.2.1"
 vault_ent_url = ENV['VAULT_ENT_URL']
 vault_group = "vault"
 vault_user = "vault"
@@ -34,8 +34,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "vault" do |vault|
     vault.vm.network :private_network, ip: "192.168.50.100"
     vault.vm.provision :hosts, sync_hosts: true
-    vault.vm.box = "bento/centos-7.3"
-    vault.vm.box_version = "2.3.8"
+    vault.vm.box = "bento/centos-7.6"
+    vault.vm.box_version = "201812.27.0"
     vault.vm.hostname = "vault"
     vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
     vault.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",
@@ -59,8 +59,8 @@ Vagrant.configure("2") do |config|
   config.vm.define "client" do |client|
     client.vm.network :private_network, ip: "192.168.50.101"
     client.vm.provision :hosts, sync_hosts: true
-    client.vm.box = "bento/centos-7.3"
-    client.vm.box_version = "2.3.8"
+    client.vm.box = "bento/centos-7.6"
+    client.vm.box_version = "201812.27.0"
     client.vm.hostname = "client"
     client.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/base.sh | bash"
     client.vm.provision "shell", inline: "curl https://raw.githubusercontent.com/hashicorp/guides-configuration/master/shared/scripts/setup-user.sh | bash",

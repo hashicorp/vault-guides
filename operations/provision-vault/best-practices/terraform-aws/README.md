@@ -49,6 +49,43 @@ $ terraform init
 
 ##### Response
 ```
+Initializing modules...
+- module.ssh_keypair_aws_override
+  Getting source "github.com/hashicorp-modules/ssh-keypair-aws"
+- module.consul_auto_join_instance_role
+  Getting source "github.com/hashicorp-modules/consul-auto-join-instance-role-aws"
+  [...]
+  [...]
+
+Initializing provider plugins...
+- Checking for available provider plugins on https://releases.hashicorp.com...
+- Downloading plugin for provider "aws" (2.8.0)...
+  [...]
+  [...]
+
+The following providers do not have any version constraints in configuration,
+so the latest version was installed.
+
+To prevent automatic upgrades to new major versions that may contain breaking
+changes, it is recommended to add version = "..." constraints to the
+corresponding provider blocks in configuration, with the constraint strings
+suggested below.
+
+* provider.aws: version = "~> 2.8"
+* provider.null: version = "~> 2.1"
+* provider.random: version = "~> 2.1"
+* provider.template: version = "~> 2.1"
+* provider.tls: version = "~> 2.0"
+
+Terraform has been successfully initialized!
+
+You may now begin working with Terraform. Try running "terraform plan" to see
+any changes that are required for your infrastructure. All Terraform commands
+should now work.
+
+If you ever set or change modules or backend configuration for Terraform,
+rerun this command to reinitialize your working directory. If you forget, other
+commands will detect it and remind you to do so if necessary.
 ```
 
 ### Step 2: Plan
@@ -67,6 +104,41 @@ $ terraform plan
 
 ##### Response
 ```
+provider.aws.region
+  The region where AWS operations will take place. Examples
+  are us-east-1, us-west-2, etc.
+
+  Default: us-east-1
+  Enter a value: us-east-1
+
+Refreshing Terraform state in-memory prior to plan...
+The refreshed state will be used to calculate this plan, but will not be
+persisted to local or remote state storage.
+
+data.aws_iam_policy_document.assume_role: Refreshing state...
+data.aws_elb_service_account.vault_lb_access_logs: Refreshing state...
+[...]
+[...]
+
+------------------------------------------------------------------------
+
+An execution plan has been generated and is shown below.
+Resource actions are indicated with the following symbols:
+  + create
+ <= read (data resources)
+
+Terraform will perform the following actions:
+
+<--- more here --->
+
+
+Plan: 127 to add, 0 to change, 0 to destroy.
+
+------------------------------------------------------------------------
+
+Note: You didn't specify an "-out" parameter to save this plan, so Terraform
+can't guarantee that exactly these actions will be performed if
+"terraform apply" is subsequently run.
 ```
 
 ### Step 3: Apply

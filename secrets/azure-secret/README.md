@@ -36,15 +36,15 @@ Change the filter to "All apps"
 
 Search for the app name (vault-admin in the above example), and click on it
 
-Click on "Settings > Required Permissions > Add > Select API > Windows Azure Active Directory" (if not grayed out)
+Click on "API permissions" > "Add a permissions".
 
-Click on "Windows Azure Active Directory" and check the permissions:
-- Read and Write directory data
-- Read and Write all applications
-
-Click on Save
-
-Click on "Grant Permissions"
+Click on "Azure Active Directory Graph" > "Application permissions" and select the following permissions:
+- Application (1)
+  - Application.ReadWrite.All
+- Directory (1)
+   - Directory.ReadWrite.All
+    
+Click on "Grant admin consent for azure (Default Directory)".
 
 ### Create Custom Role (Optional)
 This is an optional step, for tests you can use the default role "Contributor".

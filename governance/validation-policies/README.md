@@ -1,5 +1,5 @@
 # Sentinel Validation Policies
-This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys adhere to certain formats.  It includes zip code, state code, and cloud credentials examples.
+This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys of secrets adhere to certain formats.  It includes validation of zip code, state code, AWS keys, and Azure credentials. In addition to providing 4 Sentinel policies, the guide shows the reader how to deploy them to a Vault server and how to test them with the Vault CLI.
 
 ## Reference Material
 Documentation on how Sentinel can be used in Vault Enterprise can be found [here](https://www.vaultproject.io/docs/enterprise/sentinel/index.html).

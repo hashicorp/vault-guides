@@ -1,0 +1,44 @@
+# Policy that requires keys of secrets with name "zipcode", "zip-code", or "zip_code"
+# to be a valid 5-digit U.S. zipcode
+
+# Function that validates zip codes
+validate_zip_codes = func() {
+
+  # Print some information about the request
+  # Note that these messages will only be printed when the policy is violated
+  print("Namespace path:", namespace.path)
+  print("Request path:", request.path)
+  print("Request data:", request.data)
+
+  # Test for "zipcode" key
+  if "zipcode" in keys(request.data) {
+    if request.data.zipcode not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  # Test for "zip_code" key
+  if "zip_code" in keys(request.data) {
+    if request.data.zip_code not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  # Test for "zip-code" key
+  if "zip-code" in keys(request.data) {
+    if request.data.zip-code not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  return true
+
+}
+
+# Main Rule
+main = rule {
+  validate_zip_codes()
+}

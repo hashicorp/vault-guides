@@ -1,0 +1,30 @@
+# THIS IS A SAMPLE SENTINEL ENDPOINT GOVERNING POLICY (EGP) FOR HASHICORP VAULT
+# Note: When creating your EGP in Vault, set the trigger Path to '/auth/<path>/login/*',
+# replacing <path> with the value given to the -path argument when configuring the Auth Method.
+# For the Okta Auth Method, if no custom <path> is configured, the default is '/auth/okta/login/*'
+
+
+# Example List of approved Okta Users
+names = ["example@hashicorp.com", "test@hashicorp.com", "other_user@hashicorp.com"]
+
+# Auth path to check against (see note above re: custom -path versus default)
+okta_path = "auth/okta/login/"
+
+# List for tracking all User login paths
+all_paths = []
+
+# For loop to append all User login paths to all_paths list
+for names as value {
+  full_path = okta_path + value
+  append(all_paths, full_path)
+}
+
+# Rule to check whether Authenticating Okta User is in approved list
+user_check = rule {
+    request.path in all_paths
+}
+
+# Evaluate all rules  
+main = rule {
+    user_check
+}

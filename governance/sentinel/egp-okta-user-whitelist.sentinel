@@ -1,7 +1,7 @@
 # THIS IS A SAMPLE SENTINEL ENDPOINT GOVERNING POLICY (EGP) FOR HASHICORP VAULT
 # Note: When creating your EGP in Vault, set the trigger Path to '/auth/<path>/login/*',
 # replacing <path> with the value given to the -path argument when configuring the Auth Method.
-# For the Okta Auth Method, the default path is '/auth/okta/login/*'
+# For the Okta Auth Method, if no custom <path> is configured, the default is '/auth/okta/login/*'
 
 
 # Example List of approved Okta Users

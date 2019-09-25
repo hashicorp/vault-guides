@@ -1,0 +1,21 @@
+{
+  "global": {
+    "namespace": {
+       "path": ""
+    },
+    "request": {
+       "path": "kv2/azure/config",
+       "data": {
+         "data": {
+           "subscription_id": "AAAAbbbb-cccc-dddd-eeee-ffffgggghhhh",
+           "tenant_id": "AAAAbbbb-cccc-dddd-eeee-ffffgggghhhh",
+           "client_id": "AAAAbbbb-cccc-dddd-eeee-ffffgggghhhh",
+           "client_secret": "AAAAbbbb-cccc-dddd-eeee-ffffgggghhhh"
+         }
+       }
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

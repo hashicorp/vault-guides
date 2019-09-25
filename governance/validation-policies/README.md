@@ -1,5 +1,5 @@
 # Sentinel Validation Policies
-This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys of secrets adhere to certain formats.  It includes validation of zip code, state code, AWS keys, and Azure credentials. In addition to providing 4 Sentinel policies, the guide shows the reader how to deploy them to a Vault server and how to test them with the Vault CLI.
+This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys of secrets adhere to certain formats.  It includes policies that validate zip codes, state codes, AWS keys, and Azure credentials. In addition to providing 4 Sentinel policies along with corresponding test cases for use with the [Sentinel Simulator](https://docs.hashicorp.com/sentinel/intro/getting-started/install), the guide shows the reader how to deploy them to a Vault server and how to test them with the Vault CLI. The policies support both versions 1 and 2 of the [KV secrets engine](https://www.vaultproject.io/docs/secrets/kv/index.html).
 
 ## Reference Material
 Documentation on how Sentinel can be used in Vault Enterprise can be found [here](https://www.vaultproject.io/docs/enterprise/sentinel/index.html).
@@ -28,13 +28,13 @@ The steps below show you how to deploy the policies in this directory of this re
 Login to the UI of your Vault server with a root token or with some other token or user ID that is allowed to create Sentinel policies
 
 ### Step 2: Configure an Instance of the KV Secrets Engine
-In this step, you will configure a terminal session to talk to your Vault server and create an instance of the KV secrets engine so that you can use the Vault CLI to test your policies. You could also use an existing instance of the KV secrets engine.
+In this step, you will configure a terminal session to talk to your Vault server and create an instance of the KV secrets engine so that you can use the Vault CLI to test your policies. You can use version 1 or 2 of the KV secrets engine. You could also use an existing instance of the KV secrets engine. (We show examples for version 1.)
 1. Open a terminal session on your laptop.
 1. Run `export VAULT_ADDR=<vault_address>` where "\<vault_address\>" is the address of your Vault server including "http" or "https" and the port (usually 8200).  If running locally without TLS enabled, this would be "http://127.0.0.1:8200".
 1. Run `export VAULT_TOKEN=<token>` where "\<token\>" is a root token or one that is allowed to create an instance of the Vault [KV secrets engine](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html).
 1. Run `vault secrets enable -version=1 kv` to create a new instance of the KV secrets engine at the path "kv".
-1. Validate that you can write a secret from your terminal session with a command like `vault kv put kv/test number=1`. (You could also use the older syntax `vault write kv/test number=1`.)
-1. Validate that you can read back the secret you wrote with a command like `vault kv get kv/test`. (You could also use the older syntax `vault read kv/test`.)
+1. Validate that you can write a secret from your terminal session with a command like `vault kv put kv/test number=1`.
+1. Validate that you can read back the secret you wrote with a command like `vault kv get kv/test`.
 
 ### Step 3: Create a Non-root Token that Can Read and Write Secrets
 In this step, you will create a non-root token that can read and write secrets in the KV secrets engine that you are using or just created.
@@ -101,5 +101,20 @@ In this step, you will test the validate-azure-credentials policy with the Vault
 1. Try to write valid Azure credentials with a command like `vault kv put kv/azure/config subscription_id=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh tenant_id=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh client_id=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh client_secret=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh`. This should return "Success! Data written to: kv/azure/config" since the credentials are valid.
 1. Try to write invalid Azure credentials with a command like `vault kv put kv/azure/config subscription_id=AAAABBBB-CCCC-DDDD-EEEE-FFFFGGGGHHHH tenant_id=AAAAbbbb-cccc-dddd-eeee-ffffgggghhhh client_id=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh client_secret=aaaabbbb-cccc-dddd-eeee-ffffgggghhhh`. This will give a long error message including the messages "Invalid Azure subscription ID" and "Invalid Azure tenant ID" since those two keys have upper-case letters that are not allowed in Azure credentials.
 
+## Testing Policies with the Sentinel Simulator
+You can test the policies with the Sentinel Simulator after [downloading](https://docs.hashicorp.com/sentinel/downloads) it and putting it in your path.
+
+To test the included test cases against the policies, please do the following:
+1. Clone or fork this repository.
+1. Navigate to the governance/validation-policies directory.
+1. Run these commands:
+```
+sentinel test -run=zip
+sentinel test -run=state
+sentinel test -run=aws
+sentinel test -run=azure
+```
+1. To see verbose output including things the policies print, add the `-verbose` flag to these commands.
+
 ## Conclusion
-In this guide, you have learned how Sentinel policies can be used in Vault Enterprise to validate the content of secrets. In particular, you have tested policies that validate zip codes, state codes, AWS keys, and Azure credentials.
+In this guide, you have learned how Sentinel policies can be used in Vault Enterprise to validate the content of secrets. In particular, you have tested policies that validate zip codes, state codes, AWS keys, and Azure credentials against the Vault KV Secrets Engine. You have also tested the policies with the Sentinel Simulator using test cases that we provided.

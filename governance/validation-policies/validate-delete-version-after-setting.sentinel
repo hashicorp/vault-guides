@@ -1,0 +1,35 @@
+# Policy that validates that delete_version_after less than 30 days (720 hours)
+
+# This is intended to be used against paths of form <path>/metadata/<secret>
+# for the KV v2 secrets engine
+
+import "strings"
+
+# Function that validates delete_version_after less than 30 days
+validate_delete_version_after_setting = func() {
+
+  # Print some information about the request
+  # Note that these messages will only be printed when the policy is violated
+  print("Namespace path:", namespace.path)
+  print("Request path:", request.path)
+  print("Request data:", request.data)
+
+  if "delete_version_after" in keys(request.data) {
+    hours = int(strings.split(request.data.delete_version_after, "h")[0])
+    print("hours:", hours)
+  	if hours > 720 {
+      print("Invalid value of delete_version_after")
+      print("It must be under 720 hours")
+    	return false
+    }
+  }
+
+  return true
+
+}
+
+# Main Rule
+delete_version_after_setting_validated = validate_delete_version_after_setting()
+main = rule {
+  delete_version_after_setting_validated
+}

@@ -20,7 +20,7 @@ The project will create the following resources in GCP:
 * Vault-sad - A GCE instance not in the bound region - This should not be able to get a token from Vault
 * vault-auth-checker - A Service Account with the Compute Viewer and Security Viewer permissions - Vault will use these credentials for the GCE backend
 
-Note: These resources will be access bound to the IP of the machine running Terraform.
+Note: These resources will be firewall access bound to the IP of the machine running Terraform.
 
 We will then create the following Vault install and configuration using the vault-server:
 
@@ -121,10 +121,10 @@ vault_addr_export = Run the following for the Vault configuration: export VAULT_
 
 Initialize Vault:
 ```
-vault operator init
+vault operator init -key-shares=1 -key-threshold=1
 ```
 
-Unseal Vault (by supplying at least 3 keys from the above output)
+Unseal Vault (by supplying at least a key from the above output)
 ```
 vault operator unseal
 Unseal Key (will be hidden): <Enter key here>
@@ -140,7 +140,6 @@ export VAULT_TOKEN=s.KkNJYWF5g0pomcCLEmDdOVCW
 Configure Vault with Terraform code:
 ```
 cd vault/
-vault auth enable gcp
 terraform plan
 terraform apply
 cd ..

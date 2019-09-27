@@ -63,6 +63,10 @@ $ helm install --name=vault \
   --set 'authDelegator.enabled=true' vault-helm
 ```
 
+```shell
+$ helm install --name=vault --set 'authDelegator.enabled=true' vault-helm
+```
+
 Three services are running and each one needs to be unsealed.
 
 Run the vault operator init command to generate the unseal key and root token
@@ -70,9 +74,9 @@ Run the vault operator init command to generate the unseal key and root token
 ```shell
 $ kubectl exec -ti vault-0 -- vault operator init -n 1 -t 1
 
-Unseal Key 1: wtLAtCJ/MxUihEMM+Bw/RAsbQjqQvwQatuNKMCNXgvI=
+Unseal Key 1: mxW5SAU/10DOuNYaNXFZgkb/gedX+1UoK626xXM07Lg=
 
-Initial Root Token: s.wL4QOti9KOetCJrTfAO5dj6Q
+Initial Root Token: s.GNJraFHHzZZj4NSOtx6Qpvfo
 ...
 ```
 
@@ -94,25 +98,25 @@ $ kubectl port-forward vault-0 8200:8200
 $ export VAULT_ADDR="http://localhost:8200"
 
 # set the token to the initial token
-$ export VAULT_TOKEN=s.wL4QOti9KOetCJrTfAO5dj6Q
+$ export VAULT_TOKEN=s.GNJraFHHzZZj4NSOtx6Qpvfo
 ```
 
 Enable kv-v2 secrets at `secret`.
 
 ```shell
-vault secrets enable -path=secret kv-v2
+$ vault secrets enable -path=secret kv-v2
 ```
 
 Put a username and password secret at `exampleapp/config`.
 
 ```shell
-vault kv put secret/exampleapp/config username="choochoo" password="FOUNDIT"
+$ vault kv put secret/exampleapp/config username="choochoo" password="FOUNDIT"
 ```
 
 Verify that the secret exists.
 
 ```shell
-vault read secret/data/exampleapp/config -format=json
+$ vault read secret/data/exampleapp/config -format=json
 ```
 
 Next, its time to setup authentication between Vault and Kubernetes.
@@ -124,7 +128,7 @@ Set environment variables for the following values stored within Kubernetes.
 $ export VAULT_SA_NAME=$(kubectl get sa vault -o jsonpath="{.secrets[*]['name']}")
 
 # Set SA_JWT value to the service account JWT used to access the TokenReview API
-$ export SA_JWT =$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data.token}" | base64 --decode; echo)
+$ export SA_JWT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data.token}" | base64 --decode; echo)
 
 # Set SA_CA_CRT to the PEM encoded CA cert used to talk to Kubernetes API
 $ export SA_CA_CRT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)
@@ -148,13 +152,7 @@ $ vault write auth/kubernetes/config \
         kubernetes_ca_cert="$SA_CA_CRT"
 ```
 
-Create a Kubernetes service account named `vault`.
-
-TODO: this was not required.
-
-```shell
-$ kubectl create serviceaccount vault
-```
+A Kubernetes service account named `vault` was automatically created.
 
 Apply configuration of permissions for this service account found in
 `vault-service-account.yml`.
@@ -188,10 +186,10 @@ $ vault write auth/kubernetes/role/exampleapp \
 
 TODO
 
-Start a secret consumer defined in file `exampleapp.yml`.
+Start a secret consumer defined in file `k8s-exampleapp.yaml`.
 
 ```shell
-$ kubectl apply -f exampleapp.yml --name exampleapp-ruby
+$ kubectl apply -f k8s-exampleapp.yaml
 ```
 
 ### Verification
@@ -255,8 +253,12 @@ $ kubectl logs exampleapp-simple-c54944b4c-84kwf
 $ kubectl exec -it exampleapp-simple-c54944b4c-lwv7t /bin/bash
 ```
 
-Then when you are in there:
+On that system you can then run the service in the `/app` directory.
 
 ```shell
 $ rackup -p 9191
+```
+
+```shell
+$ apt-get install vim
 ```

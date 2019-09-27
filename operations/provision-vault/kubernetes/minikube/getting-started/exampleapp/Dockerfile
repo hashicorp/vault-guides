@@ -18,6 +18,6 @@ RUN mkdir $APP_HOME/lib
 COPY lib/* $APP_HOME/lib
 
 # Start server
-ENV PORT 9292
-EXPOSE 9292
-CMD ["rackup"]
+ENV PORT 8080
+EXPOSE 8080
+CMD ["rackup", "--port", "8080", "--env", "production" ]

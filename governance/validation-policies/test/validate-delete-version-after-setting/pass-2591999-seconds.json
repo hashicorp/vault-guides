@@ -1,0 +1,18 @@
+{
+  "global": {
+    "namespace": {
+      "path": ""
+    },
+    "request": {
+      "path": "kv2/metadata/address",
+        "data": {
+          "delete_version_after": "2591999s",
+          "max_versions": 100,
+          "cas_required": false
+        }
+    }
+  },
+  "test": {
+    "main": true
+  }
+}

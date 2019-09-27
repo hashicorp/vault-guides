@@ -1,0 +1,19 @@
+{
+  "global": {
+    "namespace": {
+      "path": ""
+    },
+    "request": {
+      "path": "kv1/aws/config/root",
+      "data": {
+        "data": {
+          "access_key": "AAAAA",
+          "secret_key": "AAAAA"
+        }
+      }
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

@@ -1,0 +1,113 @@
+# Policy that validates that delete_version_after less than 30 days (720 hours)
+
+# This is intended to be used against paths of form <path>/metadata/<secret>
+# for the KV v2 secrets engine
+
+import "strings"
+
+parse_duration = func(duration) {
+
+  # Process hours
+  hours_segment = strings.split(duration, "h")
+  if hours_segment[0] matches "^[0-9]+$" {
+    # Hours were specified
+    hours = int(hours_segment[0])
+    if length(hours_segment) == 1 {
+      # Minutes and seconds were not specified
+      minutes_segment = ""
+    } else {
+      # Minutes and/or seconds were specified
+      minutes_segment = hours_segment[1]
+    }
+  } else {
+    # Hours were not specified
+    # hours_segment will then be list with single element
+    # equal to original duration
+    hours = 0
+    minutes_segment = hours_segment[0]
+  }
+
+  # Process minutes
+  minutes_segment = strings.split(minutes_segment, "m")
+  if minutes_segment[0] matches "^[0-9]+$" {
+    # Minutes were specified
+    minutes = int(minutes_segment[0])
+    if length(minutes_segment) == 1 {
+      # Seconds were not specified
+      seconds_segment = ""
+    } else {
+      # Seconds were specified
+      seconds_segment = minutes_segment[1]
+    }
+  } else {
+    # Minutes were not specified
+    # minutes_segment will then be list with single element
+    # equal to hours_segment
+    minutes = 0
+    seconds_segment = minutes_segment[0]
+  }
+
+  # Process seconds
+  seconds_segment = strings.split(seconds_segment, "s")
+  if seconds_segment[0] matches "^[0-9]+$" {
+    # Seconds were specified
+    seconds = int(seconds_segment[0])
+  } else {
+    # Seconds were not specified
+    seconds = 0
+  }
+
+  # Roll seconds into minutes
+  if seconds >= 60 {
+    minutes_from_seconds = seconds / 60
+    minutes = minutes + minutes_from_seconds
+    seconds = seconds % 60
+  }
+
+  # Roll minutes into hours
+  if minutes >= 60 {
+    hours_from_minutes = minutes / 60
+    hours = hours + hours_from_minutes
+    minutes = minutes % 60
+  }
+
+  print("hours:", hours)
+  print("minutes:", minutes)
+  print("seconds:", seconds)
+
+
+  return {"hours": hours, "minutes": minutes, "seconds": seconds}
+
+}
+
+# Function that validates delete_version_after less than 30 days
+validate_delete_version_after_setting = func() {
+
+  # Print some information about the request
+  # Note that these messages will only be printed when the policy is violated
+  print("Namespace path:", namespace.path)
+  print("Request path:", request.path)
+  print("Request data:", request.data)
+
+  # Only validate against paths of form <segment>/metadata/<segments>
+  if request.path matches "^(.*)\\/metadata\\/(.*)$" and "delete_version_after" in keys(request.data) {
+    parsed_duration = parse_duration(request.data.delete_version_after)
+    hours = parsed_duration["hours"]
+    #hours = int(strings.split(request.data.delete_version_after, "h")[0])
+    print("hours in validation:", hours)
+  	if hours >= 720 {
+      print("Invalid value of delete_version_after")
+      print("It must be under 720 hours")
+    	return false
+    }
+  }
+
+  return true
+
+}
+
+# Main Rule
+delete_version_after_setting_validated = validate_delete_version_after_setting()
+main = rule {
+  delete_version_after_setting_validated
+}

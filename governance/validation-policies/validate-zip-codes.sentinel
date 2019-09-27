@@ -1,5 +1,6 @@
-# Policy that requires keys of secrets with name "zipcode", "zip-code", or "zip_code"
-# to be a valid 5-digit U.S. zipcode
+# Policy that requires keys of secrets with name "zipcode", "zip-code", or
+# "zip_code" to be a valid 5-digit U.S. zipcode
+# For use with Vault KV v1 and v2 secrets engines
 
 # Function that validates zip codes
 validate_zip_codes = func() {
@@ -9,6 +10,8 @@ validate_zip_codes = func() {
   print("Namespace path:", namespace.path)
   print("Request path:", request.path)
   print("Request data:", request.data)
+
+  # Test for request.data for kv v1
 
   # Test for "zipcode" key
   if "zipcode" in keys(request.data) {
@@ -28,7 +31,34 @@ validate_zip_codes = func() {
 
   # Test for "zip-code" key
   if "zip-code" in keys(request.data) {
-    if request.data.zip-code not matches "^[0-9]{5}$" {
+    # Using `request.data.zip-code` gives error
+    if request.data["zip-code"] not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  # Test for request.data.data for kv v2
+
+  # Test for "zipcode" key
+  if "data" in keys(request.data) and "zipcode" in keys(request.data.data) {
+    if request.data.data.zipcode not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  # Test for "zip_code" key
+  if "data" in keys(request.data) and "zip_code" in keys(request.data.data) {
+    if request.data.data.zip_code not matches "^[0-9]{5}$" {
+      print("Invalid zip code")
+      return false
+    }
+  }
+
+  # Test for "zip-code" key
+  if "data" in keys(request.data) and "zip-code" in keys(request.data.data) {
+    if request.data.datazip-code not matches "^[0-9]{5}$" {
       print("Invalid zip code")
       return false
     }
@@ -39,6 +69,7 @@ validate_zip_codes = func() {
 }
 
 # Main Rule
+zip_codes_validated = validate_zip_codes()
 main = rule {
-  validate_zip_codes()
+  zip_codes_validated
 }

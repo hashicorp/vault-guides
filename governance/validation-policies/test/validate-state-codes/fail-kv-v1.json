@@ -1,0 +1,16 @@
+{
+  "global": {
+    "namespace": {
+      "path": ""
+    },
+    "request": {
+      "path": "kv1/address",
+      "data": {
+        "state": "MM"
+      }
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

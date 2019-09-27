@@ -1,5 +1,6 @@
 # Policy that requires keys of secrets with name "state"
 # to be a valid U.S. state code
+# For use with Vault KV v1 and v2 secrets engines
 
 # Function that validates states
 validate_state_codes = func() {
@@ -16,9 +17,18 @@ validate_state_codes = func() {
     "NY","OH","OK","OR","PA","PR","RI","SC","SD","TN","TX","UT","VA","VI","VT","WA","WI","WV",
     "WY"]
 
-  # Test for "state" key
+  # Test for "state" key in request.data for kv v1
   if "state" in keys(request.data) {
     if request.data.state not in valid_states {
+      print("Invalid state code")
+      return false
+    }
+  }
+
+  # Test for "state" key in request.data.data for kv v2
+  # after first checking for "data" key in request.data
+  if "data" in keys(request.data) and "state" in keys(request.data.data) {
+    if request.data.data.state not in valid_states {
       print("Invalid state code")
       return false
     }
@@ -29,6 +39,7 @@ validate_state_codes = func() {
 }
 
 # Main Rule
+state_key_validated = validate_state_codes()
 main = rule {
-  validate_state_codes()
+  state_key_validated
 }

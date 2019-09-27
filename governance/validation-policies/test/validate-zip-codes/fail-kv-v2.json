@@ -1,0 +1,18 @@
+{
+  "global": {
+    "namespace": {
+       "path": ""
+    },
+    "request": {
+       "path": "kv2/address",
+       "data": {
+         "data": {
+           "zipcode": "123456"
+         }
+       }
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

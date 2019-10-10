@@ -1,10 +1,10 @@
 resource "aws_security_group" "testing" {
   name        = "${var.environment_name}-testing-sg"
   description = "SSH and Internal Traffic"
-  vpc_id      = "${module.vault_demo_vpc.vpc_id}"
+  vpc_id      = module.vault_demo_vpc.vpc_id
 
-  tags {
-    Name = "${var.environment_name}"
+  tags = {
+    Name = var.environment_name
   }
 
   # SSH
@@ -54,3 +54,4 @@ resource "aws_security_group" "testing" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
+

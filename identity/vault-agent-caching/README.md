@@ -26,10 +26,6 @@ These assets are provided to provision AWS resources to perform the steps descri
 
     # All resources will be tagged with this
     environment_name = "va-demo"
-
-    # If you want to use a different AWS region
-    aws_region = "us-west-1"
-    availability_zones = "us-west-1a"
     ```
 
 1. Run Terraform:

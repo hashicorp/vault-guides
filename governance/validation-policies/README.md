@@ -49,7 +49,7 @@ path "kv/*" {
 }
 ```
 1. Click the *Create policy* button to save the policy.
-1. In your terminal session, run `token create -policy=use-secrets` to create a non-root token that has the use-secrets policy assigned to it. Be sure to note the token returned by this command.
+1. In your terminal session, run `vault token create -policy=use-secrets` to create a non-root token that has the use-secrets policy assigned to it. Be sure to note the token returned by this command.
 1. Run `export VAULT_TOKEN=<token>` where "\<token\>" is the token returned by the previous command.
 1. Validate that you can write a secret with this token with a command like `vault kv put kv/test number=1`.
 

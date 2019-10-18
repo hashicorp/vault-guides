@@ -48,7 +48,7 @@ policy_match = func() {
   return true
 }
 
-# Rule applies to creating/updating AWS Vault roles
+# Rule applies to creating/updating AWS Vault roles (uses default path)
 precond = rule {
 	request.operation in ["create", "update"] and
 	strings.has_prefix(request.path, "aws/roles/")

@@ -5,7 +5,7 @@ import "strings"
 import "json"
 
 # Check for no wildcard AWS account IDs
-check_action = func(r) {
+check_resource = func(r) {
   if r matches "arn:aws:iam::\\*" {
     print("Resource", r, "AWS account wildcard is not allowed.")
     return false
@@ -44,14 +44,14 @@ policy_match = func() {
   # Iterate through all Statements and their Resources
   for payload.policy_document.Statement as statement {
     for statement.Resource as resource {
-      return check_action(resource)
+      return check_resource(resource)
     }
   }
 
   return true
 }
 
-# Rule applies to creating/updating AWS Vault roles
+# Rule applies to creating/updating AWS Vault roles (uses default path)
 precond = rule {
 	request.operation in ["create", "update"] and
 	strings.has_prefix(request.path, "aws/roles/")

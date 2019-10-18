@@ -1,0 +1,12 @@
+{
+  "global": {
+    "request": {
+      "operation": "create",
+      "path": "aws/roles/testing",
+      "data": {"credential_type": "iam_user", "policy_document": "{ \"credential_type\": \"iam_user\", \"policy_document\": { \"Version\": \"2012-10-17\", \"Statement\": [ { \"Effect\": \"Allow\", \"Action\": [ \"iam:AttachUserPolicy\", \"iam:CreateAccessKey\", \"iam:CreateUser\", \"iam:DeleteAccessKey\", \"iam:DeleteUser\", \"iam:DeleteUserPolicy\", \"iam:DetachUserPolicy\", \"iam:ListAccessKeys\", \"iam:ListAttachedUserPolicies\", \"iam:ListGroupsForUser\", \"iam:ListUserPolicies\", \"iam:PutUserPolicy\", \"iam:RemoveUserFromGroup\" ], \"Resource\": [ \"arn:aws:iam::ACCOUNT-ID-WITHOUT-HYPHENS:user/vault-*\" ] } ] }}"} 
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

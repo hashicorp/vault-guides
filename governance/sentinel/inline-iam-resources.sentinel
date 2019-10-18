@@ -1,0 +1,63 @@
+# EGP policy meant for path aws/roles/*
+# Restrict inline IAM policy from using a wildcard AWS account in Resources
+
+import "strings"
+import "json"
+
+# Check for no wildcard AWS account IDs
+check_resource = func(r) {
+  if r matches "arn:aws:iam::\\*" {
+    print("Resource", r, "AWS account wildcard is not allowed.")
+    return false
+  } else if r == "*" {
+    print("Resource", r, "wildcard is not allowed.")
+    return false
+  } else {
+    print("Resource", r, "AWS account specified.")
+    return true
+  }
+}
+
+policy_match = func() {
+  # Make sure there is request data
+  if length(request.data else 0) is 0 {
+    print("No request data")
+    return false
+  }
+
+  # Make sure there is a policy_document
+  if "policy_document" not in keys(request.data) {
+    print("No policy_document")
+    return false
+  }
+
+  # Debug data
+  #print("DATA:", request.data)
+  #print("KEYS:", keys(request.data))
+  #print("DOC:", request.data.policy_document)
+  #print("TYPE:", request.data.credential_type)
+
+  # Convert stringified policy into JSON
+  payload = json.unmarshal(request.data.policy_document)
+  #print("JSON:", payload)
+
+  # Iterate through all Statements and their Resources
+  for payload.policy_document.Statement as statement {
+    for statement.Resource as resource {
+      return check_resource(resource)
+    }
+  }
+
+  return true
+}
+
+# Rule applies to creating/updating AWS Vault roles (uses default path)
+precond = rule {
+	request.operation in ["create", "update"] and
+	strings.has_prefix(request.path, "aws/roles/")
+}
+
+# Main rule
+main = rule when precond {
+	policy_match()
+}

@@ -1,0 +1,60 @@
+# EGP policy meant for path aws/roles/*
+# Restrict inline IAM policy to only designate ec2 Actions
+
+import "strings"
+import "json"
+
+# Check for only ec2 actions
+check_action = func(a) {
+  if !(a matches "^ec2:") {
+    print("Action", a, "is not allowed.")
+    return false
+  } else {
+    print("Action", a, "is allowed.")
+    return true
+  }
+}
+
+policy_match = func() {
+  # Make sure there is request data
+  if length(request.data else 0) is 0 {
+    print("No request data")
+    return false
+  }
+
+  # Make sure there is a policy_document
+  if "policy_document" not in keys(request.data) {
+    print("No policy_document")
+    return false
+  }
+
+  # Debug data
+  #print("DATA:", request.data)
+  #print("KEYS:", keys(request.data))
+  #print("DOC:", request.data.policy_document)
+  #print("TYPE:", request.data.credential_type)
+
+  # Convert stringified policy into JSON
+  payload = json.unmarshal(request.data.policy_document)
+  #print("JSON:", payload)
+
+  # Iterate through all Statements and their Actions
+  for payload.policy_document.Statement as statement {
+    for statement.Action as action {
+      return check_action(action)
+    }
+  }
+
+  return true
+}
+
+# Rule applies to creating/updating AWS Vault roles (uses default path)
+precond = rule {
+	request.operation in ["create", "update"] and
+	strings.has_prefix(request.path, "aws/roles/")
+}
+
+# Main rule
+main = rule when precond {
+	policy_match()
+}

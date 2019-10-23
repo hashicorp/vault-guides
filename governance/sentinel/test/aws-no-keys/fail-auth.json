@@ -1,0 +1,16 @@
+{
+  "global": {
+    "request": {
+      "operation": "create",
+      "path": "auth/aws/config/client",
+      "data": {
+        "max_retries": 5,
+        "access_key": "noncompliant",
+        "secret_key": "superSecret"
+      }
+    }
+  },
+  "test": {
+    "main": false
+  }
+}

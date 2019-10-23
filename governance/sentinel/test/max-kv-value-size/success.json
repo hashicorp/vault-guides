@@ -1,0 +1,14 @@
+{
+  "global": {
+    "request": {
+      "operation": "create",
+      "path": "secret/data/stuff",
+      "data": {
+        "data": {
+          "junk": "1234567890",
+          "zip": "zap"
+        }
+      }
+    }
+  }
+}

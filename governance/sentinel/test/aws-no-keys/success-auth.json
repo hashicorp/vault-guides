@@ -1,0 +1,11 @@
+{
+  "global": {
+    "request": {
+      "operation": "create",
+      "path": "auth/aws/config/client",
+      "data": {
+        "max_retries": 5
+      }
+    }
+  }
+}

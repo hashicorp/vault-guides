@@ -1,0 +1,57 @@
+# EGP policy meant for path secret/(data/)?.*
+# Restrict KV values to a certain size
+
+check_size = func(key, value) {
+  # Set your size here
+  max_value_size = 10
+  if (length(value) > max_value_size) {
+    print(key, "value size of", length(value), "exceeds limit of", max_value_size)
+    return 1
+  } else {
+    print(key, "value size of", length(value), "is within limit of", max_value_size)
+    return 0
+  }
+}
+
+check_kvs = func() {
+  # Make sure there is request data
+  if length(request.data else 0) is 0 {
+    print("No request data")
+    return false
+  }
+
+  # Make sure there is a data object
+  if "data" not in keys(request.data) {
+    print("No data object")
+    return false
+  }
+
+  # Debug data
+  print("DATA:", request.data.data)
+
+  # Iterate through all K/V pairs
+  fails = 0
+  for request.data.data as key, value {
+    #print("KEY:", key)
+    #print("VALUE:", value)
+    fails += check_size(key, value)
+  }
+
+  # Return false if any failures were counted
+  if fails > 0 {
+    print(fails, "failures!")
+    return false
+  }
+
+  return true
+}
+
+# Rule applies to creating/updating/patching K/V pairs
+precond = rule {
+	request.operation in ["create", "update"]
+}
+
+# Main rule
+main = rule when precond {
+	check_kvs()
+}

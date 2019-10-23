@@ -1,0 +1,12 @@
+{
+  "global": {
+    "request": {
+      "operation": "create",
+      "path": "secret/data/stuff",
+      "data": {
+        "password": "abcdABCD1234#",
+        "policies": "admin,default"
+      }
+    }
+  }
+}

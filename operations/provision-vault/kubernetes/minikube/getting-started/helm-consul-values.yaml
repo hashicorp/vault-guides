@@ -1,16 +1,8 @@
 global:
   datacenter: hashidc1
 
-ui:
-  service:
-    type: "LoadBalancer"
-
-connectInject:
-  enabled: true
-
 client:
   enabled: true
-  grpc: true
 
 server:
   replicas: 1

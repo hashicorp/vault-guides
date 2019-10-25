@@ -184,8 +184,6 @@ $ vault write auth/kubernetes/role/exampleapp \
         ttl=24h
 ```
 
-TODO
-
 Start a secret consumer defined in file `k8s-exampleapp.yaml`.
 
 ```shell

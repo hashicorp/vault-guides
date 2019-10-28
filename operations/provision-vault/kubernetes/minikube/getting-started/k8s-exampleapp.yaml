@@ -1,0 +1,29 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: exampleapp
+  labels:
+    app: exampleapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: exampleapp
+  template:
+    metadata:
+      labels:
+        app: exampleapp
+    spec:
+      serviceAccountName: vault
+      containers:
+      - name: app
+        image: burtlo/exampleapp-ruby:k8s
+        imagePullPolicy: Always
+        env:
+        - name: SERVICE_PORT
+          value: "8080"
+        - name: JWT_PATH
+          value: "/var/run/secrets/kubernetes.io/serviceaccount/token"
+        - name: VAULT_ADDR
+          value: "http://vault:8200"

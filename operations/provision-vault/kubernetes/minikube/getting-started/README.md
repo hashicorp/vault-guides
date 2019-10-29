@@ -1,6 +1,6 @@
 # Vault with Kubernetes
 
-These assets are provided to perform the steps described in the [Vault Installation to Minikube via Helm](https://learn.hashicorp.com/vault/k8s-day-one/k8s-helm-chart) guide.
+These assets are provided to perform the steps described in the [Vault Installation to Minikube via Helm](https://learn.hashicorp.com/vault/getting-started-k8s/minikube) guide.
 
 ---
 

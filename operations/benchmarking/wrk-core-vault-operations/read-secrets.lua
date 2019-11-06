@@ -14,50 +14,57 @@ function setup(thread)
 end
 
 function init(args)
+   requests  = 0
+   reads = 0
+   responses = 0
+   method = "GET"
+   body = ''
+
    if args[1] == nil then
       num_secrets = 1000
    else
       num_secrets = tonumber(args[1])
    end
    print("Number of secrets is: " .. num_secrets)
+
    if args[2] == nil then
       print_secrets = "false"
    else
       print_secrets = args[2]
    end
-   requests  = 0
-   reads = 0
-   responses = 0
-   method = "GET"
-   body = ''
+
    -- give each thread different random seed
    math.randomseed(os.time() + id*1000)
    local msg = "thread %d created with print_secrets set to %s"
+
    print(msg:format(id, print_secrets))
 end
 
 function request()
    reads = reads + 1
+   requests = requests + 1
+
    -- randomize path to secret
    path = "/v1/secret/read-test/secret-" .. math.random(num_secrets)
-   requests = requests + 1
    return wrk.format(method, path, nil, body)
 end
 
 function response(status, headers, body)
    responses = responses + 1
+
    if print_secrets == "true" then
       body_object = json.decode(body)
-      for k,v in pairs(body_object) do 
+
+      for k,v in pairs(body_object) do
          if k == "data" then
             print("Secret path: " .. path)
             for k1,v1 in pairs(v) do
                local msg = "read secrets: %s : %s"
-               print(msg:format(k1, v1)) 
+               print(msg:format(k1, v1))
             end
          end
       end
-   end 
+   end
 end
 
 function done(summary, latency, requests)

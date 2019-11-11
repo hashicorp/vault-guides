@@ -1,5 +1,5 @@
 # Vault Integration Patterns with Venafi
-THis guide, along with its corresponding blog details the integration between Vault and Venafi using the vault-pki-monitor-venafi plugin
+This guide, along with its corresponding blog details the integration between Vault and Venafi using the vault-pki-monitor-venafi plugin
 
 ## Reference Material
 This code corresponds to a blog published on medium - Vault Integration Patterns with Venafi https://medium.com/@jgerson/vault-integration-patterns-with-venafi-21c3626cdcdb?source=friends_link&sk=4f5b72a9e4b19093792d8753568f3635

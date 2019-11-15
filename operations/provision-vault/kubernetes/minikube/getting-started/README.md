@@ -59,13 +59,13 @@ Launch the vault helm chart with the following options:
 ```shell
 $ helm install --name=vault \
   --set 'server.ha.enabled=true' \
-  --set 'ui.enabled=true' --set 'server.affinity=' \
-  --set 'authDelegator.enabled=true' vault-helm
+  --set 'ui.enabled=true' \
+  --set 'server.affinity=' \
+  --set 'server.authDelegator.enabled=true' \
+  vault-helm
 ```
 
-```shell
-$ helm install --name=vault --set 'authDelegator.enabled=true' vault-helm
-```
+Remark: You can also run this guide with Vault in standalone mode: `helm install --name=vault --set 'server.authDelegator.enabled=true' vault-helm`
 
 Three services are running and each one needs to be unsealed.
 

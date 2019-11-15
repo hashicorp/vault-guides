@@ -1,5 +1,5 @@
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 data "aws_ami" "ubuntu" {
@@ -24,15 +24,15 @@ data "aws_ami" "ubuntu" {
 //    This node does not participate in the HA clustering
 
 resource "aws_instance" "vault-transit" {
-  ami                         = "${data.aws_ami.ubuntu.id}"
-  instance_type               = "${var.instance_type}"
-  subnet_id                   = "${module.vault_demo_vpc.public_subnets[0]}"
-  key_name                    = "${var.key_name}"
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.instance_type
+  subnet_id                   = module.vault_demo_vpc.public_subnets[0]
+  key_name                    = var.key_name
   vpc_security_group_ids      = ["${aws_security_group.testing.id}"]
   associate_public_ip_address = true
-  iam_instance_profile        = "${aws_iam_instance_profile.vault-transit.id}"
+  iam_instance_profile        = aws_iam_instance_profile.vault-transit.id
 
-  user_data = "${data.template_file.vault-transit.rendered}"
+  user_data = data.template_file.vault-transit.rendered
 
   tags = {
     Name = "${var.environment_name}-vault-transit"
@@ -60,16 +60,16 @@ data "template_file" "vault-transit" {
 // Vault Server Instance
 
 resource "aws_instance" "vault-server" {
-  count                       = "${var.vault_server_count}"
-  ami                         = "${data.aws_ami.ubuntu.id}"
-  instance_type               = "${var.instance_type}"
-  subnet_id                   = "${module.vault_demo_vpc.public_subnets[0]}"
-  key_name                    = "${var.key_name}"
+  count                       = var.vault_server_count
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.instance_type
+  subnet_id                   = module.vault_demo_vpc.public_subnets[0]
+  key_name                    = var.key_name
   vpc_security_group_ids      = ["${aws_security_group.testing.id}"]
   associate_public_ip_address = true
-  iam_instance_profile        = "${aws_iam_instance_profile.vault-server.id}"
+  iam_instance_profile        = aws_iam_instance_profile.vault-server.id
 
-  user_data = "${data.template_file.vault-server.rendered}"
+  user_data = data.template_file.vault-server.rendered
   #user_data = "${data.template_file.vault-server[count.index]}"
 
   tags = {
@@ -77,7 +77,7 @@ resource "aws_instance" "vault-server" {
   }
 
   lifecycle {
-    ignore_changes = ["ami", "tags"]
+    ignore_changes = [ami, tags]
   }
 }
 

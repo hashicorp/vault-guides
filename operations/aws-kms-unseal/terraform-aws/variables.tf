@@ -7,7 +7,7 @@ variable "aws_zone" {
 }
 
 variable "vault_url" {
-  default = "https://releases.hashicorp.com/vault/1.1.2/vault_1.1.2_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.3.0/vault_1.3.0_linux_amd64.zip"
 }
 
 variable "vpc_cidr" {

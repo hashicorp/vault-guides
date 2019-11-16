@@ -1,6 +1,7 @@
 #!/bin/bash
 
-sudo apt-get install -y unzip jq 
+# sudo apt-get install -y unzip jq
+sudo apt update && sudo apt install -y unzip
 
 VAULT_ZIP="vault.zip"
 VAULT_URL="${vault_download_url}"
@@ -23,7 +24,7 @@ After=network-online.target
 Restart=on-failure
 PermissionsStartOnly=true
 ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/local/bin/vault
-ExecStart=/usr/local/bin/vault server -config /etc/vault.d
+ExecStart=/usr/local/bin/vault server -config /etc/vault.d/config.hcl
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGTERM
 User=azureuser

@@ -22,6 +22,7 @@ resource "google_compute_instance" "vault" {
 
   # Local SSD disk
   scratch_disk {
+    interface = "SCSI"
   }
 
   network_interface {
@@ -61,7 +62,7 @@ resource "google_compute_instance" "vault" {
 
     sudo systemctl enable vault
     sudo systemctl start vault
-  
+
 SCRIPT
 
 }
@@ -98,4 +99,3 @@ resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
     "serviceAccount:${google_service_account.vault_kms_service_account.email}",
   ]
 }
-

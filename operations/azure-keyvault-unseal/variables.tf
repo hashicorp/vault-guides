@@ -43,10 +43,9 @@ variable "vm_name" {
 }
 
 variable "vault_download_url" {
-  default = "https://releases.hashicorp.com/vault/1.1.2/vault_1.1.2_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.3.0/vault_1.3.0_linux_amd64.zip"
 }
 
 variable "resource_group_name" {
   default = "vault-demo-azure-auth"
 }
-

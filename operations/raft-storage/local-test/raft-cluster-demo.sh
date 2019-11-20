@@ -14,8 +14,8 @@ script_name=`basename "$0"`
 function setup() {
   printf "\n%s" \
     "Each node in the Vault cluster requires:" \
-    " - local loopback address" \
     " - a configuration file" \
+    " - local loopback address" \
     " - a directory to store the contents of the Raft storage." \
     ""
 
@@ -74,7 +74,8 @@ EOF
   }
   seal "transit" {
     address            = "http://127.0.0.1:8200"
-    # token              = "$VAULT_TOKEN"
+    # token is read from VAULT_TOKEN env
+    # token              = ""
     disable_renewal    = "false"
 
     // Key configuration
@@ -107,7 +108,8 @@ EOF
   }
   seal "transit" {
     address            = "http://127.0.0.1:8200"
-    # token              = "$VAULT_TOKEN"
+    # token is read from VAULT_TOKEN env
+    # token              = ""
     disable_renewal    = "false"
 
     // Key configuration
@@ -140,7 +142,8 @@ EOF
   }
   seal "transit" {
     address            = "http://127.0.0.1:8200"
-    # token              = "$VAULT_TOKEN"
+    # token is read from VAULT_TOKEN env
+    # token              = ""
     disable_renewal    = "false"
 
     // Key configuration
@@ -319,8 +322,8 @@ function clean() {
     fi
   done
 
-  for raft_storage in $DEMO_HOME/vault-raft/ $DEMO_HOME/vault-raft2/ $DEMO_HOME/vault-raft3/ $DEMO_HOME/vault-raft4/ ; do
-    if [[ -f "$raft_storage" ]] ; then
+  for raft_storage in $DEMO_HOME/vault-raft $DEMO_HOME/vault-raft2 $DEMO_HOME/vault-raft3 $DEMO_HOME/vault-raft4 ; do
+    if [[ -d "$raft_storage" ]] ; then
       rm -rf $raft_storage
     fi
   done

@@ -320,7 +320,7 @@ function setup_vault_1 {
   vault_1 login $VAULT_TOKEN
 
   printf "\n%s" \
-    "[vault_1] enabling the transit secret engine and storing key to enable remaining nodes to join the cluster" \
+    "[vault_1] enabling the transit secret engine and creating a key to auto-unseal vault_2" \
     ""
   sleep 5s # Added for human readability
 

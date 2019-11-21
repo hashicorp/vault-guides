@@ -146,17 +146,6 @@ function status {
   sleep 2
 }
 
-function create {
-  case "$1" in
-    network)
-      create_network
-      ;;
-    config)
-      create_config
-      ;;
-  esac
-}
-
 function create_network {
 
   printf "\n%s" \
@@ -435,6 +424,25 @@ function setup_vault_4 {
   VAULT_TOKEN=$VAULT_TOKEN VAULT_API_ADDR=http://127.0.0.4:8200 vault server -log-level=trace -config $DEMO_HOME/config-vault_4.hcl > $DEMO_HOME/vault_4.log 2>&1 &
 }
 
+function create {
+  case "$1" in
+    network)
+      shift ;
+      create_network $@
+      ;;
+    config)
+      shift ;
+      create_config $@
+      ;;
+    *)
+      printf "\n%s" \
+      "Creates resources for the cluster." \
+      "Usage: $script_name create [network|config]" \
+      ""
+      ;;
+  esac
+}
+
 function setup {
   case "$1" in
     vault_1)
@@ -449,15 +457,23 @@ function setup {
     vault_4)
       setup_vault_4
       ;;
+    *)
+      printf "\n%s" \
+      "Sets up resources for the cluster" \
+      "Usage: $script_name setup [vault_1|vault_2|vault_3|vault_4]" \
+      ""
+      ;;
   esac
 }
 
 case "$1" in
   create)
-    create $2
+    shift ;
+    create $@
     ;;
   setup)
-    setup $2
+    shift ;
+    setup $@
     ;;
   vault_1)
     shift ;
@@ -479,7 +495,8 @@ case "$1" in
     status
     ;;
   stop)
-    stop
+    shift ;
+    stop $@
     ;;
   clean)
     stop
@@ -487,7 +504,10 @@ case "$1" in
     ;;
   *)
     printf "\n%s" \
-    "Usage: $script_name [setup|start|status|stop|clean]" \
-    ""
+      "This script helps manages a Vault HA cluster with raft storage." \
+      "View the README.md the complete guide at https://learn.hashicorp.com/vault/beta/raft-storage" \
+      "" \
+      "Usage: $script_name [create|setup|status|stop|clean|vault_1|vault_2|vault_3|vault_4]" \
+      ""
     ;;
 esac

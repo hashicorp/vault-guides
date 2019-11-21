@@ -328,7 +328,7 @@ function setup_vault_1 {
   vault_1 login $VAULT_TOKEN
 
   printf "\n%s" \
-    "[vault_1] enabling the transit secret engine and creating a key to auto-unseal vault_2" \
+    "[vault_1] enabling the transit secret engine and creating a key to auto-unseal vault cluster" \
     ""
   sleep 5s # Added for human readability
 
@@ -374,7 +374,7 @@ function setup_vault_2 {
     ""
 
   printf "\n%s" \
-    "[vault_2] waiting to join Vault cluster (15 seconds)" \
+    "[vault_2] waiting to finish post-unseal setup (15 seconds)" \
     ""
 
   sleep 15s

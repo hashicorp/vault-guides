@@ -96,7 +96,7 @@
 1. Setup **vault_4**:
 
   ```shell
-  $ ./cluster.sh setup vault_3
+  $ ./cluster.sh setup vault_4
   ...
   ```
 

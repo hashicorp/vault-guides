@@ -95,7 +95,15 @@ function clean() {
     fi
   done
 
+  for token_file in $DEMO_HOME/root_token-vault_1 $DEMO_HOME/root_token-vault_2 ; do
+    if [[ -f "$token_file" ]] ; then
+      printf "\n%s" \
+        "Removing key $token_file"
 
+      rm $token_file
+    fi
+  done
+  
   for vault_log in $DEMO_HOME/vault_1.log $DEMO_HOME/vault_2.log $DEMO_HOME/vault_3.log $DEMO_HOME/vault_4.log ; do
     if [[ -f "$vault_log" ]] ; then
       printf "\n%s" \

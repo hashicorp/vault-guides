@@ -1,55 +1,91 @@
 #!/bin/bash
 
+# This script helps manage Vault running in a multi-node cluster using Raft
+# storage backend.
+#
+# SEE: https://learn.hashicorp.com/vault/beta/raft-storage
+
+# NOTE: This script is intended only to be used in an educational capacity. This
+#  is not intended to manage a Vault in a production environment.
+
 set -e
 
 DEMO_HOME=$(pwd)
 script_name=`basename "$0"`
 
 # Create a helper function to address the first vault node
-function vault_1() {
+function vault_1 {
     (export VAULT_ADDR=http://127.0.0.1:8200 && vault $@)
 }
 
 # Create a helper function to address the second vault node
-function vault_2() {
+function vault_2 {
     (export VAULT_ADDR=http://127.0.0.2:8200 && vault $@)
 }
 
 # Create a helper function to address the third vault node
-function vault_3() {
+function vault_3 {
     (export VAULT_ADDR=http://127.0.0.3:8200 && vault $@)
 }
 
 # Create a helper function to address the fourth vault node
-function vault_4() {
+function vault_4 {
     (export VAULT_ADDR=http://127.0.0.4:8200 && vault $@)
 }
 
-function stop() {
-  service_count=$(pgrep -f $(pwd)/config | wc -l | tr -d '[:space:]')
+function stop_vault {
+  local vault_node_name=$1
+
+  service_count=$(pgrep -f $(pwd)/config-$vault_node_name | wc -l | tr -d '[:space:]')
 
   printf "\n%s" \
-    "Found $service_count Vault services" \
-    ""
+    "Found $service_count Vault service(s) matching that name"
 
   if [ $service_count != "0" ] ; then
     printf "\n%s" \
-      "Stopping $service_count Vault services" \
+      "[$vault_node_name] stopping" \
       ""
 
-    pkill -f $(pwd)/config
+    pkill -f $(pwd)/config-$vault_node_name
   fi
 }
 
-function loopback_exists_at_address() {
+function stop {
+  case "$1" in
+    vault_1)
+      stop_vault "vault_1"
+      ;;
+    vault_2)
+      stop_vault "vault_2"
+      ;;
+    vault_3)
+      stop_vault "vault_3"
+      ;;
+    vault_4)
+      stop_vault "vault_4"
+      ;;
+    all)
+      for vault_node_name in vault_1 vault_2 vault_3 vault_4 ; do
+        stop_vault $vault_node_name
+      done
+      ;;
+    *)
+      printf "\n%s" \
+        "Usage: $script_name stop [all|vault_1|vault_2|vault_3|vault_4]" \
+        ""
+      ;;
+    esac
+}
+
+function loopback_exists_at_address {
   echo $(ifconfig lo0 | grep $1 || true) | tr -d '[:space:]'
 }
 
-function clean() {
+function clean {
 
   printf "\n%s" \
     "Cleaing up the HA cluster. Removing:" \
-    " - local loopback address for [vault_2], [vault_3], and [vault_4[" \
+    " - local loopback address for [vault_2], [vault_3], and [vault_4]" \
     " - configuration files" \
     " - raft storage directory" \
     " - log files" \
@@ -103,7 +139,7 @@ function clean() {
       rm $token_file
     fi
   done
-  
+
   for vault_log in $DEMO_HOME/vault_1.log $DEMO_HOME/vault_2.log $DEMO_HOME/vault_3.log $DEMO_HOME/vault_4.log ; do
     if [[ -f "$vault_log" ]] ; then
       printf "\n%s" \
@@ -507,7 +543,7 @@ case "$1" in
     stop $@
     ;;
   clean)
-    stop
+    stop all
     clean
     ;;
   *)

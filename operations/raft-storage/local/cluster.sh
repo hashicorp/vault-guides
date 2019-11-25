@@ -13,6 +13,25 @@ set -e
 DEMO_HOME=$(pwd)
 script_name=`basename "$0"`
 
+function vault_to_network_address {
+  local vault_node_name=$1
+
+  case "$vault_node_name" in
+    vault_1)
+      echo "http://127.0.0.1:8200"
+      ;;
+    vault_2)
+      echo "http://127.0.0.2:8200"
+      ;;
+    vault_3)
+      echo "http://127.0.0.3:8200"
+      ;;
+    vault_4)
+      echo "http://127.0.0.4:8200"
+      ;;
+  esac
+}
+
 # Create a helper function to address the first vault node
 function vault_1 {
     (export VAULT_ADDR=http://127.0.0.1:8200 && vault $@)
@@ -67,6 +86,59 @@ function stop {
     all)
       for vault_node_name in vault_1 vault_2 vault_3 vault_4 ; do
         stop_vault $vault_node_name
+      done
+      ;;
+    *)
+      printf "\n%s" \
+        "Usage: $script_name stop [all|vault_1|vault_2|vault_3|vault_4]" \
+        ""
+      ;;
+    esac
+}
+
+function start_vault {
+  local vault_node_name=$1
+
+  local vault_network_address=$(vault_to_network_address $vault_node_name)
+  local vault_config_file=$DEMO_HOME/config-$vault_node_name.hcl
+  local vault_log_file=$DEMO_HOME/vault_2.log
+
+  printf "\n%s" \
+    "[$vault_node_name] starting Vault server @ $vault_network_address" \
+    ""
+
+  # vault_1 when started should not be looking for a token. It should be
+  # creating the token.
+
+  if [[ "$vault_node_name" != "vault_1" ]] ; then
+    if [[ -e "$DEMO_HOME/root_token-vault_1" ]] ; then
+      VAULT_TOKEN=$(cat $DEMO_HOME/root_token-vault_1)
+
+      printf "\n%s" \
+        "Using [vault_1] root token ($VAULT_TOKEN) to retrieve transit key for auto-unseal"
+    fi
+  fi
+
+  VAULT_TOKEN=$VAULT_TOKEN VAULT_API_ADDR=$vault_network_address vault server -log-level=trace -config $vault_config_file > $vault_log_file 2>&1 &
+}
+
+function start {
+  case "$1" in
+    vault_1)
+      start_vault "vault_1"
+      ;;
+    vault_2)
+      start_vault "vault_2"
+      ;;
+    vault_3)
+      start_vault "vault_3"
+      ;;
+    vault_4)
+      start_vault "vault_4"
+      ;;
+    all)
+      for vault_node_name in vault_1 vault_2 vault_3 vault_4 ; do
+        start_vault $vault_node_name
       done
       ;;
     *)
@@ -329,12 +401,7 @@ EOF
 }
 
 function setup_vault_1 {
-
-  printf "\n%s" \
-    "[vault_1] starting Vault server @ http://127.0.0.1:8200" \
-    ""
-
-  VAULT_API_ADDR=http://127.0.0.1:8200 vault server -log-level=trace -config $DEMO_HOME/config-vault_1.hcl > $DEMO_HOME/vault_1.log 2>&1 &
+  start_vault "vault_1"
   sleep 5s
 
   printf "\n%s" \
@@ -373,21 +440,7 @@ function setup_vault_1 {
 }
 
 function setup_vault_2 {
-
-  if [[ -e "$DEMO_HOME/root_token-vault_1" ]] ; then
-    VAULT_TOKEN=$(cat $DEMO_HOME/root_token-vault_1)
-
-    printf "\n%s" \
-      "Using [vault_1] root token ($VAULT_TOKEN) to retrieve transit key for auto-unseal"
-  fi
-
-  printf "\n%s" \
-    "[vault_2] starting Vault server @ http://127.0.0.2:8200" \
-    ""
-  sleep 2s # Added for human readability
-
-  VAULT_TOKEN=$VAULT_TOKEN VAULT_API_ADDR=http://127.0.0.2:8200 vault server -log-level=trace -config $DEMO_HOME/config-vault_2.hcl > $DEMO_HOME/vault_2.log 2>&1 &
-
+  start_vault "vault_2"
   sleep 5s
 
   printf "\n%s" \
@@ -434,38 +487,13 @@ function setup_vault_2 {
 }
 
 function setup_vault_3 {
-
-  if [[ -e "$DEMO_HOME/root_token-vault_1" ]] ; then
-    VAULT_TOKEN=$(cat $DEMO_HOME/root_token-vault_1)
-
-    printf "\n%s" \
-      "Using [vault_1] root token ($VAULT_TOKEN) to retrieve transit key for auto-unseal"
-  fi
-
-  printf "\n%s" \
-    "[vault_3] starting Vault server @ http://127.0.0.3:8200" \
-    ""
-  sleep 2s # Added for human readability
-
-  VAULT_TOKEN=$VAULT_TOKEN VAULT_API_ADDR=http://127.0.0.3:8200 vault server -log-level=trace -config $DEMO_HOME/config-vault_3.hcl > $DEMO_HOME/vault_3.log 2>&1 &
+  start_vault "vault_3"
+  sleep 2s
 }
 
 function setup_vault_4 {
-
-  if [[ -e "$DEMO_HOME/root_token-vault_1" ]] ; then
-    VAULT_TOKEN=$(cat $DEMO_HOME/root_token-vault_1)
-
-    printf "\n%s" \
-      "Using [vault_1] root token ($VAULT_TOKEN) to retrieve transit key for auto-unseal"
-
-  fi
-
-  printf "\n%s" \
-    "[vault_4] starting Vault server @ http://127.0.0.4:8200" \
-    ""
-  sleep 2s # Added for human readability
-
-  VAULT_TOKEN=$VAULT_TOKEN VAULT_API_ADDR=http://127.0.0.4:8200 vault server -log-level=trace -config $DEMO_HOME/config-vault_4.hcl > $DEMO_HOME/vault_4.log 2>&1 &
+  start_vault "vault_4"
+  sleep 2s
 }
 
 function create {
@@ -501,10 +529,15 @@ function setup {
     vault_4)
       setup_vault_4
       ;;
+    all)
+      for vault_node_name in vault_1 vault_2 vault_3 vault_4 ; do
+        setup_vault $vault_node_name
+      done
+      ;;
     *)
       printf "\n%s" \
       "Sets up resources for the cluster" \
-      "Usage: $script_name setup [vault_1|vault_2|vault_3|vault_4]" \
+      "Usage: $script_name setup [all|vault_1|vault_2|vault_3|vault_4]" \
       ""
       ;;
   esac
@@ -537,6 +570,10 @@ case "$1" in
     ;;
   status)
     status
+    ;;
+  start)
+    shift ;
+    start $@
     ;;
   stop)
     shift ;

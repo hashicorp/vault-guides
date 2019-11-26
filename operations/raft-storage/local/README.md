@@ -4,150 +4,150 @@
 
 1. Set the `cluster.sh` file to executable:
 
-  ```shell
-  $ chmod +x cluster.sh
-  ```
+    ```shell
+    $ chmod +x cluster.sh
+    ```
 
 1. Set up the local loopback addresses for each Vault:
 
-  ```shell
-  $ ./cluster.sh create network
+    ```shell
+    $ ./cluster.sh create network
 
-  [vault_2] Enabling local loopback on 127.0.0.2 (requires sudo)
-  Password:
+    [vault_2] Enabling local loopback on 127.0.0.2 (requires sudo)
+    Password:
 
-  [vault_3] Enabling local loopback on 127.0.0.3 (requires sudo)
+    [vault_3] Enabling local loopback on 127.0.0.3 (requires sudo)
 
-  [vault_4] Enabling local loopback on 127.0.0.4 (requires sudo)
-  ```
+    [vault_4] Enabling local loopback on 127.0.0.4 (requires sudo)
+    ```
 
-  This operation requires a user with sudo access. You will be prompted to enter
-  your password.
+    > This operation requires a user with sudo access. You will be prompted to enter
+    your password.
 
 1. Create the configuration for each Vault:
 
-  ```shell
-  $ ./cluster.sh create config
-  [vault_1] Creating configuration
-    - creating $DEMO_HOME/config-vault_1.hcl
-  [vault_2] Creating configuration
-    - creating $DEMO_HOME/config-vault_2.hcl
-    - creating $DEMO_HOME/raft-vault_2
-  [vault_3] Creating configuration
-    - creating $DEMO_HOME/config-vault_3.hcl
-    - creating $DEMO_HOME/raft-vault_3
-  [vault_4] Creating configuration
-    - creating $DEMO_HOME/config-vault_4.hcl
-    - creating $DEMO_HOME/raft-vault_4
-  ```
+    ```shell
+    $ ./cluster.sh create config
+    [vault_1] Creating configuration
+      - creating $DEMO_HOME/config-vault_1.hcl
+    [vault_2] Creating configuration
+      - creating $DEMO_HOME/config-vault_2.hcl
+      - creating $DEMO_HOME/raft-vault_2
+    [vault_3] Creating configuration
+      - creating $DEMO_HOME/config-vault_3.hcl
+      - creating $DEMO_HOME/raft-vault_3
+    [vault_4] Creating configuration
+      - creating $DEMO_HOME/config-vault_4.hcl
+      - creating $DEMO_HOME/raft-vault_4
+    ```
 
-2. Setup **vault_1**:
+1. Setup **vault_1**:
 
-  ```shell
-  $ ./cluster.sh setup vault_1
-  [vault_1] starting
+    ```shell
+    $ ./cluster.sh setup vault_1
+    [vault_1] starting
 
-  [vault_1] initializing and capturing the unseal key and root token
+    [vault_1] initializing and capturing the unseal key and root token
 
-  [vault_1] Unseal key: Q4eS1oGlVtoetJcXleWNoskDwz4SQXQQ0x8SyIvM2WE=
-  [vault_1] Root token: s.K9SANPJSl7oluQNm919bgh9c
+    [vault_1] Unseal key: Q4eS1oGlVtoetJcXleWNoskDwz4SQXQQ0x8SyIvM2WE=
+    [vault_1] Root token: s.K9SANPJSl7oluQNm919bgh9c
 
-  [vault_1] unsealing and logging in
-  Key             Value
-  ---             -----
-  Seal Type       shamir
-  Initialized     true
-  Sealed          false
-  Total Shares    1
-  Threshold       1
-  Version         1.3.0
-  Cluster Name    vault-cluster-cfbd3810
-  Cluster ID      05bdd1d1-5c65-fee4-d2aa-357ccb32eaa6
-  HA Enabled      false
-  Success! You are now authenticated. The token information displayed below
-  is already stored in the token helper. You do NOT need to run "vault login"
-  again. Future Vault requests will automatically use this token.
-  ...
-  ```
+    [vault_1] unsealing and logging in
+    Key             Value
+    ---             -----
+    Seal Type       shamir
+    Initialized     true
+    Sealed          false
+    Total Shares    1
+    Threshold       1
+    Version         1.3.0
+    Cluster Name    vault-cluster-cfbd3810
+    Cluster ID      05bdd1d1-5c65-fee4-d2aa-357ccb32eaa6
+    HA Enabled      false
+    Success! You are now authenticated. The token information displayed below
+    is already stored in the token helper. You do NOT need to run "vault login"
+    again. Future Vault requests will automatically use this token.
+    ...
+    ```
 
 1. Setup **vault_2**:
 
-  ```shell
-  $ ./cluster.sh setup vault_2
-  Using [vault_1] root token (s.E9luqJNmTz4AwFF4orqu0UTt) to retrieve transit key for auto-unseal
+    ```shell
+    $ ./cluster.sh setup vault_2
+    Using [vault_1] root token (s.E9luqJNmTz4AwFF4orqu0UTt) to retrieve transit key for auto-unseal
 
-  [vault_2] starting Vault server @ http://127.0.0.2:8200
+    [vault_2] starting Vault server @ http://127.0.0.2:8200
 
-  [vault_2] initializing and capturing the recovery key and root token
+    [vault_2] initializing and capturing the recovery key and root token
 
-  [vault_2] Recovery key: zD79QAvrbLP9ndgNRPdTfubEvJByVqdQMGjuWM0p6Gs=
-  [vault_2] Root token: s.tLDy8gNJQZjQuYozVy2YG0zw
+    [vault_2] Recovery key: zD79QAvrbLP9ndgNRPdTfubEvJByVqdQMGjuWM0p6Gs=
+    [vault_2] Root token: s.tLDy8gNJQZjQuYozVy2YG0zw
 
-  [vault_2] waiting to join Vault cluster (15 seconds)
-  ```
+    [vault_2] waiting to join Vault cluster (15 seconds)
+    ```
 
-2. Setup **vault_3**:
+1. Setup **vault_3**:
 
-  ```shell
-  $ ./cluster.sh setup vault_3
-  ...
-  ```
+    ```shell
+    $ ./cluster.sh setup vault_3
+    ...
+    ```
 
 1. Setup **vault_4**:
 
-  ```shell
-  $ ./cluster.sh setup vault_4
-  ...
-  ```
+    ```shell
+    $ ./cluster.sh setup vault_4
+    ...
+    ```
 
 1. Join **vault_3** to the cluster:
 
-  ```shell
-  $ ./cluster.sh vault_3 operator raft join http://127.0.0.2:8200
-  Key       Value
-  ---       -----
-  Joined    true
-  ```
+    ```shell
+    $ ./cluster.sh vault_3 operator raft join http://127.0.0.2:8200
+    Key       Value
+    ---       -----
+    Joined    true
+    ```
 
 1. Join **vault_4** to the cluster:
 
-  ```shell
-  $ ./cluster.sh vault_4 operator raft join http://127.0.0.2:8200
-  Key       Value
-  ---       -----
-  Joined    true
-  ```
+    ```shell
+    $ ./cluster.sh vault_4 operator raft join http://127.0.0.2:8200
+    Key       Value
+    ---       -----
+    Joined    true
+    ```
 
 1. View the cluster configuration from any cluster member:
 
-  ```shell
-  $ ./cluster.sh vault_2 operator raft configuration -format=json | jq -r ".data.config.servers"
-  $ ./cluster.sh vault_3 operator raft configuration -format=json | jq -r ".data.config.servers"
-  $ ./cluster.sh vault_4 operator raft configuration -format=json | jq -r ".data.config.servers"
-   [
-      {
-          "address": "127.0.0.2:8201",
-          "leader": true,
-          "node_id": "vault_2",
-          "protocol_version": "3",
-          "voter": true
-      },
-      {
-          "address": "127.0.0.3:8201",
-          "leader": false,
-          "node_id": "vault_3",
-          "protocol_version": "3",
-          "voter": true
-      },
-      {
-          "address": "127.0.0.4:8201",
-          "leader": false,
-          "node_id": "vault_4",
-          "protocol_version": "3",
-          "voter": true
-      }
-   ]
- ```
+    ```shell
+    $ ./cluster.sh vault_2 operator raft configuration -format=json | jq -r ".data.config.servers"
+    $ ./cluster.sh vault_3 operator raft configuration -format=json | jq -r ".data.config.servers"
+    $ ./cluster.sh vault_4 operator raft configuration -format=json | jq -r ".data.config.servers"
+     [
+        {
+            "address": "127.0.0.2:8201",
+            "leader": true,
+            "node_id": "vault_2",
+            "protocol_version": "3",
+            "voter": true
+        },
+        {
+            "address": "127.0.0.3:8201",
+            "leader": false,
+            "node_id": "vault_3",
+            "protocol_version": "3",
+            "voter": true
+        },
+        {
+            "address": "127.0.0.4:8201",
+            "leader": false,
+            "node_id": "vault_4",
+            "protocol_version": "3",
+            "voter": true
+        }
+     ]
+   ```
 
 # Clean up
 

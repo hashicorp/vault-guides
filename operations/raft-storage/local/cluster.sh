@@ -530,8 +530,8 @@ function setup {
       setup_vault_4
       ;;
     all)
-      for vault_node_name in vault_1 vault_2 vault_3 vault_4 ; do
-        setup_vault $vault_node_name
+      for vault_setup_function in setup_vault_1 setup_vault_2 setup_vault_3 setup_vault_4 ; do
+        $vault_setup_function
       done
       ;;
     *)

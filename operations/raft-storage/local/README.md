@@ -1,6 +1,6 @@
 # Create a Vault HA cluster locally on your machine
 
-### Setup an HA cluster
+## Setup script, network and configuration
 
 1. Set the `cluster.sh` file to executable:
 
@@ -40,6 +40,11 @@
       - creating $DEMO_HOME/config-vault_4.hcl
       - creating $DEMO_HOME/raft-vault_4
     ```
+
+## Setup Vault nodes
+
+You can setup the nodes individually as described below or perform the setup for
+all nodes with `./cluster.sh setup all`.
 
 1. Setup **vault_1**:
 
@@ -100,6 +105,8 @@
     ...
     ```
 
+## Join nodes to the cluster
+
 1. Join **vault_3** to the cluster:
 
     ```shell
@@ -109,7 +116,7 @@
     Joined    true
     ```
 
-1. Join **vault_4** to the cluster:
+1.  Join **vault_4** to the cluster:
 
     ```shell
     $ ./cluster.sh vault_4 operator raft join http://127.0.0.2:8200
@@ -118,7 +125,7 @@
     Joined    true
     ```
 
-1. View the cluster configuration from any cluster member:
+1.  View the cluster configuration from any cluster member:
 
     ```shell
     $ ./cluster.sh vault_2 operator raft configuration -format=json | jq -r ".data.config.servers"
@@ -148,6 +155,35 @@
         }
      ]
    ```
+
+# Interacting with the nodes
+
+Get the status of all nodes:
+
+```sh
+$ ./cluster.sh status
+```
+
+Stop an individual node or all nodes:
+
+```sh
+$ ./cluster.sh stop [vault_1|vault_2|vault_3|vault_4|all]
+```
+
+Start an individual node or all nodes:
+
+```sh
+$ ./cluster.sh start [vault_1|vault_2|vault_3|vault_4|all]
+```
+
+Issue a Vault command, like `status`, targeting one of the nodes:
+
+```sh
+$ ./cluster.sh vault_1 status
+$ ./cluster.sh vault_2 status
+$ ./cluster.sh vault_3 status
+$ ./cluster.sh vault_4 status
+```
 
 # Clean up
 

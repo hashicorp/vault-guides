@@ -151,7 +151,7 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
     ```plaintext
     $ cat /test/vault/config.hcl
-    ```ß
+    ```
 
 1. Clean up
 

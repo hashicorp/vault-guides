@@ -11,9 +11,18 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
 1. Provide necessary GCP account information in the `terraform.tfvars.example` and save it as `terraform.tfvars`.
 
+    **Example:**
+
+    ```shell
+    gcloud-project = "vault-test"
+    account_file_path = "/tmp/GCP/my-service-account.json"
+    ```
+
+    > Set the `account_file_path` to where your Cloud IAM service account file is located. This is the service account that the Terraform uses to provision GCP resources. If you do not have one, follow the [GCP documentation](https://cloud.google.com/docs/authentication/getting-started) to create a service account and download the JSON file.
+
 1. This guide expects a Cloud KMS key ring and crypto key to already exists. If you **don't** have one to use for Vault auto-unseal, un-comment the key ring and key creation portion in the `main.tf` file.  **NOTE:** Keep line 93 commented out and use line 92.
 
-    ```plaintext
+    ```shell
     ...
 
     # Create a KMS key ring
@@ -44,12 +53,11 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
     NOTE: By default, this will create a Cloud KMS key ring named, "test" in the **global** location, and a key named, "vault-test".
 
-
     If you are using your own KMS key ring and its crypto key, be sure to set the correct `key_ring` and `crypto_key` values in the `terraform.tfvars` file.
 
     **Example: `terraform.tfvars`**
 
-    ```plaintext
+    ```
     gcloud-project = "my-project"
     account_file_path = "/usr/gcp/my-project.json"
     key_ring = "key_ring_name"
@@ -59,7 +67,7 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
 
     In the `main.tf` file, un-comment line 92, and comment out line 92 as shown below:
 
-    ```plaintext
+    ```shell
     ...
     # Add the service account to the Keyring
     resource "google_kms_key_ring_iam_binding" "vault_iam_kms_binding" {
@@ -86,6 +94,7 @@ KMS](https://learn.hashicorp.com/vault/operations/autounseal-gcp-kms) guide.
     ```
 
 1. [SSH into the compute instance](https://cloud.google.com/compute/docs/instances/connecting-to-instance)
+
     ```plaintext
     $ export instance_id=$(terraform output vault_server_instance_id)
     $ export project=$(terraform output project)

@@ -143,7 +143,6 @@ sudo rm -rf /tmp/vault.zip
 
 sudo tee -a /etc/environment <<EOF
 export VAULT_ADDR="http://${tpl_vault_server_addr}:8200"
-export VAULT_AGENT_ADDR=http://127.0.0.1:8200
 export VAULT_SKIP_VERIFY=true
 EOF
 

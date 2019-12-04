@@ -1,0 +1,19 @@
+# Compiled files
+*.tfstate
+*.tfstate.*
+
+# Directories
+.terraform/
+.vagrant/
+
+# Terraform Variables
+*.tfvars
+
+# SSH Keys
+*.pem
+
+# Backup files
+*.bak
+
+# Ignored Terraform files
+*gitignore*.tf

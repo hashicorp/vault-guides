@@ -30,7 +30,6 @@ data "template_file" "vault-client" {
   template = file("${path.module}/templates/userdata-vault-client.tpl")
 
   vars = {
-    tpl_consul_template_zip_file    = var.consul_template_zip_file
     tpl_vault_zip_file          = var.vault_zip_file
     tpl_vault_server_addr  = aws_instance.vault-server[0].private_ip
   }

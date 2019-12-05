@@ -32,12 +32,6 @@ variable "consul_zip_file" {
   default = "https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_linux_amd64.zip"
 }
 
-# URL for Consul Templates binary
-variable "consul_template_zip_file" {
-  description = "The url to download Consul Template."
-  default     = "https://releases.hashicorp.com/consul-template/0.21.0/consul-template_0.21.0_linux_amd64.zip"
-}
-
 # Instance size
 variable "instance_type" {
   default = "t2.micro"

@@ -17,7 +17,6 @@ logger "Running"
 PRIVATE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 #PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 
-CONSUL_TEMNPLATE_ZIP="${tpl_consul_template_zip_file}"
 VAULT_ZIP="${tpl_vault_zip_file}"
 
 # Detect package management system.
@@ -114,17 +113,6 @@ else
   exit 1;
 fi
 
-
-##--------------------------------------------------------------------
-## Install Consul-Template
-##--------------------------------------------------------------------
-logger "Downloading Consul-Template"
-curl -o /tmp/consul-template.zip $${CONSUL_TEMNPLATE_ZIP}
-
-logger "Installing Consul-Template"
-sudo unzip -o /tmp/consul-template.zip -d /usr/local/bin/
-sudo chmod +x /usr/local/bin/consul-template
-sudo rm -rf /tmp/consul-template.zip
 
 ##--------------------------------------------------------------------
 ## Install Vault

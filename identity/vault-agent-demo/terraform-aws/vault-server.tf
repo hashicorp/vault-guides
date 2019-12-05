@@ -27,6 +27,9 @@ resource "aws_instance" "vault-server" {
   }
 }
 
+data "aws_caller_identity" "current" {
+}
+
 data "template_file" "vault-server" {
   template = file("${path.module}/templates/userdata-vault-server.tpl")
 
@@ -38,6 +41,7 @@ data "template_file" "vault-server" {
     tpl_kms_key                 = aws_kms_key.vault.id
     tpl_aws_region              = var.aws_region
     tpl_consul_bootstrap_expect = var.vault_server_count
+    account_id                  = data.aws_caller_identity.current.account_id
+    role_name                   = "${var.environment_name}-vault-client-role"
   }
 }
-

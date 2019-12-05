@@ -1,6 +1,6 @@
 # Vault Agent with AWS
 
-These assets are provided to provision AWS resources to perform the steps described in the Vault Agent Template (WIP) guide.
+These assets are provided to provision AWS resources to perform the steps described in the [Vault Agent Template](https://learn.hashicorp.com/vault/identity-access-management/agent-templates) guide.
 
 ---
 

@@ -60,26 +60,8 @@ These assets are provided to provision AWS resources to perform the steps descri
     }
     EOF
 
-    # Create a policy named, 'myapp'
-    $ vault policy write myapp myapp.hcl
-
-    # Write some secrets in 'secret/app/config' path
-    $ vault kv put secret/myapp/config \
-        ttl='30s' \
-        username='appuser' \
-        password='suP3rsec(et!'
-
-    # Enable aws auth method
-    $ vault auth enable aws
-
-    # Configure aws auth method
-    $ vault write -force auth/aws/config/client
-
-    # The <ROLE_ARN> value can be found in the terraform output
-    $ vault write auth/aws/role/dev-role-iam auth_type=iam \
-        bound_iam_principal_arn=<ROLE_ARN> \
-        policies=myapp \
-        ttl=24h
+    # Run the setup script
+    $ ./aws_auth.sh
     ```
 
 1. SSH into the Vault **client** instance: `ssh -i <path_to_key> ubuntu@<public_ip_of_client>`

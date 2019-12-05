@@ -262,7 +262,7 @@ configure_systemd_resolved() {
   echo iptables-persistent iptables-persistent/autosave_v4 boolean true | sudo debconf-set-selections
   echo iptables-persistent iptables-persistent/autosave_v6 boolean true | sudo debconf-set-selections
   sudo apt-get install iptables-persistent
-  
+
   sudo systemctl restart systemd-resolved
 }
 
@@ -398,5 +398,24 @@ fi
 
 sudo systemctl enable vault
 sudo systemctl start vault
+
+##--------------------------------------------------------------------
+## Shortcut script
+##--------------------------------------------------------------------
+sudo cat << EOF > /home/ubuntu/aws_auth.sh
+vault secrets enable -path="secret" kv
+vault kv put secret/myapp/config ttl='30s' username='appuser' password='suP3rsec(et!'
+
+echo "path \"secret/myapp/*\" {
+    capabilities = [\"read\", \"list\"]
+}" | vault policy write myapp -
+
+vault auth enable aws
+vault write -force auth/aws/config/client
+
+vault write auth/aws/role/dev-role-iam auth_type=iam bound_iam_principal_arn="arn:aws:iam::${account_id}:role/${role_name}" policies=myapp ttl=24h
+EOF
+
+sudo chmod +x /home/ubuntu/aws_auth.sh
 
 logger "Complete"

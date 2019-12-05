@@ -75,7 +75,7 @@ These assets are provided to provision AWS resources to perform the steps descri
     # Configure aws auth method
     $ vault write -force auth/aws/config/client
 
-    # Be sure to get the Role ARN for ${var.environment_name}-vault-client, and replace <ROLE_ARN>
+    # The <ROLE_ARN> value can be found in the terraform output
     $ vault write auth/aws/role/dev-role-iam auth_type=iam \
         bound_iam_principal_arn=<ROLE_ARN> \
         policies=myapp \

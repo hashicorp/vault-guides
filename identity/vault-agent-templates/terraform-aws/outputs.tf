@@ -12,7 +12,7 @@ Vault Client IP (private): ${aws_instance.vault-client.private_ip}
 
 For example:
    ssh -i ${var.key_name}.pem ubuntu@${aws_instance.vault-client.public_ip}
-
+   
 EOF
 
 }

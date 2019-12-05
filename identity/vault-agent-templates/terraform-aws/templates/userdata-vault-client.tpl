@@ -152,7 +152,6 @@ sudo chmod 0775 /home/ubuntu/customer.tmpl
 
 
 cat << EOF > /home/ubuntu/vault-agent.hcl
-exit_after_auth = false
 pid_file = "./pidfile"
 
 auto_auth {

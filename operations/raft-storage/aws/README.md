@@ -117,7 +117,7 @@
     $ vault operator raft join http://13.56.210.19:8200
     ```
 
-1.  Return to the original termina, and check the current number of servers in
+1.  Return to the original terminal and check the current number of servers in
     the HA Cluster.
 
     ```plaintext

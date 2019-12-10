@@ -28,7 +28,7 @@ resource "aws_instance" "vault-transit" {
   instance_type               = var.instance_type
   subnet_id                   = module.vault_demo_vpc.public_subnets[0]
   key_name                    = var.key_name
-  vpc_security_group_ids      = ["${aws_security_group.testing.id}"]
+  vpc_security_group_ids      = [ aws_security_group.testing.id ]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.vault-transit.id
 
@@ -50,7 +50,7 @@ data "template_file" "vault-transit" {
   template = file("${path.module}/templates/userdata-vault-transit.tpl")
 
   vars = {
-    tpl_vault_zip_file     = "${var.vault_zip_file}"
+    tpl_vault_zip_file     = var.vault_zip_file
     tpl_vault_service_name = "vault-${var.environment_name}"
   }
 }
@@ -60,20 +60,19 @@ data "template_file" "vault-transit" {
 // Vault Server Instance
 
 resource "aws_instance" "vault-server" {
-  count                       = var.vault_server_count
+  count                       = length(var.vault_server_names)
   ami                         = data.aws_ami.ubuntu.id
   instance_type               = var.instance_type
   subnet_id                   = module.vault_demo_vpc.public_subnets[0]
   key_name                    = var.key_name
-  vpc_security_group_ids      = ["${aws_security_group.testing.id}"]
+  vpc_security_group_ids      = [ aws_security_group.testing.id ]
   associate_public_ip_address = true
   iam_instance_profile        = aws_iam_instance_profile.vault-server.id
 
-  user_data = data.template_file.vault-server.rendered
-  #user_data = "${data.template_file.vault-server[count.index]}"
+  user_data = data.template_file.vault-server[count.index].rendered
 
   tags = {
-    Name = "${var.environment_name}-vault-server-${count.index}"
+    Name = "${var.environment_name}-vault-server-${var.vault_server_names[count.index]}"
   }
 
   lifecycle {
@@ -81,12 +80,16 @@ resource "aws_instance" "vault-server" {
   }
 }
 
+
 data "template_file" "vault-server" {
+  count    = length(var.vault_server_names)
   template = file("${path.module}/templates/userdata-vault-server.tpl")
 
   vars = {
-    tpl_vault_zip_file     = "${var.vault_zip_file}"
-    tpl_vault_service_name = "vault-${var.environment_name}"
-    tpl_vault_transit_addr  = "${aws_instance.vault-transit.private_ip}"
+    tpl_vault_node_name = var.vault_server_names[count.index],
+    tpl_vault_storage_path = "/vault/${var.vault_server_names[count.index]}",
+    tpl_vault_zip_file = var.vault_zip_file,
+    tpl_vault_service_name = "vault-${var.environment_name}",
+    tpl_vault_transit_addr = aws_instance.vault-transit.private_ip
   }
 }

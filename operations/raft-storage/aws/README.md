@@ -32,160 +32,120 @@
 
     The Terraform output will display the IP addresses of the provisioned Vault nodes.
 
-
-1.  There are three Vault server nodes provisioned by Terraform. The Terraform output displays three server node IP addresses as well as private IP addresses.
-
-    **Example:**
-
     ```plaintext
-    Server node IPs (public):  54.215.244.175, 54.193.26.177, 54.153.90.97
-    Server node IPs (private): 10.0.101.53, 10.0.101.15, 10.0.101.73
+    vault_1 (13.56.238.70)
+      - Initialized and unsealed.
+      - The root token creates a transit key that enables the other Vaults to auto-unseal.
+      - Does not join the High-Availability (HA) cluster.
 
-    For example:
-       ssh -i vault-test.pem ubuntu@54.215.244.175
+      Local: VAULT_ADDR=http://13.56.238.70:8200 vault
+      Web:   open http://13.56.238.70:8200/ui/
+      SSH:   ssh -l ubuntu 13.56.238.70 -i <path/to/key.pem>
+
+    vault_2 (13.56.210.19)
+      - Initialized and unsealed.
+      - The root token and recovery key is stored in /tmp/key.json.
+      - K/V-V2 secret engine enabled and secret stored.
+      - Leader of HA cluster
+
+      Local: VAULT_ADDR=http://13.56.210.19:8200 vault
+      Web:   open http://13.56.210.19:8200/ui/
+      SSH:   ssh -l ubuntu 13.56.210.19 -i <path/to/key.pem>
+
+      Root Token:
+        ssh -l ubuntu -i <path/to/key.pem> 13.56.210.19 'cat /tmp/key.json | jq -r ".root_token"'
+      Recovery Key:
+        ssh -l ubuntu -i <path/to/key.pem> 13.56.210.19 'cat /tmp/key.json | jq -r ".recovery_keys_b64[0]"'
+
+    vault_3 (54.183.135.252)
+      - Started
+      - You will join it to the HA cluster.
+
+      Local: VAULT_ADDR=http://54.183.135.252:8200 vault
+      Web:   open http://54.183.135.252:8200/ui/
+      SSH:   ssh -l ubuntu 54.183.135.252 -i <path/to/key.pem>
+
+    vault_4 (13.57.238.164)
+      - Started
+      - You will join it to the HA cluster.
+
+      Local: VAULT_ADDR=http://13.57.238.164:8200 vault
+      Web:   open http://13.57.238.164:8200/ui/
+      SSH:   ssh -l ubuntu 13.57.238.164 -i <path/to/key.pem>
     ```
 
-    SSH into one of the three server nodes: `ssh -i <path_to_key> ubuntu@<public_ip>`
-
-    ```plaintext
-    $ ssh -i vault-test.pem ubuntu@54.215.244.175
-    ```
-
-1.  Examine the server configuration file, `/etc/vault.d/vault.hcl`.
-
-    ```plaintext
-    $ sudo cat /etc/vault.d/vault.hcl
-    ```
-
-    To use the integrated storage, the `storage` stanza must be set to **`raft`**. The `path` specifies the path where Vault data will be stored (`/vault/storage1`). The `seal` stanza is configured to use [Transit Auto-unseal](/vault/operations/autounseal-transit) which is provided by the _Auto-unseal Provider_ instance.
-
-    Optionally, you can review the Vault service `systemd` file which is located at `/etc/systemd/system/vault.service`.
-
-1.  Start the Vault server:
+1.  SSH into **vault_2**.
 
     ```sh
-    # Start the Vault service
-    $ sudo systemctl start vault
-
-    # Check the service log
-    $ sudo journalctl --no-page -u vault
+    ssh -l ubuntu 13.56.210.19 -i <path/to/key.pem>
     ```
 
-1.  Run the `vault operator init` command to initialize the Vault server, and save the generated unseal keys and initial root token.
+1.  Check the current number of servers in the HA Cluster.
 
     ```plaintext
-    $ vault operator init > key.txt
-    ```
-
-    Vault is now initialized and auto-unsealed.
-
-1.  Log into Vault using the generated initial root token which is stored in the `key.txt` file.
-
-    ```plaintext
-    $ vault login $(grep 'Initial Root Token:' key.txt | awk '{print $NF}')
-    ```
-
-1.  Enable the Key/Value v2 secrets engine and create some test data.
-
-    ```sh
-    # Enable k/v v2 at 'kv' path
-    $ vault secrets enable -path=kv kv-v2
-
-    # Create some test data, kv/apikey
-    $ vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
-    ```
-
-1.  Check the integrated storage for this server.
-
-    ```plaintext
-    $ vault operator raft configuration -format=json | jq
-    ```
-
-1.  Open a new terminal and SSH into another Vault server node.
-
-    **Example:**
-
-    ```plaintext
-    $ ssh -i vault-test.pem ubuntu@54.193.26.177
-    ```
-
-1.  Edit the server configuration file (`/etc/vault.d/vault.hcl`) to modify the `storage` stanza.
-
-    ```plaintext
-    $ sudo vi /etc/vault.d/vault.hcl
-    ```
-
-    In the `storage` stanza, modify `/vault/storage1` to **`/vault/storage2`**. Also, modify `node1` to **`node2`**:
-
-    ```plaintext
-    storage "raft" {
-      path    = "/vault/storage2"
-      node_id = "node2"
+    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
+    {
+      "address": "10.0.101.226:8201",
+      "leader": true,
+      "node_id": "vault_2",
+      "protocol_version": "3",
+      "voter": true
     }
-    ...
     ```
 
-1.  Now, start the Vault service.
+1.  Open a new terminal, SSH into **vault_3**.
 
     ```plaintext
-    $ sudo systemctl start vault
+    $ ssh -l ubuntu 54.183.135.252 -i <path/to/key.pem>
     ```
 
-1.  Execute the `raft join` command to add the second node to the HA cluster. Since you already initialized and unsealed a node, pass its API address to join the HA cluster: `vault operator raft join <leader_node_API_addr>`
-
-    For example, if the public IP address of `node1` is `54.215.244.175`,
+1.  Join **vault_3** to the HA cluster started by **vault_2**.
 
     ```plaintext
-    $ vault operator raft join http://54.215.244.175:8200
+    $ vault operator raft join http://13.56.210.19:8200
     ```
 
-1.  Similarly, open another terminal and SSH into the third node:
-
-    **Example:**
+1.  Open a new terminal and SSH into **vault_4**
 
     ```plaintext
-    $ ssh -i vault-test.pem ubuntu@54.153.90.97
+    $ ssh -l ubuntu 13.57.238.164 -i <path/to/key.pem>
     ```
 
-1.  Edit the server configuration file (`/etc/vault.d/vault.hcl`) to modify the `storage` stanza.
+1.  Join **vault_4** to the HA cluster started by **vault_2**.
 
     ```plaintext
-    $ sudo vi /etc/vault.d/vault.hcl
+    $ vault operator raft join http://13.56.210.19:8200
     ```
 
-    In the `storage` stanza, modify `/vault/storage1` to **`/vault/storage3`**. Also, modify `node1` to **`node3`**:
+1.  Return to the original termina, and check the current number of servers in
+    the HA Cluster.
 
     ```plaintext
-    storage "raft" {
-      path    = "/vault/storage3"
-      node_id = "node3"
+    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
+    {
+      "address": "10.0.101.226:8201",
+      "leader": true,
+      "node_id": "vault_2",
+      "protocol_version": "3",
+      "voter": true
     }
-    ...
+    {
+      "address": "10.0.101.140:8201",
+      "leader": false,
+      "node_id": "vault_3",
+      "protocol_version": "3",
+      "voter": true
+    }
+    {
+      "address": "10.0.101.204:8201",
+      "leader": false,
+      "node_id": "vault_4",
+      "protocol_version": "3",
+      "voter": true
+    }
     ```
 
-1.  Now, start the Vault service.
-
-    ```plaintext
-    $ sudo systemctl start vault
-    ```
-
-1.  Execute the `raft join` command to add the third node to the HA cluster. Again, the target node to join is the first server you initialized and unsealed.
-
-    **Example:**
-
-    ```plaintext
-    $ vault operator raft join http://54.215.244.175:8200
-    ```
-
-1.  Execute the `raft configuration` command again to see the cluster members.
-
-    ```plaintext
-    $ vault operator raft configuration -format=json | jq
-    ```
-
-    You should see all three nodes in the HA cluster.
-
-
+    You should see **vault_2**, **vault_3**, and **vault_4** in the cluster.
 
 # Clean up the cloud resources
 

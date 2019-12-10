@@ -12,9 +12,10 @@ variable "environment_name" {
   default = "raft-demo"
 }
 
-# Number of Vault servers to provision
-variable "vault_server_count" {
-  default = 3
+variable "vault_server_names" {
+  description = "Names of the Vault nodes that will join the cluster"
+  type = list(string)
+  default = [ "vault_2", "vault_3", "vault_4" ]
 }
 
 # URL for Vault OSS binary

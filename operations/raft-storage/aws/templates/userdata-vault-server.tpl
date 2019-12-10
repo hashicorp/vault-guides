@@ -150,14 +150,14 @@ logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 
 logger "Configuring Vault"
 
-sudo mkdir -pm 0755 /vault/storage1 /vault/storage2 /vault/storage3
-sudo chown -R vault:vault /vault/storage1 /vault/storage2 /vault/storage3
-sudo chmod -R a+rwx /vault/storage1 /vault/storage2 /vault/storage3
+sudo mkdir -pm 0755 ${tpl_vault_storage_path}
+sudo chown -R vault:vault ${tpl_vault_storage_path}
+sudo chmod -R a+rwx ${tpl_vault_storage_path}
 
 sudo tee /etc/vault.d/vault.hcl <<EOF
 storage "raft" {
-  path    = "/vault/storage1"
-  node_id = "node1"
+  path    = "${tpl_vault_storage_path}"
+  node_id = "${tpl_vault_node_name}"
 }
 
 listener "tcp" {
@@ -219,7 +219,7 @@ WantedBy=multi-user.target
 EOF
 
 
-<!-- if [[ ! -z $${YUM} ]]; then
+if [[ ! -z $${YUM} ]]; then
   SYSTEMD_DIR="/etc/systemd/system"
   logger "Installing systemd services for RHEL/CentOS"
   echo "$${VAULT_SERVICE}" | sudo tee $${SYSTEMD_DIR}/vault.service
@@ -232,9 +232,21 @@ elif [[ ! -z $${APT_GET} ]]; then
 else
   logger "Service not installed due to OS detection failure"
   exit 1;
-fi -->
+fi
 
 sudo systemctl enable vault
 sudo systemctl start vault
 
 logger "Complete"
+
+%{ if tpl_vault_node_name == "vault_2" }
+# vault_2 adds some test data to demonstrate that the cluster is connected to
+#   the same data.
+sleep 2
+logger "Logging in and saving the results for the vault user"
+vault operator init -recovery-shares 1 -recovery-threshold 1 -format=json > /tmp/key.json
+sudo chown vault:vault /tmp/key.json
+logger "Adding a key-value secret test data"
+VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault secrets enable -path=kv kv-v2
+VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
+%{ endif }

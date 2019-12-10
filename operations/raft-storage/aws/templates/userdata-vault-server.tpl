@@ -242,11 +242,16 @@ logger "Complete"
 %{ if tpl_vault_node_name == "vault_2" }
 # vault_2 adds some test data to demonstrate that the cluster is connected to
 #   the same data.
-sleep 2
-logger "Logging in and saving the results for the vault user"
+sleep 5
+logger "Initializing Vault and storing results for ubuntu user"
 vault operator init -recovery-shares 1 -recovery-threshold 1 -format=json > /tmp/key.json
-sudo chown vault:vault /tmp/key.json
-logger "Adding a key-value secret test data"
-VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault secrets enable -path=kv kv-v2
-VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
+logger "Setting VAULT_ADDR and VAULT_TOKEN"
+VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token")
+export VAULT_ADDR=http://127.0.0.1:8200
+export VAULT_TOKEN=$VAULT_TOKEN
+sudo chown ubuntu:ubuntu /tmp/key.json
+logger "Enabling kv-v2 secrets engine and inserting secret"
+sleep 10
+vault secrets enable -path=kv kv-v2
+vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
 %{ endif }

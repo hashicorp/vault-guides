@@ -604,13 +604,15 @@ vault3 write -f /sys/replication/performance/primary/demote
 vault3 write -f /sys/replication/dr/primary/demote
 ```
 
+Now we will update the primary address for the DR secondary cluster (vault3)
+```sh
 PRIMARY_DR_TOKEN=$(vault write -format=json /sys/replication/dr/primary/secondary-token id=vault3 | jq --raw-output '.wrap_info .token' )
 DR_OTP=$(vault3 operator generate-root -dr-token -generate-otp)
 NONCE=$(vault3 operator generate-root -dr-token -init -otp=${DR_OTP} | grep -i nonce | awk '{print $2}')
 ENCODED_TOKEN=$(vault3 operator generate-root -dr-token -nonce=${NONCE} ${PRIMARY_UNSEAL_KEY} | grep -i encoded | awk '{print $3}'  )
 DR_OPERATION_TOKEN=$(vault3 operator generate-root -dr-token -otp=${DR_OTP} -decode=${ENCODED_TOKEN})
 vault3 write sys/replication/dr/secondary/update-primary dr_operation_token=${DR_OPERATION_TOKEN} token=${PRIMARY_DR_TOKEN}
-
+```
 
 
 

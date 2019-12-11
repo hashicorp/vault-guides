@@ -2,30 +2,31 @@
 // Providers
 
 provider "aws" {
-  region = "${var.aws_region}"
+  region = var.aws_region
 }
 
 //--------------------------------------------------------------------
 // Resources
 
 resource "aws_instance" "vault" {
-  ami                         = "${data.aws_ami.ubuntu.id}"
-  instance_type               = "${var.instance_type}"
-  subnet_id                   = "${var.subnet_id}"
-  key_name                    = "${var.key_name}"
-  vpc_security_group_ids      = ["${aws_security_group.vault.id}"]
+  ami                         = data.aws_ami.ubuntu.id
+  instance_type               = var.instance_type
+  subnet_id                   = var.subnet_id
+  key_name                    = var.key_name
+  vpc_security_group_ids      = [aws_security_group.vault.id]
   associate_public_ip_address = true
-  iam_instance_profile        = "${aws_iam_instance_profile.vault.id}"
+  iam_instance_profile        = aws_iam_instance_profile.vault.id
 
-  tags {
+  tags = {
     Name = "${var.environment_name}-vault-server"
   }
 
   provisioner "remote-exec" {
     connection {
+      host        = coalesce(self.public_ip, self.private_ip)
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.ec2_pem)}"
+      private_key = file(var.ec2_pem)
     }
 
     inline = [
@@ -36,9 +37,10 @@ resource "aws_instance" "vault" {
 
   provisioner "file" {
     connection {
+      host        = coalesce(self.public_ip, self.private_ip)
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.ec2_pem)}"
+      private_key = file(var.ec2_pem)
     }
 
     source      = "../../chef"
@@ -47,25 +49,26 @@ resource "aws_instance" "vault" {
 
   provisioner "file" {
     connection {
+      host        = coalesce(self.public_ip, self.private_ip)
       type        = "ssh"
       user        = "ubuntu"
-      private_key = "${file(var.ec2_pem)}"
+      private_key = file(var.ec2_pem)
     }
 
     source      = "../../scripts"
     destination = "/home/ubuntu/vault-chef-approle-demo"
   }
 
-  user_data = "${data.template_file.vault.rendered}"
+  user_data = data.template_file.vault.rendered
 }
 
 resource "aws_security_group" "vault" {
   name        = "${var.environment_name}-vault-sg"
   description = "Access to Vault server"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = var.vpc_id
 
-  tags {
-    Name = "${var.environment_name}"
+  tags = {
+    Name = var.environment_name
   }
 
   # SSH
@@ -110,18 +113,18 @@ resource "aws_security_group" "vault" {
 
 resource "aws_iam_role" "vault" {
   name               = "${var.environment_name}-vault-role"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy" "vault" {
   name   = "${var.environment_name}-vault-role-policy"
-  role   = "${aws_iam_role.vault.id}"
-  policy = "${data.aws_iam_policy_document.vault.json}"
+  role   = aws_iam_role.vault.id
+  policy = data.aws_iam_policy_document.vault.json
 }
 
 resource "aws_iam_instance_profile" "vault" {
   name = "${var.environment_name}-vault-instance-profile"
-  role = "${aws_iam_role.vault.name}"
+  role = aws_iam_role.vault.name
 }
 
 //--------------------------------------------------------------------
@@ -176,17 +179,18 @@ data "aws_iam_policy_document" "vault" {
 }
 
 data "template_file" "vault" {
-  template = "${file("${path.module}/templates/userdata-mgmt-node.tpl")}"
+  template = file("${path.module}/templates/userdata-mgmt-node.tpl")
 
   vars = {
-    tpl_aws_region              = "${var.aws_region}"
-    tpl_s3_bucket_name          = "${var.s3_bucket_name}"
-    tpl_vault_zip_url           = "${var.vault_zip_url}"
-    tpl_chef_server_package_url = "${var.chef_server_package_url}"
-    tpl_chef_dk_package_url     = "${var.chef_dk_package_url}"
-    tpl_chef_admin              = "${var.chef_admin}"
-    tpl_chef_admin_password     = "${var.chef_admin_password}"
-    tpl_chef_org                = "${var.chef_org}"
-    tpl_chef_app_name           = "${var.chef_app_name}"
+    tpl_aws_region              = var.aws_region
+    tpl_s3_bucket_name          = var.s3_bucket_name
+    tpl_vault_zip_url           = var.vault_zip_url
+    tpl_chef_server_package_url = var.chef_server_package_url
+    tpl_chef_dk_package_url     = var.chef_dk_package_url
+    tpl_chef_admin              = var.chef_admin
+    tpl_chef_admin_password     = var.chef_admin_password
+    tpl_chef_org                = var.chef_org
+    tpl_chef_app_name           = var.chef_app_name
   }
 }
+

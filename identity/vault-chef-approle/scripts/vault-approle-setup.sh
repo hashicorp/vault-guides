@@ -194,11 +194,21 @@ curl \
     --data @secretid-token-config.json \
     $VAULT_ADDR/v1/auth/token/create > secretid-token.json
 
+
+# Enable kv at secret
+curl \
+    --silent \
+    --location \
+    --header "X-Vault-Token: $VAULT_TOKEN" \
+    --request POST \
+    --data '{ "type": "kv" }' \
+    $VAULT_ADDR/v1/sys/mounts/secret
+
 # Write some demo secrets
 tee demo-secrets.json <<'EOF'
 {
   "username": "app-1-user",
-  "password": "$up3r$3cr3t!"
+  "password": "my-long-password"
 }
 EOF
 

@@ -13,7 +13,6 @@ logger "Running"
 ## Variables
 
 # Get Private IP address
-#HOSTNAME=$(curl http://169.254.169.254/latest/meta-data/hostname)
 PRIVATE_IP=$(curl http://169.254.169.254/latest/meta-data/local-ipv4)
 PUBLIC_IP=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 
@@ -209,7 +208,31 @@ Restart=on-failure
 PermissionsStartOnly=true
 ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/local/bin/vault
 ExecStart=/usr/local/bin/vault server -config /etc/vault.d
-ExecReload=/bin/kill -HUP $MAINPID
+ExecReload=/bin/kill -HUP \$MAINPID
+KillSignal=SIGTERM
+User=vault
+Group=vault
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+##--------------------------------------------------------------------
+## Install Vault Systemd Service that allows additional params/args
+
+sudo tee /etc/systemd/system/vault@.service > /dev/null <<EOF
+[Unit]
+Description=Vault
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Environment="OPTIONS=%i"
+Restart=on-failure
+PermissionsStartOnly=true
+ExecStartPre=/sbin/setcap 'cap_ipc_lock=+ep' /usr/local/bin/vault
+ExecStart=/usr/local/bin/vault server -config /etc/vault.d \$OPTIONS
+ExecReload=/bin/kill -HUP \$MAINPID
 KillSignal=SIGTERM
 User=vault
 Group=vault
@@ -245,13 +268,26 @@ logger "Complete"
 sleep 5
 logger "Initializing Vault and storing results for ubuntu user"
 vault operator init -recovery-shares 1 -recovery-threshold 1 -format=json > /tmp/key.json
-logger "Setting VAULT_ADDR and VAULT_TOKEN"
+sudo chown ubuntu:ubuntu /tmp/key.json
+
+logger "Saving root_token and recovery key to ubuntu user's home"
 VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token")
+echo $VAULT_TOKEN > /home/ubuntu/root_token
+sudo chown ubuntu:ubuntu /home/ubuntu/root_token
+echo $VAULT_TOKEN > /home/ubuntu/.vault-token
+sudo chown ubuntu:ubuntu /home/ubuntu/.vault-token
+
+echo $(cat /tmp/key.json | jq -r ".recovery_keys_b64[]") > /home/ubuntu/recovery_key
+sudo chown ubuntu:ubuntu /home/ubuntu/recovery_key
+
+logger "Setting VAULT_ADDR and VAULT_TOKEN"
 export VAULT_ADDR=http://127.0.0.1:8200
 export VAULT_TOKEN=$VAULT_TOKEN
-sudo chown ubuntu:ubuntu /tmp/key.json
-logger "Enabling kv-v2 secrets engine and inserting secret"
+
+logger "Waiting for Vault to finish preparations (10s)"
 sleep 10
+
+logger "Enabling kv-v2 secrets engine and inserting secret"
 vault secrets enable -path=kv kv-v2
 vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
 %{ endif }

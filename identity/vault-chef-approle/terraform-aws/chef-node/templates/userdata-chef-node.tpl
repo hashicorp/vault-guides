@@ -3,8 +3,6 @@ set -x
 exec > >(tee /var/log/tf-user-data.log|logger -t user-data ) 2>&1
 
 # Install jq
-# sudo curl --silent -Lo /bin/jq https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64
-# sudo chmod +x /bin/jq
 sudo apt-get install jq
 
 # Write AppRole RoleID

@@ -14,10 +14,7 @@ provider "vault" {
   token = var.vault_token
 }
 
-# data "vault_generic_secret" "approle" {
-#   path = "auth/approle/role/app-1/role-id"
-# }
-
+# Reads the app-1 role from the approle auth method
 data "vault_approle_auth_backend_role_id" "role" {
   backend   = "approle"
   role_name = "app-1"

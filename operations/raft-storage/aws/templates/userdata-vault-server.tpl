@@ -266,9 +266,6 @@ sudo systemctl start vault
 echo "${address} ${name}" | sudo tee -a /etc/hosts
 %{ endfor ~}
 
-
-logger "Complete"
-
 %{ if tpl_vault_node_name == "vault_2" }
 # vault_2 adds some test data to demonstrate that the cluster is connected to
 #   the same data.
@@ -298,3 +295,5 @@ logger "Enabling kv-v2 secrets engine and inserting secret"
 vault secrets enable -path=kv kv-v2
 vault kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
 %{ endif }
+
+logger "Complete"

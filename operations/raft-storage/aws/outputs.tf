@@ -1,6 +1,11 @@
 output "endpoints" {
   value = <<EOF
 
+  NOTE: While Terraform's work is done, these instances need time to complete
+        their own installation and configuration. Progress is reported within
+        the log file `/var/log/tf-user-data.log` and reports 'Complete' when
+        the instance is ready.
+
   vault_1 (${aws_instance.vault-transit.public_ip}) | internal: (${aws_instance.vault-transit.private_ip})
     - Initialized and unsealed.
     - The root token creates a transit key that enables the other Vaults to auto-unseal.

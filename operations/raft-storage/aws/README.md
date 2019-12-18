@@ -7,7 +7,11 @@
     $ export AWS_SECRET_ACCESS_KEY = "<YOUR_AWS_SECRET_ACCESS_KEY>"
     ```
 
-1.  Use the provided `terraform.tfvars.example` as a base to create a file named `terraform.tfvars` and specify the `key_name`. Be sure to set the correct [key pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html) name created in the AWS region that you are using.
+1.  Use the provided `terraform.tfvars.example` as a base to create a file named
+    `terraform.tfvars` and specify the `key_name`. Be sure to set the correct
+    [key
+    pair](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html)
+    name created in the AWS region that you are using.
 
     Example `terrafrom.tfvars`:
 
@@ -33,51 +37,41 @@
     The Terraform output will display the IP addresses of the provisioned Vault nodes.
 
     ```plaintext
-    vault_1 (13.56.238.70)
+    vault_1 (13.56.78.64)  | internal: (10.0.101.21)
       - Initialized and unsealed.
       - The root token creates a transit key that enables the other Vaults to auto-unseal.
       - Does not join the High-Availability (HA) cluster.
 
-      Local: VAULT_ADDR=http://13.56.238.70:8200 vault
-      Web:   open http://13.56.238.70:8200/ui/
-      SSH:   ssh -l ubuntu 13.56.238.70 -i <path/to/key.pem>
-
-    vault_2 (13.56.210.19)
+    vault_2 (13.56.255.200) | internal: (10.0.101.22)
       - Initialized and unsealed.
       - The root token and recovery key is stored in /tmp/key.json.
       - K/V-V2 secret engine enabled and secret stored.
       - Leader of HA cluster
 
-      Local: VAULT_ADDR=http://13.56.210.19:8200 vault
-      Web:   open http://13.56.210.19:8200/ui/
-      SSH:   ssh -l ubuntu 13.56.210.19 -i <path/to/key.pem>
+      $ ssh -l ubuntu 13.56.255.200 -i <path/to/key.pem>
 
-      Root Token:
-        ssh -l ubuntu -i <path/to/key.pem> 13.56.210.19 'cat /tmp/key.json | jq -r ".root_token"'
-      Recovery Key:
-        ssh -l ubuntu -i <path/to/key.pem> 13.56.210.19 'cat /tmp/key.json | jq -r ".recovery_keys_b64[0]"'
+      # Root token:
+      $ ssh -l ubuntu 13.56.255.200 -i <path/to/key.pem> "cat ~/root_token"
+      # Recovery key:
+      $ ssh -l ubuntu 13.56.255.200 -i <path/to/key.pem> "cat ~/recovery_key"
 
-    vault_3 (54.183.135.252)
+    vault_3 (54.183.62.59) | internal: (10.0.101.23)
       - Started
-      - You will join it to the HA cluster.
+      - You will join it to cluster started by vault_2
 
-      Local: VAULT_ADDR=http://54.183.135.252:8200 vault
-      Web:   open http://54.183.135.252:8200/ui/
-      SSH:   ssh -l ubuntu 54.183.135.252 -i <path/to/key.pem>
+      $ ssh -l ubuntu 54.183.62.59 -i <path/to/key.pem>
 
-    vault_4 (13.57.238.164)
+    vault_4 (13.57.235.28) | internal: (10.0.101.24)
       - Started
-      - You will join it to the HA cluster.
+      - You will join it to cluster started by vault_2
 
-      Local: VAULT_ADDR=http://13.57.238.164:8200 vault
-      Web:   open http://13.57.238.164:8200/ui/
-      SSH:   ssh -l ubuntu 13.57.238.164 -i <path/to/key.pem>
+      $ ssh -l ubuntu 13.57.235.28 -i <path/to/key.pem>
     ```
 
 1.  SSH into **vault_2**.
 
     ```sh
-    ssh -l ubuntu 13.56.210.19 -i <path/to/key.pem>
+    ssh -l ubuntu 13.56.255.200 -i <path/to/key.pem>
     ```
 
 1.  Check the current number of servers in the HA Cluster.
@@ -85,7 +79,7 @@
     ```plaintext
     $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
     {
-      "address": "10.0.101.226:8201",
+      "address": "10.0.101.22:8201",
       "leader": true,
       "node_id": "vault_2",
       "protocol_version": "3",
@@ -96,25 +90,25 @@
 1.  Open a new terminal, SSH into **vault_3**.
 
     ```plaintext
-    $ ssh -l ubuntu 54.183.135.252 -i <path/to/key.pem>
+    $ ssh -l ubuntu 54.183.62.59 -i <path/to/key.pem>
     ```
 
 1.  Join **vault_3** to the HA cluster started by **vault_2**.
 
     ```plaintext
-    $ vault operator raft join http://13.56.210.19:8200
+    $ vault operator raft join http://vault_2:8200
     ```
 
 1.  Open a new terminal and SSH into **vault_4**
 
     ```plaintext
-    $ ssh -l ubuntu 13.57.238.164 -i <path/to/key.pem>
+    $ ssh -l ubuntu 13.57.235.28 -i <path/to/key.pem>
     ```
 
 1.  Join **vault_4** to the HA cluster started by **vault_2**.
 
     ```plaintext
-    $ vault operator raft join http://13.56.210.19:8200
+    $ vault operator raft join http://vault_2:8200
     ```
 
 1.  Return to the original terminal and check the current number of servers in
@@ -123,21 +117,21 @@
     ```plaintext
     $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
     {
-      "address": "10.0.101.226:8201",
+      "address": "10.0.101.22:8201",
       "leader": true,
       "node_id": "vault_2",
       "protocol_version": "3",
       "voter": true
     }
     {
-      "address": "10.0.101.140:8201",
+      "address": "10.0.101.23:8201",
       "leader": false,
       "node_id": "vault_3",
       "protocol_version": "3",
       "voter": true
     }
     {
-      "address": "10.0.101.204:8201",
+      "address": "10.0.101.24:8201",
       "leader": false,
       "node_id": "vault_4",
       "protocol_version": "3",

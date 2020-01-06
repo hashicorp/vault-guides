@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orgchart
+  labels:
+    app: vault-agent-injector-demo
+spec:
+  selector:
+    matchLabels:
+      app: vault-agent-injector-demo
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: vault-agent-injector-demo
+    spec:
+      serviceAccountName: internal-app
+      containers:
+        - name: orgchart
+          image: jweissig/app:0.0.1

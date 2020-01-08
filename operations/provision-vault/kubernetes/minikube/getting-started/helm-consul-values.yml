@@ -1,5 +1,5 @@
 global:
-  datacenter: hashidc1
+  datacenter: vault-kubernetes-guide
 
 client:
   enabled: true
@@ -8,5 +8,4 @@ server:
   replicas: 1
   bootstrapExpect: 1
   disruptionBudget:
-    enabled: true
     maxUnavailable: 0

@@ -2,7 +2,7 @@
 This guide, along with its corresponding blog details the integration between Vault and Venafi using the vault-pki-backend-venafi plugin
 
 ## Reference Material
-This code corresponds to a blog published on medium - Vault Integration Patterns with Venafi https://medium.com/@jgerson/vault-integration-patterns-with-venafi-21c3626cdcdb?source=friends_link&sk=4f5b72a9e4b19093792d8753568f3635
+This code corresponds to a blog published on medium - Vault Integration Patterns with Venafi https://medium.com/@jgerson/vault-integration-patterns-with-venafi-part-2-ff6a5fcc3d3d?sk=96087ff35a3792686966454888e421b9
 
 ## Estimated Time to Complete
 This guide should take 30 minutes. 

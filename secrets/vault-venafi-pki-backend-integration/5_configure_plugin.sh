@@ -1,8 +1,8 @@
-export VAULT_ADDR=http://127.0.0.1:8200
-export TPP_ADDR=https://ben-rogers.se.venafi.com/vedsdk
-export TPP_USER=hashicorp_svc
-export TPP_PASS=Passw0rd
+export TPP_ADDR=https://example.venafi.com/vedsdk
+export TPP_USER=serviceaccountuser
+export TPP_PASS=serviceaccountpassword
 export TPP_ZONE="Certificates\\\\HashiCorp Vault\\\\Internal PKI"
+export VAULT_ADDR=http://127.0.0.1:8200
 
 # Enable the secrets engine for the venafi-pki-backend plugin:
 vault secrets enable -path=venafi-pki -plugin-name=venafi-pki-backend plugin

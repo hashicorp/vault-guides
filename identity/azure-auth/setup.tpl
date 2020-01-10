@@ -1,5 +1,6 @@
 #!/bin/bash
 
+sudo apt update
 sudo apt-get install -y unzip jq 
 
 sudo cat << EOF > /etc/profile.d/vault.sh

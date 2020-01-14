@@ -64,7 +64,7 @@ namespace RewrapExample
                     "(`user_name`, `first_name`, `last_name`, `address`, " +
                     "`city`, `state`, `postcode`, `email`) " +
                     $"VALUES (\"{r.Login.Username}\", \"{r.Name.First}\", \"{r.Name.Last}\", " +
-                    $"\"{r.Location.Street}\", \"{r.Location.City}\", \"{r.Location.State}\", " +
+                    $"\"{r.Location.City}\", \"{r.Location.State}\", \"{r.Location.Country}\", " +
                     $"\"{r.Location.Postcode}\", \"{r.Email}\");";
                     
                     cmd.CommandText = command;
@@ -83,7 +83,7 @@ namespace RewrapExample
                 using (var cmd = db.Connection.CreateCommand())
                 {
                     string command = "UPDATE `user_data` " + 
-                    $"SET `address` = \"{r.Location.Street}\", " +
+                    $"SET `address` = \"{r.Location.City}\", " +
                     $"`email` = \"{r.Email}\" " +
                     $"WHERE `user_id` = {r.Id.Value}";
                     
@@ -123,7 +123,7 @@ namespace RewrapExample
                         var address = reader.GetString(2);
                         
                         RewrapExample.Location addr = new Location();
-                        addr.Street = address;
+                        addr.City = address;
                         RewrapExample.Id id = new Id();
                         id.Value = user_id.ToString();
 

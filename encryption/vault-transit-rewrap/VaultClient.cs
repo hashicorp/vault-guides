@@ -66,7 +66,7 @@ namespace RewrapExample
             foreach (Record user in users)
             {
                 count++;
-                user.Location.Street = await ReWrapValue(user.Location.Street);
+                user.Location.City = await ReWrapValue(user.Location.City);
                 user.Email = await ReWrapValue(user.Email);
                 
                 tasks.Add(DBHelper.UpdateRecordAsyc(user));

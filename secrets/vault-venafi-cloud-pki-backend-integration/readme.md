@@ -32,5 +32,5 @@ Scripts were validated on ubuntu 16.04 and may require adjustments if running on
 ### Step 2: 2_start_over.sh - Kill any running Vault and start Vault (optional)
 ### Step 3: 3_init_vault.sh - Initialize Vault (optional)
 ### Step 4: 4_install_plugin.sh - Add Plugin to Vault
-### Step 5: 5_init_subca.sh - Enable secrets engine and configure role
+### Step 5: 5_configure_plugin.sh - Enable secrets engine and configure role
 ### Step 6: 6_test_plugin.sh - Request certificate from Venafi via Vault

@@ -28,16 +28,11 @@ Next, start the Kubernetes dashboard.
 $ minikube dashboard
 ```
 
-Initialize Helm and start Tiller.
+The Vault Helm chart only supports Helm version 2.x. Initialize Helm and start
+Tiller.
 
 ```shell
 $ helm init
-```
-
-Clone the consul helm chart.
-
-```shell
-$ git clone https://github.com/hashicorp/consul-helm.git
 ```
 
 Wait for the Tiller pod to finish its startup.
@@ -45,26 +40,17 @@ Wait for the Tiller pod to finish its startup.
 Launch the consul helm chart with the additional values found in the directory.
 
 ```shell
-$ helm install -f helm-consul-values.yaml --name consul consul-helm
-```
-
-Clone the vault helm chart
-
-```shell
-$ git clone https://github.com/hashicorp/vault-helm.git
+$ helm install --name consul \
+    --values helm-consul-values.yml \
+    https://github.com/hashicorp/consul-helm/archive/v0.15.0.tar.gz
 ```
 
 Launch the vault helm chart with the following options:
 
 ```shell
-$ helm install --name=vault \
-  --set 'server.ha.enabled=true' \
-  --set 'ui.enabled=true' --set 'server.affinity=' \
-  --set 'authDelegator.enabled=true' vault-helm
-```
-
-```shell
-$ helm install --name=vault --set 'authDelegator.enabled=true' vault-helm
+$ helm install --name vault \
+    --values helm-vault-values.yml \
+    https://github.com/hashicorp/vault-helm/archive/v0.3.0.tar.gz
 ```
 
 Three services are running and each one needs to be unsealed.
@@ -107,16 +93,16 @@ Enable kv-v2 secrets at `secret`.
 $ vault secrets enable -path=secret kv-v2
 ```
 
-Put a username and password secret at `exampleapp/config`.
+Put a username and password secret at `webapp/config`.
 
 ```shell
-$ vault kv put secret/exampleapp/config username="choochoo" password="FOUNDIT"
+$ vault kv put secret/webapp/config username="choochoo" password="FOUNDIT"
 ```
 
 Verify that the secret exists.
 
 ```shell
-$ vault read secret/data/exampleapp/config -format=json
+$ vault read secret/data/webapp/config -format=json
 ```
 
 Next, its time to setup authentication between Vault and Kubernetes.
@@ -161,38 +147,38 @@ Apply configuration of permissions for this service account found in
 $ kubectl apply --filename vault-auth-service-account.yml
 ```
 
-Write out a policy called `exampleapp` which reads secrets defined at the `secret/data/exampleapp` path.
+Write out a policy called `webapp` which reads secrets defined at the `secret/data/webapp` path.
 
 ```shell
-$ vault policy write exampleapp - <<EOH
-path "secret/data/exampleapp/*" {
+$ vault policy write webapp - <<EOH
+path "secret/data/webapp/*" {
   capabilities = ["read"]
 }
 EOH
 ```
 
-Create a role, named `exampleapp`, that connects the Kubernetes service account
-and the `exampleapp` policy.
+Create a role, named `webapp`, that connects the Kubernetes service account
+and the `webapp` policy.
 
 ```shell
 # Create a role named, 'example' to map Kubernetes Service Account to
 #  Vault policies and default token TTL
-$ vault write auth/kubernetes/role/exampleapp \
+$ vault write auth/kubernetes/role/webapp \
         bound_service_account_names=vault \
         bound_service_account_namespaces=default \
-        policies=exampleapp \
+        policies=webapp \
         ttl=24h
 ```
 
-Start a secret consumer defined in file `k8s-exampleapp.yaml`.
+Start a secret consumer defined in file `k8s-webapp.yaml`.
 
 ```shell
-$ kubectl apply -f k8s-exampleapp.yaml
+$ kubectl apply -f k8s-webapp.yaml
 ```
 
 ### Verification
 
-Get the name of the exampleapp pod.
+Get the name of the webapp pod.
 
 ```shell
 $ kubectl get pods
@@ -200,16 +186,16 @@ NAME                                                              READY   STATUS
 consul-consul-connect-injector-webhook-deployment-568996d6ndswv   1/1     Running   0          155m
 consul-consul-dpdbz                                               1/1     Running   0          155m
 consul-consul-server-0                                            1/1     Running   0          155m
-exampleapp-simple-c54944b4c-84kwf                                 1/1     Running   0          7m45s
+webapp-simple-c54944b4c-84kwf                                     1/1     Running   0          7m45s
 vault-0                                                           1/1     Running   0          155m
 vault-1                                                           1/1     Running   0          155m
 vault-2                                                           1/1     Running   0          155m
 ```
 
-Map your localhost port 9292 to the exampleapp pod port 9292.
+Map your localhost port 9292 to the webapp pod port 9292.
 
 ```shell
-$ kubectl port-forward exampleapp-simple-c54944b4c-84kwf 9292:9292
+$ kubectl port-forward webapp-simple-c54944b4c-84kwf 9292:9292
 ```
 
 ```shell
@@ -226,29 +212,29 @@ NAME                                                              READY   STATUS
 consul-consul-connect-injector-webhook-deployment-568996d6ndswv   1/1     Running   0          155m
 consul-consul-dpdbz                                               1/1     Running   0          155m
 consul-consul-server-0                                            1/1     Running   0          155m
-exampleapp-simple-c54944b4c-84kwf                                 1/1     Running   0          7m45s
+webapp-simple-c54944b4c-84kwf                                     1/1     Running   0          7m45s
 vault-0                                                           1/1     Running   0          155m
 vault-1                                                           1/1     Running   0          155m
 vault-2                                                           1/1     Running   0          155m
 ```
 
-1. Check the logs of the exampleapp pod
+1. Check the logs of the webapp pod
 
 ```shell
-$ kubectl logs exampleapp-simple-c54944b4c-84kwf
+$ kubectl logs webapp-simple-c54944b4c-84kwf
 [2019-09-26 21:27:47] INFO  WEBrick 1.4.2
 [2019-09-26 21:27:47] INFO  ruby 2.6.2 (2019-03-13) [x86_64-linux]
 [2019-09-26 21:27:47] INFO  WEBrick::HTTPServer#start: pid=1 port=9292
 ```
 
 1. In the minikube dashboard, click **Pods** under **Workloads** to verify that
-`exampleapp` Pod has been created successfully.
+`webapp` Pod has been created successfully.
 
 
 1. Login to the app and run it yourself:
 
 ```shell
-$ kubectl exec -it exampleapp-simple-c54944b4c-lwv7t /bin/bash
+$ kubectl exec -it webapp-simple-c54944b4c-lwv7t /bin/bash
 ```
 
 On that system you can then run the service in the `/app` directory.

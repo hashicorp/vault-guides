@@ -101,7 +101,7 @@ function start_vault {
 
   local vault_network_address=$(vault_to_network_address $vault_node_name)
   local vault_config_file=$DEMO_HOME/config-$vault_node_name.hcl
-  local vault_log_file=$DEMO_HOME/vault_2.log
+  local vault_log_file=$DEMO_HOME/$vault_node_name.log
 
   printf "\n%s" \
     "[$vault_node_name] starting Vault server @ $vault_network_address" \

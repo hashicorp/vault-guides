@@ -1,0 +1,30 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devwebapp-through-service
+  labels:
+    app: devwebapp-through-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: devwebapp-through-service
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "devweb-app"
+        vault.hashicorp.com/agent-inject-secret-credentials.txt: "secret/data/devwebapp/config"
+      labels:
+        app: devwebapp-through-service
+    spec:
+      containers:
+      - name: app
+        image: burtlo/devwebapp-ruby:k8s
+        imagePullPolicy: Always
+        env:
+        - name: SERVICE_PORT
+          value: "8080"
+        - name: VAULT_ADDR
+          value: "http://external-vault:8200"

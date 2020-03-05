@@ -30,35 +30,34 @@ data "aws_iam_policy_document" "benchmark" {
       "iam:GetUser",
       "iam:GetRole",
     ]
-
   }
 
   statement {
-     actions = [
-     "kms:DescribeKey",
-     "kms:Encrypt",
-     "kms:Decrypt"
-     ]
+    actions = [
+      "kms:DescribeKey",
+      "kms:Encrypt",
+      "kms:Decrypt",
+    ]
 
-     resources = [
-       "${aws_kms_key.vault.arn}"
-     ]
-   }
-
+    resources = [
+      aws_kms_key.vault.arn,
+    ]
+  }
 }
 
 resource "aws_iam_role" "benchmark" {
   name               = "benchmark-${var.env}"
-  assume_role_policy = "${data.aws_iam_policy_document.assume_role.json}"
+  assume_role_policy = data.aws_iam_policy_document.assume_role.json
 }
 
 resource "aws_iam_role_policy" "benchmark" {
   name   = "benchmark-${var.env}-SelfAssembly"
-  role   = "${aws_iam_role.benchmark.id}"
-  policy = "${data.aws_iam_policy_document.benchmark.json}"
+  role   = aws_iam_role.benchmark.id
+  policy = data.aws_iam_policy_document.benchmark.json
 }
 
 resource "aws_iam_instance_profile" "benchmark" {
   name = "benchmark-${var.env}"
-  role = "${aws_iam_role.benchmark.name}"
+  role = aws_iam_role.benchmark.name
 }
+

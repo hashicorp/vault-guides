@@ -5,5 +5,6 @@ resource "aws_kms_key" "vault" {
 
 resource "aws_kms_alias" "vault" {
   name          = "alias/${random_id.environment_name.hex}"
-  target_key_id = "${aws_kms_key.vault.key_id}"
+  target_key_id = aws_kms_key.vault.key_id
 }
+

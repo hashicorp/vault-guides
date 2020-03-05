@@ -1,7 +1,7 @@
 resource "aws_security_group" "bastion" {
   name        = "bastion"
   description = "bastion"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 22
@@ -11,17 +11,17 @@ resource "aws_security_group" "bastion" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "consul" {
   name        = "consul"
   description = "consul"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
@@ -31,17 +31,17 @@ resource "aws_security_group" "consul" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "vault" {
   name        = "vault"
   description = "vault"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
@@ -51,17 +51,17 @@ resource "aws_security_group" "vault" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "telemetry" {
   name        = "telemetry"
   description = "telemetry"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
@@ -71,17 +71,17 @@ resource "aws_security_group" "telemetry" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "envoy" {
   name        = "envoy"
   description = "envoy"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
@@ -105,17 +105,17 @@ resource "aws_security_group" "envoy" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "benchmark" {
   name        = "benchmark"
   description = "benchmark"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 0
@@ -125,17 +125,17 @@ resource "aws_security_group" "benchmark" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
 resource "aws_security_group" "telemetry-lb" {
   name        = "telemetry-lb"
   description = "telemetry-lb"
-  vpc_id      = "${module.vpc.vpc_id}"
+  vpc_id      = module.vpc.vpc_id
 
   ingress {
     from_port   = 3000
@@ -145,9 +145,10 @@ resource "aws_security_group" "telemetry-lb" {
   }
 
   egress {
-    from_port       = 0
-    to_port         = 0
-    protocol        = "-1"
-    cidr_blocks     = ["0.0.0.0/0"]
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
+

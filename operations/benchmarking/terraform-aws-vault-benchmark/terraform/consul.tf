@@ -3,31 +3,31 @@ data "aws_ami" "consul" {
 
   filter {
     name   = "image-id"
-    values = ["${var.consul_ami}"]
+    values = [var.consul_ami]
   }
 
   owners = ["self"]
 }
 
 resource "aws_instance" "consul" {
-  count             = "${var.consul_cluster_size}"
-  ami               = "${data.aws_ami.consul.id}"
-  instance_type     = "m5.4xlarge"
-  subnet_id         = "${element(module.vpc.private_subnets, count.index)}"
-  key_name          = "${aws_key_pair.aws.key_name}"
+  count                       = var.consul_cluster_size
+  ami                         = data.aws_ami.consul.id
+  instance_type               = var.consul_instance_type
+  subnet_id                   = element(module.vpc.private_subnets, count.index)
+  key_name                    = aws_key_pair.aws.key_name
   associate_public_ip_address = false
-  ebs_optimized     = "true"
-  iam_instance_profile        = "${aws_iam_instance_profile.benchmark.id}"
+  ebs_optimized               = "true"
+  iam_instance_profile        = aws_iam_instance_profile.benchmark.id
 
-  vpc_security_group_ids  = [
-    "${aws_security_group.consul.id}"
+  vpc_security_group_ids = [
+    aws_security_group.consul.id,
   ]
 
-  tags {
-    env              = "${var.env}"
-    role             = "consul"
-    owner            = "${var.owner}"
-    TTL              = "${var.ttl}"
+  tags = {
+    env   = var.env
+    role  = "consul"
+    owner = var.owner
+    TTL   = var.ttl
   }
 
   root_block_device {
@@ -43,13 +43,14 @@ resource "aws_instance" "consul" {
   }
   */
 
-  user_data = "${data.template_file.consul.rendered}"
+  user_data = data.template_file.consul.rendered
 }
 
 data "template_file" "consul" {
-  template = "${file("${path.module}/templates/consul.tpl")}"
+  template = file("${path.module}/templates/consul.tpl")
 
   vars = {
-    env = "${var.env}"
+    env = var.env
   }
 }
+

@@ -13,6 +13,7 @@ resource "null_resource" "main" {
 }
 
 resource "aws_key_pair" "aws" {
-  key_name   = "${var.env}"
-  public_key = "${tls_private_key.main.public_key_openssh}"
+  key_name   = var.env
+  public_key = tls_private_key.main.public_key_openssh
 }
+

@@ -1,9 +1,9 @@
 output "bastion" {
-  value = "${aws_instance.bastion.public_ip}"
+  value = aws_instance.bastion.public_ip
 }
 
 output "key" {
-  value = "${tls_private_key.main.private_key_pem}"
+  value = tls_private_key.main.private_key_pem
 }
 
 output "envoy_http" {
@@ -19,5 +19,6 @@ output "grafana" {
 }
 
 output "ca" {
-  value = "${tls_self_signed_cert.root.cert_pem}"
+  value = tls_self_signed_cert.root.cert_pem
 }
+

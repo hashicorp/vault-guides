@@ -4,7 +4,7 @@
 This repo is intended to provide guidance and will not be officially maintained by HashiCorp.
 
 ## Overview
-This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine.
+This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine. Most of the script were originally written by Roger Berlind in https://github.com/rberlind/vault-benchmarking who drew inspiration from Jacob Friedman's benchmark scripts for Vault's Transit secrets engine that he wrote in https://github.com/jdfriedma/Vault-Transit-Load-Testing.
 
 ## Scripts
 The following are the main test scripts:

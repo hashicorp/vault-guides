@@ -49,7 +49,6 @@ $ docker run \
   --name=learn-ldap \
   --hostname=learn-ldap \
   --network=learn-vault \
-  --hostname=ldap \
   -p 389:389 \
   -p 636:636 \
   -e LDAP_ORGANISATION="Example" \
@@ -62,8 +61,8 @@ $ docker run \
 
 **Successful output**:
 
-```
-FIXME
+```plaintext
+54276896dfbd840dda7af7b3e5407260889794529d16212da461578667cea3f1
 ```
 
 You can use `docker ps` to validate that the container is up and ready.
@@ -159,7 +158,6 @@ $ docker run \
   --name=learn-sshd \
   --hostname=learn-sshd \
   --network=learn-vault \
-  --hostname=sshd \
   -e SSH_PASSWORD_AUTHENTICATION='true' \
   -p 2022:22 \
   --detach \
@@ -170,7 +168,7 @@ $ docker run \
 **Successful output**:
 
 ```
-FIXME
+b7ed04c3a15a3d9d0317a549bd4541f92a69322b5bd0422f9d3a33b16c27a8c4
 ```
 
 You can use `docker ps` go validate that the container is up and ready.
@@ -228,6 +226,12 @@ $ docker run \
   --detach \
   --rm \
   vault:1.4.0
+```
+
+**Successful output**:
+
+```plaintext
+089b6beed68bafd942ae771f444008fd51694960973c15ce0af9700874f835b3
 ```
 
 > **NOTE**: We have started the Vault server in [development mode](https://www.vaultproject.io/docs/commands/server/#inlinecode--dev-1); this means Vault initializes, unseals itself, and sets the initial root token to _c0ffee0ca7_ for us. Any 1.4.0+ version of the container can be used.

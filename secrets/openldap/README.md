@@ -191,7 +191,7 @@ $ ssh -l learner 0.0.0.0 -p 2022
 
 Since this is the first connection to the sshd container, you will be prompted with some information about the host and asked whether you want to continue connecting.
 
-```
+```plaintext
 The authenticity of host '[0.0.0.0]:2022 ([0.0.0.0]:2022)' can't be established.
 ECDSA key fingerprint is SHA256:jiMaT0yey0MUFs7qKg+OTMGPBILuBaUKkATVjB02s4o.
 Are you sure you want to continue connecting (yes/no)? yes
@@ -225,7 +225,7 @@ $ docker run \
   -p 8200:8200 \
   --detach \
   --rm \
-  vault:1.4.0
+  vault:1.4.0-beta1
 ```
 
 **Successful output**:
@@ -240,7 +240,7 @@ Beware that in dev mode all Vault data are persisted only to memory, so if the c
 
 You can use `docker ps` go validate that the container is up and ready.
 
-```
+```shell
 $ docker ps -f name=learn-vault --format "table {{.Names}}\t{{.Status}}"
 NAMES               STATUS
 learn-sshd          Up 14 seconds
@@ -250,7 +250,7 @@ From this point on, we will execute a shell in the Vault server container and ca
 
 Use `docker exec` to open a shell in the Vault server container.
 
-```
+```shell
 $ docker exec -it learn-vault sh
 ```
 
@@ -286,13 +286,13 @@ Great, Vault is ready to go and we are now ready to configure the OpenLDAP secre
 
 First, use `vault login` authenticate with the root _c0ffee0ca7_ token.
 
-```
+```shell
 # vault login c0ffee0ca7
 ```
 
 **Successful output**:
 
-```
+```plaintext
 Success! You are now authenticated. The token information displayed below
 is already stored in the token helper. You do NOT need to run "vault login"
 again. Future Vault requests will automatically use this token.
@@ -363,7 +363,7 @@ $ vault write openldap/static-role/learner \
 
 **Successful output**:
 
-```
+```plaintext
 Success! Data written to: openldap/static-role/learner
 ```
 
@@ -394,7 +394,7 @@ Indeed this is the case, but now that we have rotated the credential what is the
 
 From within the Vault server container, we can ask Vault by reading from the _/openldap/static-cred/learner_ using `vault read`; if we further use the `-field` flag, we can ask for _only the raw password string_, which offers precision for use in automation use cases and so on.
 
-```
+```shell
 # vault read -field=password /openldap/static-cred/learner
 ```
 
@@ -448,7 +448,7 @@ Last login: Tue Mar 10 17:12:56 2020 from 172.22.0.1
 
 You can quickly clean up the environment with `docker rm` and `docker network rm` commands:
 
-```
+```shell
 $ docker rm learn-vault --force ; \
   docker rm learn-ldap --force ; \
   docker rm learn-sshd --force ; \

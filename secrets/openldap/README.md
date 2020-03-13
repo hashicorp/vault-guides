@@ -212,7 +212,7 @@ Creating directory '/home/learner'.
 [learner@sshd ~]$
 ```
 
-Now that we have successfully authenticated with the sshd server, let's configure Vault to manage the LDAP credential for our _learner_ and then rotate it.
+Now that we have successfully authenticated with the sshd server, let's configure Vault to manage the LDAP credential for our _learner_ user, and then rotate it.
 
 ### Vault Container
 
@@ -228,10 +228,11 @@ $ docker run \
   --cap-add=IPC_LOCK \
   -e 'VAULT_DEV_ROOT_TOKEN_ID=c0ffee0ca7' \
   -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' \
+  -e 'VAULT_ADDR=http://127.0.0.1:8200' \
   -p 8200:8200 \
   --detach \
   --rm \
-  vault:1.4.0-beta1
+  vault:1.4.0
 ```
 
 The flags to `docker run` define a container name, network hostname, name of Docker network to join, the IPC_LOCK capability for `mlock()` support, an environment variable to set the initial Vault root token, an environment variable to set the listen address, and the port mapping plus exposed port.
@@ -265,13 +266,7 @@ Use `docker exec` to open a shell in the Vault server container.
 $ docker exec -it learn-vault sh
 ```
 
-Next, export a `VAULT_ADDR` environment variable that instructs the `vault` binary client on the specific host and port in use by our Vault server.
-
-```shell
-# export VAULT_ADDR=http://127.0.0.1:8200
-```
-
-Now that the Vault server is ready and we have instructed our `vault` client binary to communicate with it, let's do a quick check of Vault's current status.
+Now that the Vault server is ready, let's do a quick check of Vault's current status.
 
 ```shell
 # vault status
@@ -320,6 +315,8 @@ policies             ["root"
 ```
 
 Now that we are authenticated with the root token, continue with the secrets engine configuration.
+
+> ***NOTE:** This guide uses the initial root token for all Vault operations solely for convenience and simplicity. In actual production use, Vault root tokens should not be generally used and should be closely guarded. Refer to the [Root Tokens](https://master--vault-www.netlify.com/docs/concepts/tokens/#root-tokens) documentation to learn more.
 
 #### Enable and Configure OpenLDAP Secrets Engine
 

@@ -416,7 +416,7 @@ From within the Vault server container, we can ask Vault by reading from the _/o
 ZdSuDuHEUeeLlNijYXF527RzYdiF34h2YmgAv0EhNhpLRhCUmmpkGzenTQHyTs1H
 ```
 
-If you'd prefer to see all the metadata associated with the secret, just omit the `-field=password`.
+If you'd prefer to output all the metadata associated with the secret, just omit the `-field=password`.
 
 ```plaintext
 # vault read /openldap/static-cred/learner

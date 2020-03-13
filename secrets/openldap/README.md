@@ -50,7 +50,6 @@ $ docker run \
   --hostname=learn-ldap \
   --network=learn-vault \
   -p 389:389 \
-  -p 636:636 \
   -e LDAP_ORGANISATION="Example" \
   -e LDAP_DOMAIN="example.com" \
   -e LDAP_ADMIN_PASSWORD="admin" \
@@ -58,6 +57,10 @@ $ docker run \
   --rm \
   osixia/openldap:1.3.0
 ```
+
+The flags to `docker run` define a container name, network hostname, name of Docker network to join, the LDAP port number to expose, an example organization name, organization domain, and initial administrator password.
+
+We also specify that the container detach from the terminal and remove itself when it exits.
 
 **Successful output**:
 
@@ -79,7 +82,7 @@ Now that the OpenLDAP server is ready, let's move on to configuring it.
 
 The OpenLDAP server needs a bit of additional configuration to define some initial groups and a POSIX user account named _learner_. We'll use this account to authenticate to the sshd container later on. You can find this configuration in the files `configs/base.ldif` and `configs/learn.ldif`.
 
-Use the `ldapadd` command to add configuration from `configs.base.ldif` to your OpenLDAP server.
+Use the `ldapadd` command to add configuration from `configs.base.ldif` to your OpenLDAP server to add initial users and groups.
 
 ```shell
 $ ldapadd \
@@ -165,6 +168,10 @@ $ docker run \
   sshtest:1.0.0
 ```
 
+The flags to `docker run` define a container name, network hostname, name of Docker network to join, an environment variable to enable password authentication in sshd, and the sshd port mapping plus port number to expose.
+
+We also specify that the container detach from the terminal and remove itself when it exits.
+
 **Successful output**:
 
 ```
@@ -218,7 +225,6 @@ $ docker run \
   --name=learn-vault \
   --hostname=learn-vault \
   --network=learn-vault \
-  --hostname=vault \
   --cap-add=IPC_LOCK \
   -e 'VAULT_DEV_ROOT_TOKEN_ID=c0ffee0ca7' \
   -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' \
@@ -227,6 +233,11 @@ $ docker run \
   --rm \
   vault:1.4.0-beta1
 ```
+
+The flags to `docker run` define a container name, network hostname, name of Docker network to join, the IPC_LOCK capability for `mlock()` support, an environment variable to set the initial Vault root token, an environment variable to set the listen address, and the port mapping plus exposed port.
+
+We also specify that the container detach from the terminal and remove itself when it exits.
+
 
 **Successful output**:
 

@@ -10,6 +10,8 @@ The infrastructure in this demonstration consists of the following:
 
 Once you have established the initial SSH authentication through OpenLDAP, we can demonstrate use of Vault to manage our LDAP user credential with the [OpenLDAP Secrets Engine](https://www.vaultproject.io/docs/secrets/openldap/) introduced in Vault version 1.4.0).
 
+-> **NOTE:** As this is purely an informative feature demonstration, the environment is not configured to use TLS for Vault and OpenLDAP.
+
 ## Prerequisites
 
 You need the following to successfully try this demonstration.
@@ -347,7 +349,7 @@ $ vault write openldap/config \
 Success! Data written to: openldap/config
 ```
 
-Then rotate the root credential.
+Then, rotate the root credential so that only Vault has control of it from this point on.
 
 ```shell
 $ vault write -f openldap/rotate-root

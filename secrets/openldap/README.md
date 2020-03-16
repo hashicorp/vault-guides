@@ -22,6 +22,27 @@ You need the following to successfully try this demonstration.
   - `ldapadd`
   - `ldappasswd`
 
+This guide was last tested 13 Mar 2020 on a macOS 10.15.3 using the following configuration.
+
+```shell
+$ docker version --format '{{.Server.Version}}'
+19.03.5
+```
+
+```
+$ docker image list osixia/openldap
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+osixia/openldap     1.3.0               a74251817ae5        5 months ago        275MB
+```
+
+```
+$ docker image list vault
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+vault               1.4.0-beta1         647def44c08c        3 weeks ago         139MB
+```
+
+Although we recommend these software versions, the output you see may vary depending on your environment and the software versions you use.
+
 ## Setup the Infrastructure
 
 Once you meet all prerequisites, proceed with the setup to establish a dedicated Docker network and the necessary containers for our demonstration infrastructure.
@@ -234,7 +255,7 @@ $ docker run \
   -p 8200:8200 \
   --detach \
   --rm \
-  vault:1.4.0
+  vault:1.4.0-beta1
 ```
 
 The flags to `docker run` define a container name, network hostname, name of Docker network to join, the IPC_LOCK capability for `mlock()` support, an environment variable to set the initial Vault root token, an environment variable to set the listen address, and the port mapping plus exposed port.

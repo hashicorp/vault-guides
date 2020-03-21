@@ -12,6 +12,8 @@ Once you have established the initial SSH authentication through OpenLDAP, we ca
 
 > **NOTE:** As this is purely an informative feature demonstration, the environment is not configured to use TLS for Vault and OpenLDAP.
 
+Refer to the [OpenLDAP Secrets Engine](https://learn.hashicorp.com/vault/secrets-management/sm-openldap) guide for additional information using the OpenLDAP secrets engine.
+
 ## Prerequisites
 
 You need the following to successfully try this demonstration.

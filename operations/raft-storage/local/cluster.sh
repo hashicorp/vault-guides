@@ -156,7 +156,7 @@ function loopback_exists_at_address {
 function clean {
 
   printf "\n%s" \
-    "Cleaing up the HA cluster. Removing:" \
+    "Cleaning up the HA cluster. Removing:" \
     " - local loopback address for [vault_2], [vault_3], and [vault_4]" \
     " - configuration files" \
     " - raft storage directory" \
@@ -220,6 +220,14 @@ function clean {
       rm $vault_log
     fi
   done
+
+
+  if [[ -f "$DEMO_HOME/demo.snapshot" ]] ; then
+    printf "\n%s" \
+      "Removing demo.snapshot"
+
+    rm demo.snapshot
+  fi
 
   printf "\n%s" \
     "Clean complete" \

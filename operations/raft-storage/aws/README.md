@@ -1,5 +1,9 @@
 # Create a Vault HA cluster on AWS using Terraform
 
+These assets are provided to perform the tasks described in the [Vault HA Cluster with Integrated Storage on AWS](https://learn.hashicorp.com/vault/operations/raft-storage-aws) guide.
+
+---
+
 1.  Set your AWS credentials as environment variables:
 
     ```plaintext
@@ -77,14 +81,10 @@
 1.  Check the current number of servers in the HA Cluster.
 
     ```plaintext
-    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
-    {
-      "address": "10.0.101.22:8201",
-      "leader": true,
-      "node_id": "vault_2",
-      "protocol_version": "3",
-      "voter": true
-    }
+    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft list-peers
+    Node       Address             State     Voter
+    ----       -------             -----     -----
+    vault_2    10.0.101.22:8201    leader    true
     ```
 
 1.  Open a new terminal, SSH into **vault_3**.
@@ -111,35 +111,25 @@
     $ vault operator raft join http://vault_2:8200
     ```
 
-1.  Return to the original terminal and check the current number of servers in
+1.  Return to the **vault_2** terminal and check the current number of servers in
     the HA Cluster.
 
     ```plaintext
-    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft configuration -format=json | jq  ".data.config.servers[]"
-    {
-      "address": "10.0.101.22:8201",
-      "leader": true,
-      "node_id": "vault_2",
-      "protocol_version": "3",
-      "voter": true
-    }
-    {
-      "address": "10.0.101.23:8201",
-      "leader": false,
-      "node_id": "vault_3",
-      "protocol_version": "3",
-      "voter": true
-    }
-    {
-      "address": "10.0.101.24:8201",
-      "leader": false,
-      "node_id": "vault_4",
-      "protocol_version": "3",
-      "voter": true
-    }
+    $ VAULT_TOKEN=$(cat /tmp/key.json | jq -r ".root_token") vault operator raft list-peers
+
+    Node       Address             State       Voter
+    ----       -------             -----       -----
+    vault_2    10.0.101.22:8201    leader      true
+    vault_3    10.0.101.23:8201    follower    true
+    vault_4    10.0.101.24:8201    follower    true
     ```
 
     You should see **vault_2**, **vault_3**, and **vault_4** in the cluster.
+
+**NOTE:** Using the root token stored in the `/tmp/key.json` file, you can log into **vault_3** and **vault_4** as well.
+
+Refer to the [Vault HA Cluster with Integrated Storage](https://learn.hashicorp.com/vault/operations/raft-storage-aws) to learn more about [taking a snapshot](https://learn.hashicorp.com/vault/operations/raft-storage-aws#raft-snapshots-for-data-recovery) and [`retry_join` configuration](https://learn.hashicorp.com/vault/operations/raft-storage-aws#retry-join). 
+
 
 # Clean up the cloud resources
 

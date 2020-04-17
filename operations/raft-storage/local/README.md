@@ -1,5 +1,9 @@
 # Create a Vault HA cluster locally on your machine
 
+These assets are provided to perform the tasks described in the [Vault HA Cluster with Integrated Storage](https://learn.hashicorp.com/vault/operations/raft-storage) guide.
+
+---
+
 ## Setup script, network and configuration
 
 1. Set the `cluster.sh` file to executable:
@@ -128,33 +132,20 @@ all nodes with `./cluster.sh setup all`.
 1.  View the cluster configuration from any cluster member:
 
     ```shell
-    $ ./cluster.sh vault_2 operator raft configuration -format=json | jq -r ".data.config.servers"
-    $ ./cluster.sh vault_3 operator raft configuration -format=json | jq -r ".data.config.servers"
-    $ ./cluster.sh vault_4 operator raft configuration -format=json | jq -r ".data.config.servers"
-     [
-        {
-            "address": "127.0.0.2:8201",
-            "leader": true,
-            "node_id": "vault_2",
-            "protocol_version": "3",
-            "voter": true
-        },
-        {
-            "address": "127.0.0.3:8201",
-            "leader": false,
-            "node_id": "vault_3",
-            "protocol_version": "3",
-            "voter": true
-        },
-        {
-            "address": "127.0.0.4:8201",
-            "leader": false,
-            "node_id": "vault_4",
-            "protocol_version": "3",
-            "voter": true
-        }
-     ]
+    $ ./cluster.sh vault_2 operator raft list-peers
+    $ ./cluster.sh vault_3 operator raft list-peers
+    $ ./cluster.sh vault_4 operator raft list-peers
    ```
+
+    The output should show that `vault_3` and `vault_4` are cluster members as follower.
+
+    ```
+    Node       Address           State       Voter
+    ----       -------           -----       -----
+    vault_2    127.0.0.2:8201    leader      true
+    vault_3    127.0.0.3:8201    follower    true
+    vault_4    127.0.0.4:8201    follower    true
+    ```
 
 # Interacting with the nodes
 
@@ -195,7 +186,7 @@ Found 4 Vault services
 
 Stopping 4 Vault services
 
-Cleaing up the HA cluster. Removing:
+Cleaning up the HA cluster. Removing:
  - local loopback address for [vault_2], [vault_3], and [vault_4[
  - configuration files
  - raft storage directory

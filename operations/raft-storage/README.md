@@ -1,20 +1,11 @@
 # Vault HA Cluster with Integrated Storage (Raft)
 
-**[BETA]** Currently, Vault's Integrated Storage is a _BETA_ feature. To explore this new persistent storage, [download Vault 1.3 or later](https://releases.hashicorp.com/vault/).
+These assets are provided to perform the tasks described in the following guides:
 
-These assets are provided to perform the tasks described in the [Vault HA with Raft Storage Backend](https://learn.hashicorp.com/vault/operations/raft-storage) guide.
+- [Vault HA with Raft Storage Backend](https://learn.hashicorp.com/vault/operations/raft-storage) uses the script in the [`local`](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/local) sub-folder
+- [Vault HA with Raft Storage Backend on AWS](https://learn.hashicorp.com/vault/operations/raft-storage-aws) uses the Terraform files in the [`aws`](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/aws) sub-folder.
 
-This guide provides two options to explore the raft storage backend:
-
-- **Option 1:** Create a Vault HA cluster locally on your machine
-- **Option 2:** Create a Vault HA cluster on AWS using Terraform
-
-| Folder                     | Description                                      |
-|----------------------------|--------------------------------------------------|
-| `local-test`               | Scripts to create a Vault HA cluster locally on your machine ([Option 1](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/local-test)) |
-| `terraform-aws`            | Terraform files to create a Vault HA cluster on AWS using Terraform ([Option 2](https://github.com/hashicorp/vault-guides/tree/master/operations/raft-storage/terraform-aws)) |
-
-<br>
+------
 
 ## Taking a Vault data snapshot
 

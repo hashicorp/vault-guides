@@ -7,22 +7,18 @@ data:
     pid_file = "/home/vault/pidfile"
 
     auto_auth {
-      method "kubernetes" {
-        mount_path = "auth/kubernetes"
-        config = {
-          role = "example"
+        method "kubernetes" {
+            mount_path = "auth/kubernetes"
+            config = {
+                role = "example"
+            }
         }
-      }
 
-      sink "file" {
-        config = {
-          path = "/home/vault/.vault-token"
+        sink "file" {
+            config = {
+                path = "/home/vault/.vault-token"
+            }
         }
-      }
-    }
-
-    vault {
-      address = http://192.168.64.1:8200
     }
 
     template {
@@ -31,10 +27,10 @@ data:
     <html>
     <body>
     <p>Some secrets:</p>
-    {{- with secret "secret/myapp/config" }}
+    {{- with secret "secret/data/myapp/config" }}
     <ul>
-    <li><pre>username: {{ .Data.username }}</pre></li>
-    <li><pre>password: {{ .Data.password }}</pre></li>
+    <li><pre>username: {{ .Data.data.username }}</pre></li>
+    <li><pre>password: {{ .Data.data.password }}</pre></li>
     </ul>
     {{ end }}
     </body>
@@ -44,4 +40,4 @@ data:
 kind: ConfigMap
 metadata:
   name: example-vault-agent-config
-  namespace: myproject
+  namespace: default

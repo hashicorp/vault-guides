@@ -2,9 +2,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: vault-agent-example
-  namespace: myproject
+  namespace: default
 spec:
-  serviceAccountName: test-app
+  serviceAccountName: vault-auth
 
   volumes:
   - configMap:

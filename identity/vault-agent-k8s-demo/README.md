@@ -22,7 +22,7 @@ To perform the tasks described in this guide, you need:
 
 1. Make sure that Minikube has been started: `minikube start`
 
-1.  Run the `setup-k8s-auth.sh` script to set up the kubernetes auth method on your Vault server.
+1. Run the `setup-k8s-auth.sh` script to set up the kubernetes auth method on your Vault server.
 
     **NOTE:** This guide assumes that _version 1_ of `kv` secret engine is mounted at `secret/`. If it is not enabled, un-comment the line 27 in the `setup-k8s-auth.sh` file.
 
@@ -30,47 +30,30 @@ To perform the tasks described in this guide, you need:
     $ ./setup-k8s-auth.sh
     ```
 
-1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value ***if*** your Vault server is NOT running locally (line 43 and 74).
+1. Start a minikube SSH session.
 
-    **Example:**
-
-    ```plaintext
-    ...
-    initContainers:
-      # Vault container
-      - name: vault-agent-auth
-        image: vault
-
-        ...
-
-        # This assumes Vault running on local host and K8s running in Minikube using VirtualBox
-        env:
-          - name: VAULT_ADDR
-            value: http://192.0.2.5:8200
-      ...
-
-      containers:
-        # Consul Template container
-        - name: consul-template
-          image: hashicorp/consul-template:alpine
-          imagePullPolicy: Always
-
-          ...
-
-          env:
-            - name: HOME
-              value: /home/vault
-
-            - name: VAULT_ADDR
-              value: http://192.0.2.5:8200
-        ...
+    ```shell
+    $ minikube ssh
     ```
+
+1. Within this SSH session, retrieve the value of the Minikube host.
+
+    ```shell
+    $ route -n | grep ^0.0.0.0 | awk '{ print $2 }'
+    192.168.64.1
+    ```
+
+    In this example, the Vault address would be **`http://192.168.64.1:8200`**.
+
+    Enter `exit` to quit the SSH session.
+
+1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value for your environment.
 
 1. Now, create a Pod using ConfigMap named, `example-vault-agent-config` pulling files from `configs-k8s` directory:
 
     ```shell
     # Create a ConfigMap, example-vault-agent-config
-    $ kubectl create configmap example-vault-agent-config --from-file=./configs-k8s/
+    $ kubectl create -f configmap.yaml
 
     # View the created ConfigMap
     $ kubectl get configmap example-vault-agent-config -o yaml
@@ -102,83 +85,5 @@ been created successfully.
     Notice that the `username` and `password` values were successfully read from
     `secret/myapp/config`.
 
-1. Open a shell of `vault-agent-auth` container:
 
-    ```plaintext
-    $ kubectl exec -it vault-agent-example --container vault-agent-auth sh
-    ```
-
-    Remember that the Vault Agent's `sink` is set to `/home/vault/.vault-token`.
-    To view the token stored in the sink:
-
-    ```plaintext
-    /# echo $(cat /home/vault/.vault-token)
-    s.7MQZzFZxUTBQMrtfy98wTGkZ
-    ```
-
-    Enter `exit` to terminate the shell.
-
-1. Optionally, you can view the HTML source:
-
-    ```plaintext
-    $ kubectl exec -it vault-agent-example --container nginx-container sh
-
-    /# cat /usr/share/nginx/html/index.html
-      <html>
-      <body>
-      <p>Some secrets:</p>
-      <ul>
-      <li><pre>username: appuser</pre></li>
-      <li><pre>password: suP3rsec(et!</pre></li>
-      </ul>
-
-      </body>
-      </html>
-    ```
-
-## Troubleshooting
-
-If `localhost:8080` returns an error, check the following:
-
-1. Verify that the `kubernetes` auth method is working
-1. Verify that the `consul-template` can read the token from `/home/vault/.vault-token`
-
-### Kubernetes auth method verification
-
-Follow the steps documented in the [Step 3: Verify the Kubernetes auth method configuration](https://learn.hashicorp.com/vault/identity-access-management/vault-agent-k8s#step-3-verify-the-kubernetes-auth-method-configuration).
-
-
-### Examine the consul-template container
-
-Open a shell of `consul-template` container:
-
-```plaintext
-$ kubectl exec -it vault-agent-example --container consul-template sh
-```
-
-Remember that the Vault Agent's `sink` is set to `/home/vault/.vault-token`.
-To view the token stored in the sink:
-
-```plaintext
-/# echo $(cat /home/vault/.vault-token)
-s.7MQZzFZxUTBQMrtfy98wTGkZ
-```
-
-If it fails to read a token, this may be related to an [issue](https://github.com/hashicorp/vault-guides/issues/100) reported. Some suggested to use a different `consul-template` Docker image [tag](https://hub.docker.com/r/hashicorp/consul-template/tags):
-
-- `hashicorp/consul-template:0.19.6-dev-alpine`
-- `registry.hub.docker.com/sethvargo/consul-template:0.19.5.dev-alpine`
-
-To run a different image, modify line 56 in the `example-k8s-spec.yml` file to load a different `consul-template` image:
-
-**Example:**
-
-```plaintext
-...
-containers:
-  # Consul Template container
-  - name: consul-template
-    image: hashicorp/consul-template:0.19.6-dev-alpine
-    imagePullPolicy: Always
-...
-```
+Follow the [Vault Agent with Kubernetes](https://learn.hashicorp.com/vault/identity-access-management/vault-agent-k8s) guide for a step-by-step instruction. 

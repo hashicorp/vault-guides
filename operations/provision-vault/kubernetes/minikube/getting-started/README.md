@@ -12,14 +12,18 @@ in a cloud, you can use that instead.
 
 To perform the tasks described in this guide, you need:
 
-- [Minikube installed](https://kubernetes.io/docs/tasks/tools/install-minikube/)
+This guide requires the [Kubernetes command-line interface
+(CLI)](https://kubernetes.io/docs/tasks/tools/install-kubectl/) and the [Helm
+CLI](https://helm.sh/docs/helm/) installed,
+[Minikube](https://minikube.sigs.k8s.io), the Vault and Consul Helm charts, the
+sample web application, and additional configuration to bring it all together.
 
 ## Demo Steps
 
 Start Minikube.
 
 ```
-$ minikube start --memory 4096
+$ minikube start
 ```
 
 Next, start the Kubernetes dashboard.
@@ -28,221 +32,222 @@ Next, start the Kubernetes dashboard.
 $ minikube dashboard
 ```
 
-The Vault Helm chart only supports Helm version 2.x. Initialize Helm and start
-Tiller.
+Install the Consul Helm chart version 0.18.0 with pods prefixed with the name
+`consul` and apply the values found in `helm-consul-values.yml`.
 
 ```shell
-$ helm init
-```
-
-Wait for the Tiller pod to finish its startup.
-
-Launch the consul helm chart with the additional values found in the directory.
-
-```shell
-$ helm install --name consul \
+$ helm install consul \
     --values helm-consul-values.yml \
-    https://github.com/hashicorp/consul-helm/archive/v0.15.0.tar.gz
+    https://github.com/hashicorp/consul-helm/archive/v0.18.0.tar.gz
 ```
 
-Launch the vault helm chart with the following options:
+Install the Vault Helm chart version 0.4.0 with pods prefixed with the name
+`vault` and apply the values found in `helm-vault-values.yml`.
 
 ```shell
-$ helm install --name vault \
+$ helm install vault \
     --values helm-vault-values.yml \
-    https://github.com/hashicorp/vault-helm/archive/v0.3.0.tar.gz
+    https://github.com/hashicorp/vault-helm/archive/v0.4.0.tar.gz
 ```
 
-Three services are running and each one needs to be unsealed.
-
-Run the vault operator init command to generate the unseal key and root token
+Initialize Vault with one key share and one key threshold.
 
 ```shell
-$ kubectl exec -ti vault-0 -- vault operator init -n 1 -t 1
-
-Unseal Key 1: mxW5SAU/10DOuNYaNXFZgkb/gedX+1UoK626xXM07Lg=
-
-Initial Root Token: s.GNJraFHHzZZj4NSOtx6Qpvfo
-...
+$ kubectl exec vault-0 -- vault operator init -key-shares=1 -key-threshold=1 -format=json > cluster-keys.json
 ```
 
-Unseal each of the vault services by name.
+View the unseal key found in `cluster-keys.json`.
 
 ```shell
-$ kubectl exec -ti vault-0 -- vault operator unseal
-$ kubectl exec -ti vault-1 -- vault operator unseal
-$ kubectl exec -ti vault-2 -- vault operator unseal
+$ cat cluster-keys.json | jq -r ".unseal_keys_b64[]"
+rrUtT32GztRy/pVWmcH0ZQLCCXon/TxCgi40FL1Zzus
 ```
 
-Enable communication with a Vault server.
-
-```
-# Port-forward to be able to talk to one of the vault services
-$ kubectl port-forward vault-0 8200:8200
-
-# set the vault address to localhost:8200
-$ export VAULT_ADDR="http://localhost:8200"
-
-# set the token to the initial token
-$ export VAULT_TOKEN=s.GNJraFHHzZZj4NSOtx6Qpvfo
-```
-
-Enable kv-v2 secrets at `secret`.
+Create a variable named VAULT_UNSEAL_KEY to capture the Vault unseal key.
 
 ```shell
-$ vault secrets enable -path=secret kv-v2
+$ VAULT_UNSEAL_KEY=$(cat cluster-keys.json | jq -r ".unseal_keys_b64[]")
 ```
 
-Put a username and password secret at `webapp/config`.
+Unseal Vault running on the `vault-0` pod.
 
 ```shell
-$ vault kv put secret/webapp/config username="choochoo" password="FOUNDIT"
+$ kubectl exec vault-0 -- vault operator unseal $VAULT_UNSEAL_KEY
+Key                    Value
+---                    -----
+Seal Type              shamir
+Initialized            true
+Sealed                 false
+Total Shares           1
+Threshold              1
+Version                1.3.2
+Cluster Name           vault-cluster-40bde7f6
+Cluster ID             7e0355e2-ee66-4d9e-f4eb-42ef453b857d
+HA Enabled             true
+HA Cluster             n/a
+HA Mode                standby
+Active Node Address    <none>
 ```
 
-Verify that the secret exists.
+Unseal Vault running on the `vault-1` pod.
 
 ```shell
-$ vault read secret/data/webapp/config -format=json
+$ kubectl exec vault-1 -- vault operator unseal $VAULT_UNSEAL_KEY
+# ...
 ```
 
-Next, its time to setup authentication between Vault and Kubernetes.
-
-Set environment variables for the following values stored within Kubernetes.
-
-```
-# Set VAULT_SA_NAME to the service account you created earlier
-$ export VAULT_SA_NAME=$(kubectl get sa vault -o jsonpath="{.secrets[*]['name']}")
-
-# Set SA_JWT value to the service account JWT used to access the TokenReview API
-$ export SA_JWT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data.token}" | base64 --decode; echo)
-
-# Set SA_CA_CRT to the PEM encoded CA cert used to talk to Kubernetes API
-$ export SA_CA_CRT=$(kubectl get secret $VAULT_SA_NAME -o jsonpath="{.data['ca\.crt']}" | base64 --decode; echo)
-
-# Set K8S_HOST to minikube IP address
-$ export K8S_HOST=$(minikube ip)
-```
-
-Enable kubernetes authentication method.
+Unseal Vault running on the `vault-2` pod.
 
 ```shell
-$ vault auth enable kubernetes
+$ kubectl exec vault-2 -- vault operator unseal $VAULT_UNSEAL_KEY
+# ...
 ```
 
-Configure Vault to communicate with the Kubernetes (Minikube) cluster.
+View the root token found in `cluster-keys.json`.
 
 ```shell
-$ vault write auth/kubernetes/config \
-        token_reviewer_jwt="$SA_JWT" \
-        kubernetes_host="https://$K8S_HOST:8443" \
-        kubernetes_ca_cert="$SA_CA_CRT"
+$ cat cluster-keys.json | jq -r ".root_token"
+s.VgQvaXl8xGFO1RUxAPbPbsfN
 ```
 
-A Kubernetes service account named `vault` was automatically created.
-
-Apply configuration of permissions for this service account found in
-`vault-service-account.yml`.
-
-```
-$ kubectl apply --filename vault-auth-service-account.yml
-```
-
-Write out a policy called `webapp` which reads secrets defined at the `secret/data/webapp` path.
+First, start an interactive shell session on the `vault-0` pod.
 
 ```shell
-$ vault policy write webapp - <<EOH
-path "secret/data/webapp/*" {
+$ kubectl exec -it vault-0 -- /bin/sh
+/ $
+```
+
+Login with the root token.
+
+```shell
+/ $ vault login s.VgQvaXl8xGFO1RUxAPbPbsfN
+Success! You are now authenticated. The token information displayed below
+is already stored in the token helper. You do NOT need to run "vault login"
+again. Future Vault requests will automatically use this token.
+
+Key                  Value
+---                  -----
+token                s.g3dGqNy5IYrj8E4EU8mSPeL2
+token_accessor       JVsMJHVu6rTWbPLlYmWQTq1R
+token_duration       ∞
+token_renewable      false
+token_policies       ["root"]
+identity_policies    []
+policies             ["root"]
+```
+
+Enable kv-v2 secrets at the path `secret`.
+
+```shell
+/ $ vault secrets enable -path=secret kv-v2
+Success! Enabled the kv-v2 secrets engine at: secret/
+```
+
+Create a secret at path `secret/webapp/config` with a `username` and `password`.
+
+```shell
+/ $ vault kv put secret/webapp/config username="static-user" password="static-password"
+Key              Value
+---              -----
+created_time     2020-03-24T19:13:06.72377543Z
+deletion_time    n/a
+destroyed        false
+version          1
+```
+
+Verify that the secret is defined at the path `secret/webapp/config`.
+
+```shell
+/ $ vault kv get secret/webapp/config
+====== Metadata ======
+Key              Value
+---              -----
+created_time     2020-03-24T19:13:06.72377543Z
+deletion_time    n/a
+destroyed        false
+version          1
+
+====== Data ======
+Key         Value
+---         -----
+password    static-password
+username    static-user
+```
+
+Enable the Kubernetes authentication method.
+
+```shell
+/ $ vault auth enable kubernetes
+Success! Enabled kubernetes auth method at: kubernetes/
+```
+
+Configure the Kubernetes authentication method to use the service account
+token, the location of the Kubernetes host, and its certificate.
+
+```shell
+/ $ vault write auth/kubernetes/config \
+        token_reviewer_jwt="$(cat /var/run/secrets/kubernetes.io/serviceaccount/token)" \
+        kubernetes_host="https://$KUBERNETES_PORT_443_TCP_ADDR:443" \
+        kubernetes_ca_cert=@/var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+Success! Data written to: auth/kubernetes/config
+```
+
+Write out the policy named `webapp` that enables the `read` capability for
+secrets at path `secret/data/webapp/config`
+
+
+```shell
+/ $ vault policy write webapp - <<EOF
+path "secret/data/webapp/config" {
   capabilities = ["read"]
 }
-EOH
+EOF
+Success! Uploaded policy: webapp
 ```
 
-Create a role, named `webapp`, that connects the Kubernetes service account
-and the `webapp` policy.
+Create a Kubernetes authentication role, named `webapp`, that connects the
+Kubernetes service account name and `webapp` policy.
 
 ```shell
-# Create a role named, 'example' to map Kubernetes Service Account to
-#  Vault policies and default token TTL
 $ vault write auth/kubernetes/role/webapp \
         bound_service_account_names=vault \
         bound_service_account_namespaces=default \
         policies=webapp \
         ttl=24h
+Success! Data written to: auth/kubernetes/role/webapp
 ```
 
-Start a secret consumer defined in file `k8s-webapp.yaml`.
+Lastly, exit the the `vault-0` pod.
 
 ```shell
-$ kubectl apply -f k8s-webapp.yaml
+/ $ exit
+$
 ```
 
-### Verification
-
-Get the name of the webapp pod.
+Deploy the webapp in Kubernetes by applying the file `deployment-01-webapp.yml`.
 
 ```shell
-$ kubectl get pods
-NAME                                                              READY   STATUS    RESTARTS   AGE
-consul-consul-connect-injector-webhook-deployment-568996d6ndswv   1/1     Running   0          155m
-consul-consul-dpdbz                                               1/1     Running   0          155m
-consul-consul-server-0                                            1/1     Running   0          155m
-webapp-simple-c54944b4c-84kwf                                     1/1     Running   0          7m45s
-vault-0                                                           1/1     Running   0          155m
-vault-1                                                           1/1     Running   0          155m
-vault-2                                                           1/1     Running   0          155m
+$ kubectl apply --filename deployment-01-webapp.yml
+deployment.apps/webapp created
 ```
 
-Map your localhost port 9292 to the webapp pod port 9292.
-
-```shell
-$ kubectl port-forward webapp-simple-c54944b4c-84kwf 9292:9292
-```
-
-```shell
-curl http://localhost:9292
-```
-
-## Troubleshooting
-
-1. Check the status of the pods
+Get all the pods within the `default` namespace.
 
 ```shell
 $ kubectl get pods
-NAME                                                              READY   STATUS    RESTARTS   AGE
-consul-consul-connect-injector-webhook-deployment-568996d6ndswv   1/1     Running   0          155m
-consul-consul-dpdbz                                               1/1     Running   0          155m
-consul-consul-server-0                                            1/1     Running   0          155m
-webapp-simple-c54944b4c-84kwf                                     1/1     Running   0          7m45s
-vault-0                                                           1/1     Running   0          155m
-vault-1                                                           1/1     Running   0          155m
-vault-2                                                           1/1     Running   0          155m
+NAME                                    READY   STATUS    RESTARTS   AGE
+consul-consul-6jcfj                     1/1     Running   0          19m
+consul-consul-server-0                  1/1     Running   0          19m
+vault-0                                 1/1     Running   0          14m
+vault-1                                 1/1     Running   0          14m
+vault-2                                 1/1     Running   0          14m
+vault-agent-injector-5945fb98b5-thczv   1/1     Running   0          14m
+webapp-5c76d96c6-r4mcq                  1/1     Running   0          2m43s
 ```
 
-1. Check the logs of the webapp pod
+Finally, perform a `curl` request at `http://localhost:8080`.
 
 ```shell
-$ kubectl logs webapp-simple-c54944b4c-84kwf
-[2019-09-26 21:27:47] INFO  WEBrick 1.4.2
-[2019-09-26 21:27:47] INFO  ruby 2.6.2 (2019-03-13) [x86_64-linux]
-[2019-09-26 21:27:47] INFO  WEBrick::HTTPServer#start: pid=1 port=9292
-```
-
-1. In the minikube dashboard, click **Pods** under **Workloads** to verify that
-`webapp` Pod has been created successfully.
-
-
-1. Login to the app and run it yourself:
-
-```shell
-$ kubectl exec -it webapp-simple-c54944b4c-lwv7t /bin/bash
-```
-
-On that system you can then run the service in the `/app` directory.
-
-```shell
-$ rackup -p 9191
-```
-
-```shell
-$ apt-get install vim
+$ kubectl exec webapp-5c76d96c6-r4mcq -- curl -s http://localhost:8080
+{"password"=>"static-secret", "username"=>"static-user"}%
 ```

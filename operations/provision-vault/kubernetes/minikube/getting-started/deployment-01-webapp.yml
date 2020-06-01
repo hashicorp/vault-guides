@@ -2,18 +2,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: exampleapp
+  name: webapp
   labels:
-    app: exampleapp
+    app: webapp
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: exampleapp
+      app: webapp
   template:
     metadata:
       labels:
-        app: exampleapp
+        app: webapp
     spec:
       serviceAccountName: vault
       containers:

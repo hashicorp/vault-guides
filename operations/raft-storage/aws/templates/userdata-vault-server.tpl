@@ -197,7 +197,7 @@ sudo setcap cap_ipc_lock=+ep /usr/local/bin/vault
 ##--------------------------------------------------------------------
 ## Install Vault Systemd Service
 
-sudo tee /etc/systemd/system/vault.service > /dev/null <<EOF
+read -d '' VAULT_SERVICE <<EOF
 [Unit]
 Description=Vault
 Requires=network-online.target

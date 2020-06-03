@@ -1,29 +1,26 @@
 #!/bin/bash
-
-# This script helps manage Vault running in a multi-node cluster using Raft
-# storage backend.
-#
-# SEE: https://learn.hashicorp.com/vault/beta/raft-storage
-
-# NOTE: This script is intended only to be used in an educational capacity. This
-#  is not intended to manage a Vault in a production environment.
 # shellcheck disable=SC2005,SC2030,SC2031,SC2174
+#
+# This script helps manage Vault running in a multi-node cluster
+# using the integrated storage (Raft) backend.
+#
+# Learn Guide: https://learn.hashicorp.com/vault/beta/raft-storage
+#
+# NOTES:
+# - This script is intended only to be used in an educational capacity.
+# - This script is not intended to manage a Vault in a production environment.
+# - This script supports Linux and macOS
+# - Linux support expects the 'ip' command instead of 'ifcnfig' command
 
 set -e
 
-DEMO_HOME=$(pwd)
-script_name=$(basename "$0")
+demo_home="$(pwd)"
+script_name="$(basename "$0")"
+os_name="$(uname -s | awk '{print tolower($0)}')"
 
-# identify Linux or macOS loopback for appropriate ifconfig commands
-if ifconfig lo0 > /dev/null 2>&1; then
-  export OSNAME=macos
-  else
-  if ifconfig lo > /dev/null 2>&1; then
-  export OSNAME=linux
-  else
-  >&2 echo "Cannot identify loopback device; you need Linux or macOS with an lo or lo0 device present."
+if [ "$os_name" != "darwin" ] && [ "$os_name" != "linux" ]; then
+  >&2 echo "Sorry, this script supports only Linux or macOS operating systems."
   exit 1
-  fi
 fi
 
 function vault_to_network_address {
@@ -114,8 +111,8 @@ function start_vault {
 
   local vault_network_address
   vault_network_address=$(vault_to_network_address "$vault_node_name")
-  local vault_config_file=$DEMO_HOME/config-$vault_node_name.hcl
-  local vault_log_file=$DEMO_HOME/$vault_node_name.log
+  local vault_config_file=$demo_home/config-$vault_node_name.hcl
+  local vault_log_file=$demo_home/$vault_node_name.log
 
   printf "\n%s" \
     "[$vault_node_name] starting Vault server @ $vault_network_address" \
@@ -125,11 +122,12 @@ function start_vault {
   # creating the token.
 
   if [[ "$vault_node_name" != "vault_1" ]] ; then
-    if [[ -e "$DEMO_HOME/root_token-vault_1" ]] ; then
-      VAULT_TOKEN=$(cat "$DEMO_HOME"/root_token-vault_1)
+    if [[ -e "$demo_home/root_token-vault_1" ]] ; then
+      VAULT_TOKEN=$(cat "$demo_home"/root_token-vault_1)
 
       printf "\n%s" \
         "Using [vault_1] root token ($VAULT_TOKEN) to retrieve transit key for auto-unseal"
+      printf "\n"
     fi
   fi
 
@@ -164,17 +162,14 @@ function start {
 }
 
 function loopback_exists_at_address {
-  case "$OSNAME" in
-  linux)
-    echo "$(ifconfig lo:0 | grep "$1" || true)" | tr -d '[:space:]'
-    echo "$(ifconfig lo:1 | grep "$1" || true)" | tr -d '[:space:]'
-    echo "$(ifconfig lo:2 | grep "$1" || true)" | tr -d '[:space:]'
-    ;;
-  macos)
+  case "$os_name" in
+  darwin)
     echo "$(ifconfig lo0 | grep "$1" || true)" | tr -d '[:space:]'
     ;;
-  *)
-    >&2 echo "Cannot identify OS based on loopback device; you need Linux or macOS with an lo or lo0 device present."
+  linux)
+    echo "$(ip addr show dev lo | grep "$1" || true)" | tr -d '[:space:]'
+    echo "$(ip addr show dev lo | grep "$1" || true)" | tr -d '[:space:]'
+    echo "$(ip addr show dev lo | grep "$1" || true)" | tr -d '[:space:]'
     ;;
   esac
 }
@@ -196,33 +191,28 @@ function clean {
       printf "\n%s" \
         "Removing local loopback address: $loopback_address (sudo required)" \
         ""
-
-        case "$OSNAME" in
-        linux)
-          sudo ifconfig lo:0 down && \
-          sudo ifconfig lo:1 down && \
-          sudo ifconfig lo:2 down
-          ;;
-        macos)
+        case "$os_name" in
+        darwin)
           sudo ifconfig lo0 -alias $loopback_address
           ;;
-        *)
-        >&2 echo "Cannot identify OS based on loopback device; you need Linux or macOS with an lo or lo0 device present."
+        linux)
+          sudo ip addr del "$loopback_address"/8 dev lo
           ;;
         esac
     fi
   done
 
-  for config_file in $DEMO_HOME/config-vault_1.hcl $DEMO_HOME/config-vault_2.hcl $DEMO_HOME/config-vault_3.hcl $DEMO_HOME/config-vault_4.hcl ; do
+  for config_file in $demo_home/config-vault_1.hcl $demo_home/config-vault_2.hcl $demo_home/config-vault_3.hcl $demo_home/config-vault_4.hcl ; do
     if [[ -f "$config_file" ]] ; then
       printf "\n%s" \
         "Removing configuration file $config_file"
 
       rm "$config_file"
+      printf "\n"
     fi
   done
 
-  for raft_storage in $DEMO_HOME/raft-vault_2 $DEMO_HOME/raft-vault_3 $DEMO_HOME/raft-vault_4 ; do
+  for raft_storage in $demo_home/raft-vault_2 $demo_home/raft-vault_3 $demo_home/raft-vault_4 ; do
     if [[ -d "$raft_storage" ]] ; then
     printf "\n%s" \
         "Removing raft storage file $raft_storage"
@@ -231,7 +221,7 @@ function clean {
     fi
   done
 
-  for key_file in $DEMO_HOME/unseal_key-vault_1 $DEMO_HOME/recovery_key-vault_2 ; do
+  for key_file in $demo_home/unseal_key-vault_1 $demo_home/recovery_key-vault_2 ; do
     if [[ -f "$key_file" ]] ; then
       printf "\n%s" \
         "Removing key $key_file"
@@ -240,7 +230,7 @@ function clean {
     fi
   done
 
-  for token_file in $DEMO_HOME/root_token-vault_1 $DEMO_HOME/root_token-vault_2 ; do
+  for token_file in $demo_home/root_token-vault_1 $demo_home/root_token-vault_2 ; do
     if [[ -f "$token_file" ]] ; then
       printf "\n%s" \
         "Removing key $token_file"
@@ -249,7 +239,7 @@ function clean {
     fi
   done
 
-  for vault_log in $DEMO_HOME/vault_1.log $DEMO_HOME/vault_2.log $DEMO_HOME/vault_3.log $DEMO_HOME/vault_4.log ; do
+  for vault_log in $demo_home/vault_1.log $demo_home/vault_2.log $demo_home/vault_3.log $demo_home/vault_4.log ; do
     if [[ -f "$vault_log" ]] ; then
       printf "\n%s" \
         "Removing log file $vault_log"
@@ -259,7 +249,7 @@ function clean {
   done
 
 
-  if [[ -f "$DEMO_HOME/demo.snapshot" ]] ; then
+  if [[ -f "$demo_home/demo.snapshot" ]] ; then
     printf "\n%s" \
       "Removing demo.snapshot"
 
@@ -312,27 +302,8 @@ function status {
 
 function create_network {
 
-  case "$OSNAME" in
-    linux)
-      printf "\n%s" \
-      "[vault_2] Enabling local loopback on 127.0.0.2 (requires sudo)" \
-      ""
-
-      sudo ifconfig lo:0 127.0.0.2
-
-      printf "\n%s" \
-        "[vault_3] Enabling local loopback on 127.0.0.3 (requires sudo)" \
-        ""
-
-      sudo ifconfig lo:1 127.0.0.3
-
-      printf "\n%s" \
-        "[vault_4] Enabling local loopback on 127.0.0.4 (requires sudo)" \
-        ""
-
-      sudo ifconfig lo:2 127.0.0.4
-      ;;
-    macos)
+  case "$os_name" in
+    darwin)
       printf "\n%s" \
       "[vault_2] Enabling local loopback on 127.0.0.2 (requires sudo)" \
       ""
@@ -351,9 +322,25 @@ function create_network {
 
       sudo ifconfig lo0 alias 127.0.0.4
       ;;
-    *)
-      >&2 echo "Cannot identify your operating system based on loopback device name; you need Linux or macOS with an lo or lo0 device present to use this script."
-      exit 1
+    linux)
+      printf "\n%s" \
+      "[vault_2] Enabling local loopback on 127.0.0.2 (requires sudo)" \
+      ""
+
+      sudo ip addr add 127.0.0.2/8 dev lo label lo:0
+
+      printf "\n%s" \
+        "[vault_3] Enabling local loopback on 127.0.0.3 (requires sudo)" \
+        ""
+
+      sudo ip addr add 127.0.0.3/8 dev lo label lo:1
+
+      printf "\n%s" \
+        "[vault_4] Enabling local loopback on 127.0.0.4 (requires sudo)" \
+        ""
+
+      sudo ip addr add 127.0.0.4/8 dev lo label lo:2
+
       ;;
   esac
 
@@ -363,11 +350,11 @@ function create_config {
 
   printf "\n%s" \
     "[vault_1] Creating configuration" \
-    "  - creating $DEMO_HOME/config-vault_1.hcl"
+    "  - creating $demo_home/config-vault_1.hcl"
 
-  rm -rf config-vault_1.hcl
+  rm -f config-vault_1.hcl
 
-  tee "$DEMO_HOME"/config-vault_1.hcl 1> /dev/null <<EOF
+  tee "$demo_home"/config-vault_1.hcl 1> /dev/null <<EOF
     storage "inmem" {}
     listener "tcp" {
       address = "127.0.0.1:8200"
@@ -377,16 +364,16 @@ EOF
 
   printf "\n%s" \
     "[vault_2] Creating configuration" \
-    "  - creating $DEMO_HOME/config-vault_2.hcl" \
-    "  - creating $DEMO_HOME/raft-vault_2"
+    "  - creating $demo_home/config-vault_2.hcl" \
+    "  - creating $demo_home/raft-vault_2"
 
-  rm -rf config-vault_2.hcl
-  rm -rf "$DEMO_HOME"/raft-vault_2
-  mkdir -pm 0755 "$DEMO_HOME"/raft-vault_2
+  rm -f config-vault_2.hcl
+  rm -rf "$demo_home"/raft-vault_2
+  mkdir -pm 0755 "$demo_home"/raft-vault_2
 
-  tee "$DEMO_HOME"/config-vault_2.hcl 1> /dev/null <<EOF
+  tee "$demo_home"/config-vault_2.hcl 1> /dev/null <<EOF
   storage "raft" {
-    path    = "$DEMO_HOME/raft-vault_2/"
+    path    = "$demo_home/raft-vault_2/"
     node_id = "vault_2"
   }
   listener "tcp" {
@@ -410,16 +397,16 @@ EOF
 
   printf "\n%s" \
     "[vault_3] Creating configuration" \
-    "  - creating $DEMO_HOME/config-vault_3.hcl" \
-    "  - creating $DEMO_HOME/raft-vault_3"
+    "  - creating $demo_home/config-vault_3.hcl" \
+    "  - creating $demo_home/raft-vault_3"
 
-  rm -rf config-vault_3.hcl
-  rm -rf "$DEMO_HOME"/raft-vault_3
-  mkdir -pm 0755 "$DEMO_HOME"/raft-vault_3
+  rm -f config-vault_3.hcl
+  rm -rf "$demo_home"/raft-vault_3
+  mkdir -pm 0755 "$demo_home"/raft-vault_3
 
-  tee "$DEMO_HOME"/config-vault_3.hcl 1> /dev/null <<EOF
+  tee "$demo_home"/config-vault_3.hcl 1> /dev/null <<EOF
   storage "raft" {
-    path    = "$DEMO_HOME/raft-vault_3/"
+    path    = "$demo_home/raft-vault_3/"
     node_id = "vault_3"
   }
   listener "tcp" {
@@ -443,16 +430,16 @@ EOF
 
   printf "\n%s" \
     "[vault_4] Creating configuration" \
-    "  - creating $DEMO_HOME/config-vault_4.hcl" \
-    "  - creating $DEMO_HOME/raft-vault_4"
+    "  - creating $demo_home/config-vault_4.hcl" \
+    "  - creating $demo_home/raft-vault_4"
 
-  rm -rf config-vault_4.hcl
-  rm -rf "$DEMO_HOME"/raft-vault_4
-  mkdir -pm 0755 "$DEMO_HOME"/raft-vault_4
+  rm -f config-vault_4.hcl
+  rm -rf "$demo_home"/raft-vault_4
+  mkdir -pm 0755 "$demo_home"/raft-vault_4
 
-  tee "$DEMO_HOME"/config-vault_4.hcl 1> /dev/null <<EOF
+  tee "$demo_home"/config-vault_4.hcl 1> /dev/null <<EOF
   storage "raft" {
-    path    = "$DEMO_HOME/raft-vault_4/"
+    path    = "$demo_home/raft-vault_4/"
     node_id = "vault_4"
   }
   listener "tcp" {
@@ -473,6 +460,7 @@ EOF
   disable_mlock = true
   cluster_addr = "http://127.0.0.4:8201"
 EOF
+  printf "\n"
 }
 
 function setup_vault_1 {

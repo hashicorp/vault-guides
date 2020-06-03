@@ -21,7 +21,7 @@ $ docker build . -t exampleapp-ruby
 Test the Docker image.
 
 ```shell
-$ docker run -it exampleapp-ruby:latest
+$ docker run -it -p 8080:8080 exampleapp-ruby:k8s
 ```
 
 Push the Docker image.

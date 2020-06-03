@@ -77,6 +77,6 @@ class ExampleApp < Sinatra::Base
     end
 
     # Return secret
-    secrets.to_s
+    "#{secrets.to_s}\n"
   end
 end

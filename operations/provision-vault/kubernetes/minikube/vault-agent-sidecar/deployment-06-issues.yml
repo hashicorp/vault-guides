@@ -3,11 +3,11 @@ kind: Deployment
 metadata:
   name: issues
   labels:
-    app: vault-agent-injector-demo
+    app: issues
 spec:
   selector:
     matchLabels:
-      app: vault-agent-injector-demo
+      app: issues
   replicas: 1
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
           postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
           {{- end -}}
       labels:
-        app: vault-agent-injector-demo
+        app: issues
     spec:
       serviceAccountName: internal-app
       containers:

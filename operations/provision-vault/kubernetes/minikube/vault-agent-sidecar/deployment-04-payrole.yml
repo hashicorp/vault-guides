@@ -3,11 +3,11 @@ kind: Deployment
 metadata:
   name: payrole
   labels:
-    app: vault-agent-injector-demo
+    app: payrole
 spec:
   selector:
     matchLabels:
-      app: vault-agent-injector-demo
+      app: payrole
   replicas: 1
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
           postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
           {{- end -}}
       labels:
-        app: vault-agent-injector-demo
+        app: payrole
     spec:
       serviceAccountName: internal-app
       containers:

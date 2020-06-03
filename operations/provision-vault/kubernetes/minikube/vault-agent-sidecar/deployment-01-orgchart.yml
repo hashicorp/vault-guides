@@ -3,17 +3,17 @@ kind: Deployment
 metadata:
   name: orgchart
   labels:
-    app: vault-agent-injector-demo
+    app: orgchart
 spec:
   selector:
     matchLabels:
-      app: vault-agent-injector-demo
+      app: orgchart
   replicas: 1
   template:
     metadata:
       annotations:
       labels:
-        app: vault-agent-injector-demo
+        app: orgchart
     spec:
       serviceAccountName: internal-app
       containers:

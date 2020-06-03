@@ -3,11 +3,11 @@ kind: Deployment
 metadata:
   name: website
   labels:
-    app: vault-agent-injector-demo
+    app: website
 spec:
   selector:
     matchLabels:
-      app: vault-agent-injector-demo
+      app: website
   replicas: 1
   template:
     metadata:
@@ -21,7 +21,7 @@ spec:
           postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
           {{- end -}}
       labels:
-        app: vault-agent-injector-demo
+        app: website
     spec:
       # This service account does not have permission to request the secrets.
       serviceAccountName: external-app

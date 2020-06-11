@@ -1,0 +1,29 @@
+{
+  "global": {
+    "namespace": {
+      "path": "Sales/SE"
+    },
+    "request": {
+      "path": "sys/mounts/test-kv",
+      "data": {
+        "config": {
+          "default_lease_ttl": "0s",
+          "force_no_cache": false,
+          "max_lease_ttl": "0s",
+          "options": null
+        },
+        "description": "",
+        "external_entropy_access": false,
+        "local": false,
+        "options": {
+        },
+        "seal_wrap": false,
+        "type": "kv-v2"
+      },
+      "operation": "update"
+    }
+  },
+  "test": {
+    "main": true
+  }
+}

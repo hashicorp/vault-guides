@@ -28,23 +28,32 @@ sentinel test
 
 File | Description | Application
 --- | --- | ---
-egp-cidr-payload.json | Contains base64 enconded Sentinel policy, to be applied to all secrets | Used to register the Sentinel policy within Vault
-egp-businesshours-payload.json | Contains base64 enconded Sentinel policy, to be applied to the "accounting" secrets | Used to register the Sentinel policy within Vault
-cidr-policy.sentinel | Sentinel policy that checks request's IP | Needs to be converted to base64 prior to be added to *egp-cidr-payload.json*
+aws-no-keys.sentinel | Sentinel policy that prevents explicit use of AWS keys when creating an instance of the AWS secrets engine or the AWS auth method | Needs to be converted to base64 prior to being added with the Vault HTTP API
 businesshours-policy.sentinel | Sentinel policy that checks request's time | Needs to be converted to base64 prior to be added to *egp-time-payload.json*
+cidr-policy.sentinel | Sentinel policy that checks request's IP | Needs to be converted to base64 prior to be added to *egp-cidr-payload.json*
+egp-businesshours-payload.json | Contains base64 enconded Sentinel policy, to be applied to the "accounting" secrets | Used to register the Sentinel policy within Vault
+egp-cidr-payload.json | Contains base64 enconded Sentinel policy, to be applied to all secrets | Used to register the Sentinel policy within Vault
+egp-okta-user-whitelist.sentinel | Sentinel policy that gives whitelist of approved users that can authenticate with the Okta auth method | Needs to be converted to base64 prior to being added with the Vault HTTP API
+inline-iam-actions.sentinel | Sentinel policy that restricts inline AWS IAM policies to only designate ec2 actions | Needs to be converted to base64 prior to being added with the Vault HTTP API
+inline-iam-resources.sentinel | Sentinel policy that restricts inline AWS IAM policies from using a wildcard in resources | Needs to be converted to base64 prior to being added with the Vault HTTP API
+max-kv-value-size.sentinel | Sentinel policy that restricts the size of keys written to KVv2 secrets | Needs to be converted to base64 prior to being added with the Vault HTTP API
 my-acl-policy.json | ACL policy to be associated to an user | This policy will allow access to the secret path that will be protected by Sentinel
+prevent-kv-v1-engines.sentinel | Sentinel policy that prevents KVv1 secrets engines from being created in any namespace | This should be deployed in the root namespace and needs to be converted to base64 prior to being added with the Vault HTTP API
 secret-example.json | Value representing sensitive information to be stored in Vault | Used to test if user can read/write a secret when Sentinel policy is in place
-userpass-auth-payload.json | userpass auth method payload | Used to enable userpass authentication method for our tests
 user-password.json | Contains user password | Used to create a new user with the permissive ACL policy
 user-payload | Information to create an user | This user will test the Sentinel check
+userpass-auth-payload.json | userpass auth method payload | Used to enable userpass authentication method for our tests
+userpass-password-check.sentinel | Sentinel policy that requires strong passwords for the Userpass auth method | Needs to be converted to base64 prior to being added with the Vault HTTP API
 
 ### Base64
-The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault. In this repository the Sentinel policy "cidr-policy.sentinel" is already encoded, however if you would like to change or use your own you can run the following command:
+The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault with the Vault HTTP API. In this repository the Sentinel policy "cidr-policy.sentinel" and a few others are already encoded, however if you would like to change or use your own you can run the following command:
 ```
 cat cidr-policy.sentinel | base64
 cat businesshours-policy.sentinel | base64
 ```
 Or you can use a free online service such as https://www.base64decode.org/ to encode/decode a string.
+
+You do not need to encode policies if you add them in the Vault UI.
 
 ## Steps
 

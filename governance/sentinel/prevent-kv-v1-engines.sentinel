@@ -1,0 +1,32 @@
+# Function that validates AWS keys
+prevent_kv_v1_engines = func() {
+
+  # Print some information about the request
+  # Note that these messages will only be printed when the policy is violated
+  print("Namespace path:", namespace.path)
+  print("Request path:", request.path)
+  print("Request data:", request.data)
+
+  # Validate that path includes sys/mounts
+  if request.path matches "^(.*)sys\\/mounts\\/(.*)$" and
+     ("type" in keys(request.data) and request.data.type is "kv") and
+     request.operation in ["create", "update"] {
+    print("type of secrets engine:", request.data.type)
+    if (request.data.options else null is null) or 
+       ("version" in keys(request.data.options) and request.data.options.version is "1") {
+      print("The version of the KV secrets engine is 1 which is not allowed.")
+      print("Please set version to 2 or create engine with type kv-v2")
+      return false
+    }
+    return true
+  }
+
+  return true
+
+}
+
+# Main Rule
+secrets_engines_validated = prevent_kv_v1_engines()
+main = rule {
+  secrets_engines_validated
+}

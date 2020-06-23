@@ -185,7 +185,7 @@ function status {
 
 
 function update {
-
+  set -aex
   rm -rf "$demo_home"/raft-vault_1
   mkdir -pm 0755 "$demo_home"/raft-vault_1
 
@@ -305,13 +305,27 @@ EOF
 
   vault_1 operator unseal `cat $demo_home/unsealKey1`
 
-  sleep 10s
+  sleep 2s
 
   vault_1 login `cat $demo_home/rootToken1`
 
+  printf "\n%s" \
+    "[vault_1] logging in and enabling the KV secrets engine" \
+    ""
+  sleep 2s # Added for human readability
+
+  vault_1 secrets enable -path=kv kv-v2
+
+  printf "\n%s" \
+    "[vault_1] storing secret 'kv/apikey' for testing" \
+    ""
+
+  vault_1 kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
+  vault_1 kv get kv/apikey
 }
 
 function setup_vault_2 {
+  set -aex
 
   printf "\n%s" \
     "[vault_2] Creating configuration" \
@@ -383,6 +397,7 @@ EOF
 }
 
 function setup_vault_3 {
+  set -aex
 
   printf "\n%s" \
     "[vault_3] Creating configuration" \

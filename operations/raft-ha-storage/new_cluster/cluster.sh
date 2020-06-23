@@ -204,7 +204,7 @@ function create_config {
   }
 
   storage "file" {
-  	path = "$demo_home/vault-raft-file/"
+    path = "$demo_home/vault-raft-file/"
   }
 
   listener "tcp" {
@@ -330,15 +330,15 @@ function setup_vault_1 {
   sleep 2s
 
   printf "\n%s" \
-    "[vault_1] storing secret 'kv/apikey' to demonstrate snapshot and recovery methods" \
+    "[vault_1] storing secret 'kv/apikey' for testing" \
     ""
-  sleep 2s # Added for human readability
 
   vault_1 kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
   vault_1 kv get kv/apikey
 }
 
 function setup_vault_2 {
+  set -aex
   local vault_node_name="vault_2"
   local vault_config_file=$demo_home/config-$vault_node_name.hcl
   local vault_log_file=$demo_home/$vault_node_name.log
@@ -379,6 +379,8 @@ function setup_vault_2 {
 }
 
 function setup_vault_3 {
+  set -aex
+
   local vault_node_name="vault_3"
   local vault_config_file=$demo_home/config-$vault_node_name.hcl
   local vault_log_file=$demo_home/$vault_node_name.log

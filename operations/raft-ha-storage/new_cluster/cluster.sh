@@ -108,7 +108,7 @@ function clean {
     fi
   done
 
-  for raft_storage in $demo_home/raft-vault_1 $demo_home/raft-vault_2 $demo_home/raft-vault_3 $demo_home/vault-raft-file ; do
+  for raft_storage in $demo_home/ha-raft_1 $demo_home/ha-raft_2 $demo_home/ha-raft_3 $demo_home/vault-storage-file ; do
     if [[ -d "$raft_storage" ]] ; then
     printf "\n%s" \
         "Removing raft storage file $raft_storage"
@@ -185,26 +185,26 @@ function status {
 
 
 function create_config {
-  rm -rf "$demo_home"/vault-raft-file
-  mkdir -pm 0755 "$demo_home"/vault-raft-file
+  rm -rf "$demo_home"/vault-storage-file
+  mkdir -pm 0755 "$demo_home"/vault-storage-file
 
   printf "\n%s" \
     "[vault_1] Creating configuration" \
     "  - creating $demo_home/config-vault_1.hcl" \
-    "  - creating $demo_home/raft-vault_1"
+    "  - creating $demo_home/ha-raft_1"
 
   rm -f config-vault_1.hcl
-  rm -rf "$demo_home"/raft-vault_1
-  mkdir -pm 0755 "$demo_home"/raft-vault_1
+  rm -rf "$demo_home"/ha-raft_1
+  mkdir -pm 0755 "$demo_home"/ha-raft_1
 
   tee "$demo_home"/config-vault_1.hcl 1> /dev/null <<EOF
   ha_storage "raft" {
-    path    = "$demo_home/raft-vault_1/"
+    path    = "$demo_home/ha-raft_1/"
     node_id = "vault_1"
   }
 
   storage "file" {
-    path = "$demo_home/vault-raft-file/"
+    path = "$demo_home/vault-storage-file/"
   }
 
   listener "tcp" {
@@ -221,20 +221,20 @@ EOF
   printf "\n%s" \
     "[vault_2] Creating configuration" \
     "  - creating $demo_home/config-vault_2.hcl" \
-    "  - creating $demo_home/raft-vault_2"
+    "  - creating $demo_home/ha-raft_2"
 
   rm -f config-vault_2.hcl
-  rm -rf "$demo_home"/raft-vault_2
-  mkdir -pm 0755 "$demo_home"/raft-vault_2
+  rm -rf "$demo_home"/ha-raft_2
+  mkdir -pm 0755 "$demo_home"/ha-raft_2
 
   tee "$demo_home"/config-vault_2.hcl 1> /dev/null <<EOF
   ha_storage "raft" {
-    path    = "$demo_home/raft-vault_2/"
+    path    = "$demo_home/ha-raft_2/"
     node_id = "vault_2"
   }
 
   storage "file" {
-    path = "$demo_home/vault-raft-file/"
+    path = "$demo_home/vault-storage-file/"
   }
 
   listener "tcp" {
@@ -251,20 +251,20 @@ EOF
   printf "\n%s" \
     "[vault_3] Creating configuration" \
     "  - creating $demo_home/config-vault_3.hcl" \
-    "  - creating $demo_home/raft-vault_3"
+    "  - creating $demo_home/ha-raft_3"
 
   rm -f config-vault_3.hcl
-  rm -rf "$demo_home"/raft-vault_3
-  mkdir -pm 0755 "$demo_home"/raft-vault_3
+  rm -rf "$demo_home"/ha-raft_3
+  mkdir -pm 0755 "$demo_home"/ha-raft_3
 
   tee "$demo_home"/config-vault_3.hcl 1> /dev/null <<EOF
   ha_storage "raft" {
-    path    = "$demo_home/raft-vault_3/"
+    path    = "$demo_home/ha-raft_3/"
     node_id = "vault_3"
   }
 
   storage "file" {
-    path = "$demo_home/vault-raft-file/"
+    path = "$demo_home/vault-storage-file/"
   }
 
   listener "tcp" {

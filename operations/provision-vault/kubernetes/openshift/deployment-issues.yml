@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: issues
+  labels:
+    app: issues
+spec:
+  selector:
+    matchLabels:
+      app: issues
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        vault.hashicorp.com/agent-inject: "true"
+        vault.hashicorp.com/role: "issues"
+        vault.hashicorp.com/agent-inject-secret-issues-config.txt: "secret/data/issues/config"
+        vault.hashicorp.com/agent-inject-template-issues-config.txt: |
+          {{- with secret "secret/data/issues/config" -}}
+          postgresql://{{ .Data.data.username }}:{{ .Data.data.password }}@postgres:5432/wizard
+          {{- end -}}
+      labels:
+        app: issues
+    spec:
+      serviceAccountName: issues
+      containers:
+        - name: issues
+          image: jweissig/app:0.0.1

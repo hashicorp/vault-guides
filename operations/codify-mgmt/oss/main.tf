@@ -1,43 +1,45 @@
+#------------------------------------------------------------------------------
+# The best practice is to use remote state file and encrypt it since your
+# state files may contains sensitive data (secrets).
+#------------------------------------------------------------------------------
+# terraform {
+#       backend "s3" {
+#             bucket = "remote-terraform-state-dev"
+#             encrypt = true
+#             key = "terraform.tfstate"
+#             region = "us-east-1"
+#       }
+# }
+
+
 # Use Vault provider
-provider "vault" {
-}
+provider "vault" { }
 
+#---------------------
+# Create policies
+#---------------------
 
-# Create a policy document
-data "vault_policy_document" "training" {
-  rule {
-    path         = "kv-v2/data/training/*"
-    capabilities = ["create", "read", "update", "delete", "list"]
-  }
-  rule {
-    path         = "kv-v2/*"
-    capabilities = ["list", "read"]
-  }
-  rule {
-    path         = "transit/encrypt/payment"
-    capabilities = ["update"]
-  }
-  rule {
-    path         = "transit/decrypt/payment"
-    capabilities = ["update"]
-  }
-  rule {
-    path         = "transit/*"
-    capabilities = ["read", "list"]
-  }
+# Create admin policy in the root namespace
+resource "vault_policy" "admin_policy" {
+  name   = "admins"
+  policy = file("policies/admin-policy.hcl")
 }
 
 # Create 'training' policy
-resource "vault_policy" "training" {
-  name   = "training"
-  policy = data.vault_policy_document.training.hcl
+resource "vault_policy" "eaas-client" {
+  name   = "eaas-client"
+  policy = file("policies/eaas-client-policy.hcl")
 }
 
-# Enable auth method
+#--------------------------------
+# Enable userpass auth method
+#--------------------------------
+
 resource "vault_auth_backend" "userpass" {
   type = "userpass"
 }
 
+# Create a user, 'student'
 resource "vault_generic_endpoint" "student" {
   depends_on           = [vault_auth_backend.userpass]
   path                 = "auth/userpass/users/student"
@@ -45,12 +47,15 @@ resource "vault_generic_endpoint" "student" {
 
   data_json = <<EOT
 {
-  "policies": ["training"],
+  "policies": ["eaas-client"],
   "password": "changeme"
 }
 EOT
-
 }
+
+#----------------------------------------------------------
+# Enable secrets engines
+#----------------------------------------------------------
 
 # Enable K/V v2 secrets engine at 'kv-v2'
 resource "vault_mount" "kv-v2" {
@@ -58,7 +63,7 @@ resource "vault_mount" "kv-v2" {
   type = "kv-v2"
 }
 
-# Enable Transit secrets engine
+# Enable Transit secrets engine at 'transit'
 resource "vault_mount" "transit" {
   path = "transit"
   type = "transit"

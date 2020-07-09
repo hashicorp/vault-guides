@@ -24,7 +24,7 @@ output "endpoints" {
     - PAM configured
     - SSHD configured
 
-    $ ssh -l ubuntu ${aws_instance.vault-server.public_ip} -i ${var.key_name}.pem
+    $ ssh -l ubuntu ${aws_instance.remote-host.public_ip} -i ${var.key_name}.pem
 
 EOF
 }

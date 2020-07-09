@@ -45,3 +45,11 @@ variable "key_name" {
 variable "hashibot_reaper_ttl" {
   default = 48
 }
+
+variable "configure_vault_server" {
+  default = "yes"
+}
+
+variable "configure_remote_host" {
+  default = "yes"
+}

@@ -36,6 +36,7 @@ resource "aws_instance" "vault-server" {
     tpl_vault_storage_path = "/vault/vault-server",
     tpl_vault_zip_file = var.vault_zip_file,
     tpl_remote_host_ip = var.remote_host_private_ip
+    tpl_configure_vault_server = var.configure_vault_server
   })
 
   tags = {
@@ -63,6 +64,7 @@ resource "aws_instance" "remote-host" {
   user_data = templatefile("${path.module}/templates/userdata-remote-host.tpl", {
     tpl_vault_ssh_helper_version = var.vault_ssh_helper_version,
     tpl_vault_server_ip = var.vault_server_private_ip
+    tpl_configure_remote_host = var.configure_remote_host
   })
 
   tags = {

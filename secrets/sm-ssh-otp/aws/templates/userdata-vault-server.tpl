@@ -281,6 +281,8 @@ export VAULT_TOKEN=$VAULT_TOKEN
 logger "Waiting for Vault to finish preparations (10s)"
 sleep 10
 
+%{ if tpl_configure_vault_server == "yes" }
+
 logger "Enabling SSH secrets engine"
 vault secrets enable ssh
 
@@ -302,5 +304,7 @@ vault policy write test /tmp/test.hcl
 vault auth enable userpass
 # Create the "learn_vault" user with password "hashicorp"
 vault write auth/userpass/users/learn_vault password="hashicorp" policies="test"
+
+%{ endif }
 
 logger "Complete"

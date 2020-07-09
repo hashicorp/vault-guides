@@ -116,6 +116,8 @@ source /etc/environment
 ## Set up aliases to ease networking to each node
 echo "${tpl_vault_server_ip} vault" | sudo tee -a /etc/hosts
 
+%{ if tpl_configure_remote_host == "yes" }
+
 # Install the Vault SSH Helper binary
 logger "Installing and configuring the Vault SSH helper"
 wget https://releases.hashicorp.com/vault-ssh-helper/${tpl_vault_ssh_helper_version}/vault-ssh-helper_${tpl_vault_ssh_helper_version}_linux_amd64.zip
@@ -127,7 +129,6 @@ sudo mkdir -p /etc/vault-ssh-helper.d/
 sudo tee /etc/vault-ssh-helper.d/config.hcl <<EOF
 vault_addr = "http://${tpl_vault_server_ip}:8200"
 ssh_mount_point = "ssh"
-ca_cert = "-dev"
 tls_skip_verify = false
 allowed_roles = "*"
 EOF
@@ -140,7 +141,7 @@ sudo cp /etc/pam.d/sshd /etc/pam.d/sshd.orig
 sudo sed -i 's/@include common-auth/# @include common-auth/' /etc/pam.d/sshd
 
 # Insert authentication via vault-ssh-helper in dev mode
-echo -e "\nauth requisite pam_exec.so quiet expose_authtok log=/tmp/vaultssh.log /usr/local/bin/vault-ssh-helper -dev -config=/etc/vault-ssh-helper.d/config.hcl
+echo -e "\nauth requisite pam_exec.so quiet expose_authtok log=/var/log/vault-ssh.log /usr/local/bin/vault-ssh-helper -dev -config=/etc/vault-ssh-helper.d/config.hcl
 auth optional pam_unix.so not_set_pass use_first_pass nodelay" | sudo tee -a /etc/pam.d/sshd
 
 
@@ -148,9 +149,10 @@ auth optional pam_unix.so not_set_pass use_first_pass nodelay" | sudo tee -a /et
 logger "Modifying the SSHD configuration to use Vault SSH Helper"
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.orig
 
-sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 sudo sed -i 's/ChallengeResponseAuthentication no/ChallengeResponseAuthentication yes/' /etc/ssh/sshd_config
 
 sudo systemctl restart sshd
+
+%{ endif }
 
 logger "Complete"

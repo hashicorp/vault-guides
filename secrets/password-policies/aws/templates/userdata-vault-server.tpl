@@ -348,14 +348,14 @@ vault read sys/policies/password/common_policy/generate
 
 logger "Vault: enable and configure RabbitMQ secrets engine WITHOUT password policy"
 
-vault secrets enable -path rabbitmq-no-policy rabbitmq
+vault secrets enable -path rabbitmq-default-policy rabbitmq
 
-vault write rabbitmq-no-policy/config/connection \
+vault write rabbitmq-default-policy/config/connection \
     connection_uri=http://localhost:15672 \
     username="learn_vault" \
     password="hashicorp"
 
-vault write rabbitmq-no-policy/roles/example vhosts='{"/":{"write": ".*", "read": ".*"}}'
+vault write rabbitmq-default-policy/roles/example vhosts='{"/":{"write": ".*", "read": ".*"}}'
 
 logger "Vault: enable and configure RabbitMQ secrets engine WITH password policy"
 

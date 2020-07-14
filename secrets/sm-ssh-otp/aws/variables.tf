@@ -28,7 +28,7 @@ variable "vault_zip_file" {
 }
 
 variable "vault_ssh_helper_version" {
-  default = "0.1.4"
+  default = "0.1.6"
 }
 
 # Instance size

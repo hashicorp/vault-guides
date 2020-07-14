@@ -310,7 +310,7 @@ sudo rabbitmqctl set_user_tags learn_vault administrator
 
 logger "Filesystem: create a password policy file"
 
-tee /home/ubuntu/common_policy.hcl > /dev/null <<EOF
+tee /home/ubuntu/example_policy.hcl > /dev/null <<EOF
 length=20
 
 rule "charset" {
@@ -334,17 +334,17 @@ rule "charset" {
 }
 EOF
 
-sudo chown ubuntu:ubuntu /home/ubuntu/common_policy.hcl
+sudo chown ubuntu:ubuntu /home/ubuntu/example_policy.hcl
 
 %{ if tpl_configure_vault_server == "yes" }
 
 logger "Vault: create the password policy"
 
-vault write sys/policies/password/common_policy policy=@/home/ubuntu/common_policy.hcl
+vault write sys/policies/password/example policy=@/home/ubuntu/example_policy.hcl
 
 logger "Vault: generate a password from the policy"
 
-vault read sys/policies/password/common_policy/generate
+vault read sys/policies/password/example/generate
 
 logger "Vault: enable and configure RabbitMQ secrets engine WITHOUT password policy"
 
@@ -365,7 +365,7 @@ vault write rabbitmq-with-policy/config/connection \
     connection_uri=http://localhost:15672 \
     username="learn_vault" \
     password="hashicorp" \
-    password_policy="common_policy"
+    password_policy="example"
 
 vault write rabbitmq-with-policy/roles/example vhosts='{"/":{"write": ".*", "read": ".*"}}'
 

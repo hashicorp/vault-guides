@@ -10,7 +10,7 @@ resource "vault_policy" "admin_policy" {
 
 # Create admin policy in the finance namespace
 resource "vault_policy" "admin_policy_finance" {
-  provider = vault15.finance
+  provider = vault.finance
   depends_on = [vault_namespace.finance]
   name   = "admins"
   policy = file("policies/admin-policy.hcl")
@@ -18,7 +18,7 @@ resource "vault_policy" "admin_policy_finance" {
 
 # Create admin policy in the engineering namespace
 resource "vault_policy" "admin_policy_engineering" {
-  provider = vault15.engineering
+  provider = vault.engineering
   depends_on = [vault_namespace.engineering]
   name   = "admins"
   policy = file("policies/admin-policy.hcl")

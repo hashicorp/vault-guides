@@ -14,12 +14,12 @@
 #------------------------------------------------------------------------------
 # To leverate more than one namespace, define a vault provider per namespace
 #------------------------------------------------------------------------------
-provider "vault15" {
+provider "vault" {
   alias = "finance"
   namespace = "finance"
 }
 
-provider "vault15" {
+provider "vault" {
   alias = "engineering"
   namespace = "engineering"
 }

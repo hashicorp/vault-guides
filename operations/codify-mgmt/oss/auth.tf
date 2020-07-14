@@ -14,7 +14,7 @@ resource "vault_generic_endpoint" "student" {
 
   data_json = <<EOT
 {
-  "policies": ["admin","eaas-client"],
+  "policies": ["admins", "eaas-client"],
   "password": "changeme"
 }
 EOT

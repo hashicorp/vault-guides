@@ -93,7 +93,7 @@ Engines](https://learn.hashicorp.com/vault/secrets/password-policies) guide.
 
 ## Clean up
 
-When you are done exploring, execute the `terraform destroy` command to terminal all AWS elements:
+When you are done exploring, execute the `terraform destroy` command to terminate all AWS elements:
 
 ```plaintext
 $ terraform destroy -auto-approve

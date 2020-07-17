@@ -37,6 +37,10 @@ variable "hashibot_reaper_ttl" {
   default = 48
 }
 
+# The Vault server is configured with the scenario completed.
+# Set this to:
+#   - "yes" for configuration complete
+#   - "no" for configuration required (Have the practitioner do it)
 variable "configure_vault_server" {
-  default = "yes"
+  default = "no"
 }

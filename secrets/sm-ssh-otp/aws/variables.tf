@@ -47,9 +47,9 @@ variable "hashibot_reaper_ttl" {
 }
 
 variable "configure_vault_server" {
-  default = "yes"
+  default = "no"
 }
 
 variable "configure_remote_host" {
-  default = "yes"
+  default = "no"
 }

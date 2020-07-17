@@ -19,7 +19,7 @@ variable "vault_server_private_ip" {
 
 # URL for Vault OSS binary
 variable "vault_binary_url" {
-  default = "https://releases.hashicorp.com/vault/1.4.3/vault_1.4.3_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.5.0-rc/vault_1.5.0-rc_linux_amd64.zip"
 }
 
 # Instance size

@@ -54,10 +54,10 @@ Tips:
     # Pull necessary plugins
     $ terraform init
 
-    $ terraform plan
+    $ terraform plan -out tfplan
 
     # Output provides the SSH instruction
-    $ terraform apply -auto-approve
+    $ terraform apply tfplan
     ...
     Outputs:
 
@@ -91,6 +91,7 @@ Tips:
     Version                  n/a
     HA Enabled               false
     ```
+
     Vault hasn't been initialized, yet.
 
 1. Initialize Vault
@@ -135,10 +136,10 @@ Tips:
     HA Enabled               false
     ```
 
-1. Explorer the Vault configuration file
+1. Explore the Vault configuration file
 
     ```plaintext
-    $ cat /etc/vault.d/config.hcl
+    $ sudo cat /etc/vault.d/config.hcl
 
     storage "file" {
       path = "/opt/vault"
@@ -168,7 +169,7 @@ The `azure` auth method allows authentication against Vault using Azure Active D
     $ vault login s.bRyEk2vIPrKfeldFZD5xFvUL
     ```
 
-1. Explorer the `/tmp/azure_auth.sh` file
+1. Explore the `/tmp/azure_auth.sh` file
 
     ```plaintext
     $ cat /tmp/azure_auth.sh
@@ -184,7 +185,7 @@ The `azure` auth method allows authentication against Vault using Azure Active D
 1. Execute the script
 
     ```plaintext
-    $ ./azure_auth.sh
+    $ /tmp/azure_auth.sh
 
      ...
 

@@ -102,6 +102,7 @@ vault write auth/azure/role/dev-role \
 # returned by the azure instance metadata service).
 # NB use the returned token to login into vault using `vault login`.
 # see https://docs.microsoft.com/en-us/azure/active-directory/managed-identities-azure-resources/how-to-use-vm-token
+# see https://docs.microsoft.com/en-us/azure/virtual-machines/linux/instance-metadata-service
 vault write auth/azure/login \
   role="dev-role" \
   jwt="$(curl 'http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&resource=https%3A%2F%2Fmanagement.azure.com%2F' -H Metadata:true -s | jq -r .access_token)" \

@@ -11,7 +11,6 @@ set -euxo pipefail
 sudo apt update && sudo apt install -y unzip jq
 
 # TODO create a dedicated account for running vault.
-# TODO upgrade to vault 1.5.
 
 VAULT_ZIP="vault.zip"
 VAULT_URL="${vault_download_url}"

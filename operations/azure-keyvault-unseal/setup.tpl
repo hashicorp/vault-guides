@@ -29,6 +29,18 @@ listener "tcp" {
   address         = "0.0.0.0:8200"
   cluster_address = "0.0.0.0:8201"
   tls_disable     = 1
+  telemetry {
+    unauthenticated_metrics_access = true
+  }
+}
+
+# enable the telemetry endpoint.
+# access it at http://<VAULT-IP-ADDRESS>:8200/v1/sys/metrics?format=prometheus
+# see https://www.vaultproject.io/docs/configuration/telemetry
+# see https://www.vaultproject.io/docs/configuration/listener/tcp#telemetry-parameters
+telemetry {
+   disable_hostname = true
+   prometheus_retention_time = "24h"
 }
 
 # enable auto-unseal using the azure key vault.

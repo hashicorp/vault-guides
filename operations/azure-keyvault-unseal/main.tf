@@ -238,7 +238,7 @@ data "template_file" "setup" {
   vars = {
     resource_group_name = "${var.environment}-vault-rg"
     vm_name             = var.vm_name
-    vault_download_url  = var.vault_download_url
+    vault_version       = var.vault_version
     tenant_id           = var.tenant_id
     subscription_id     = var.subscription_id
     client_id           = var.client_id
@@ -279,7 +279,7 @@ resource "azurerm_linux_virtual_machine" "tf_vm" {
   source_image_reference {
     publisher = "Canonical"
     offer     = "UbuntuServer"
-    sku       = "16.04.0-LTS"
+    sku       = "18.04-LTS"
     version   = "latest"
   }
 

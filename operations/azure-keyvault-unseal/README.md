@@ -130,7 +130,7 @@ Tips:
     Sealed                   false
     Total Recovery Shares    5
     Threshold                3
-    Version                  1.0.2
+    Version                  1.5.0
     Cluster Name             vault-cluster-092ba5de
     Cluster ID               8b173565-7d74-fe5b-a199-a2b56b7019ee
     HA Enabled               false
@@ -139,15 +139,37 @@ Tips:
 1. Explore the Vault configuration file
 
     ```plaintext
-    $ sudo cat /etc/vault.d/config.hcl
+    $ sudo cat /etc/vault.d/vault.hcl
+
+    ui = true
+    disable_mlock = true
+
+    api_addr = "http://VAULT-IP-ADDRESS:8200"
+    cluster_addr = "http://VAULT-IP-ADDRESS:8201"
 
     storage "file" {
-      path = "/opt/vault"
+      path = "/opt/vault/data"
     }
+
     listener "tcp" {
-      address     = "0.0.0.0:8200"
-      tls_disable = 1
+      address         = "0.0.0.0:8200"
+      cluster_address = "0.0.0.0:8201"
+      tls_disable     = 1
+      telemetry {
+        unauthenticated_metrics_access = true
+      }
     }
+
+    # enable the telemetry endpoint.
+    # access it at http://<VAULT-IP-ADDRESS>:8200/v1/sys/metrics?format=prometheus
+    # see https://www.vaultproject.io/docs/configuration/telemetry
+    # see https://www.vaultproject.io/docs/configuration/listener/tcp#telemetry-parameters
+    telemetry {
+      disable_hostname = true
+      prometheus_retention_time = "24h"
+    }
+
+    # enable auto-unseal using the azure key vault.
     seal "azurekeyvault" {
       client_id      = "YOUR-AZURE-APP-ID"
       client_secret  = "YOUR-AZURE-APP-PASSWORD"
@@ -155,8 +177,6 @@ Tips:
       vault_name     = "Test-vault-xxxx"
       key_name       = "generated-key"
     }
-    ui=true
-    disable_mlock = true
     ```
 
 ## Azure Auth Method Steps
@@ -186,19 +206,20 @@ The `azure` auth method allows authentication against Vault using Azure Active D
 
     ```plaintext
     $ /tmp/azure_auth.sh
-
-     ...
-
-     Key                  Value
-     ---                  -----
-     token                s.xYqTKUSivsKiwNwXv6wz9LUJ
-     token_accessor       0dua5lTuYkAyQakJiy0oKJW5
-     token_duration       768h
-     token_renewable      true
-     token_policies       ["default"]
-     identity_policies    []
-     policies             ["default"]
-     token_meta_role      dev-role
+    ...
+    Key                               Value
+    ---                               -----
+    token                             s.xYqTKUSivsKiwNwXv6wz9LUJ
+    token_accessor                    0dua5lTuYkAyQakJiy0oKJW5
+    token_duration                    768h
+    token_renewable                   true
+    token_policies                    ["default"]
+    identity_policies                 []
+    policies                          ["default"]
+    token_meta_resource_group_name    learn-vault-rg
+    token_meta_role                   dev-role
+    token_meta_subscription_id        YOUR-AZURE-SUBSCRIPTION-ID
+    token_meta_vm_name                azure-auth-demo-vm
     ```
 
     A valid service token is generated.
@@ -217,7 +238,7 @@ The `azure` auth method allows authentication against Vault using Azure Active D
     explicit_max_ttl    0s
     id                  s.xYqTKUSivsKiwNwXv6wz9LUJ
     issue_time          2019-01-23T21:41:14.231598924Z
-    meta                map[role:dev-role]
+    meta                map[resource_group_name:learn-vault-rg role:dev-role subscription_id:YOUR-AZURE-SUBSCRIPTION-ID vm_name:azure-auth-demo-vm]
     num_uses            0
     orphan              true
     path                auth/azure/login

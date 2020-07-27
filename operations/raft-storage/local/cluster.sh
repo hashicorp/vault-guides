@@ -10,7 +10,7 @@
 # - This script is intended only to be used in an educational capacity.
 # - This script is not intended to manage a Vault in a production environment.
 # - This script supports Linux and macOS
-# - Linux support expects the 'ip' command instead of 'ifcnfig' command
+# - Linux support expects the 'ip' command instead of 'ifconfig' command
 
 set -e
 
@@ -360,6 +360,7 @@ function create_config {
       address = "127.0.0.1:8200"
       tls_disable = true
     }
+    disable_mlock = true
 EOF
 
   printf "\n%s" \

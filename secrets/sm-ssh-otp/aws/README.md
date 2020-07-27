@@ -44,62 +44,13 @@ These assets are provided to perform the tasks described in the [SSH Secrets Eng
     vault-server (52.53.193.90) | internal: (10.0.101.21)
       - Initialized and unsealed.
       - The root token and recovery key is stored in /tmp/key.json.
-      - SSH secrets engine ENABLED
-      - User authentication enabled
-          * user: learn_vault
-          * password: hashicorp
 
       $ ssh -l ubuntu 52.53.193.90 -i <path/to/key.pem>
 
-      # Root token:
-      $ ssh -l ubuntu 52.53.193.90 -i <path/to/key.pem> "cat ~/root_token"
-
     remote-host (13.56.247.45) | internal: (10.0.101.22)
-      - Vault SSH helper installed
-      - PAM configured
-      - SSHD configured
 
       $ ssh -l ubuntu 13.56.247.45 -i <path/to/key.pem>
     ```
-
-## Generate OTP
-
-1.  SSH into the Vault server.
-
-    ```sh
-    $ ssh -l ubuntu 52.53.193.90 -i <path/to/key.pem>
-    ```
-
-
-1.  Login to Vault using the `userpass` method with user `learn_vault` and password `hashicorp`.
-
-    ```sh
-    $ vault login -method=userpass username=learn_vault password=hashicorp
-    ```
-
-1.  Generate an OTP
-
-    ```sh
-    $ vault write ssh/creds/otp_key_role ip=10.0.101.22
-    Key                Value
-    ---                -----
-    lease_id           ssh/creds/otp_key_role/xGu0y8QtatlFTm3sc5BX4fCD
-    lease_duration     768h
-    lease_renewable    false
-    ip                 10.0.101.22
-    key                35e507cf-d589-6fbf-e5b6-39cd7531dfe6
-    key_type           otp
-    port               22
-    username           ubuntu
-    ```
-1.  SSH into the remote-host with the OTP
-
-    ```sh
-    $ ssh ubuntu@10.0.101.22
-    Password:
-    ```
-
-    > **NOTE:** If you copy-and-paste the password allow for some time for the tty to complete the paste operation.
 
 ## Clean up
 

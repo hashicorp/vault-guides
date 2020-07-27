@@ -9,20 +9,10 @@ output "endpoints" {
   vault-server (${aws_instance.vault-server.public_ip}) | internal: (${aws_instance.vault-server.private_ip})
     - Initialized and unsealed.
     - The root token and recovery key is stored in /tmp/key.json.
-    - SSH secrets engine ENABLED
-    - User authentication enabled
-        * user: learn_vault
-        * password: hashicorp
 
     $ ssh -l ubuntu ${aws_instance.vault-server.public_ip} -i ${var.key_name}.pem
 
-    # Root token:
-    $ ssh -l ubuntu ${aws_instance.vault-server.public_ip} -i ${var.key_name}.pem "cat ~/root_token"
-
   remote-host (${aws_instance.remote-host.public_ip}) | internal: (${aws_instance.remote-host.private_ip})
-    - Vault SSH helper installed
-    - PAM configured
-    - SSHD configured
 
     $ ssh -l ubuntu ${aws_instance.remote-host.public_ip} -i ${var.key_name}.pem
 

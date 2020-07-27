@@ -54,8 +54,6 @@ Tips:
     # Pull necessary plugins
     $ terraform init
 
-    $ terraform plan
-
     # Output provides the SSH instruction
     $ terraform apply -auto-approve
     ...

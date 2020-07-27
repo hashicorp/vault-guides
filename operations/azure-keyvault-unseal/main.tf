@@ -1,4 +1,5 @@
 provider "azurerm" {
+  features {}
 }
 
 resource "azurerm_resource_group" "vault" {
@@ -35,7 +36,7 @@ resource "azurerm_key_vault" "vault" {
     tenant_id = var.tenant_id
 
     #object_id = "${var.object_id}"
-    object_id = data.azurerm_client_config.current.service_principal_object_id
+    object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
       "get",
@@ -92,7 +93,7 @@ resource "azurerm_subnet" "tf_subnet" {
   name                 = "subnet-${random_id.keyvault.hex}"
   resource_group_name  = azurerm_resource_group.vault.name
   virtual_network_name = azurerm_virtual_network.tf_network.name
-  address_prefix       = "10.0.1.0/24"
+  address_prefixes     = ["10.0.1.0/24"]
 }
 
 resource "azurerm_public_ip" "tf_publicip" {
@@ -156,7 +157,7 @@ resource "azurerm_network_interface" "tf_nic" {
   name                      = "nic-${random_id.keyvault.hex}"
   location                  = var.location
   resource_group_name       = azurerm_resource_group.vault.name
-  network_security_group_id = azurerm_network_security_group.tf_nsg.id
+  #network_security_group_id = azurerm_network_security_group.tf_nsg.id
 
   ip_configuration {
     name                          = "nic-${random_id.keyvault.hex}"

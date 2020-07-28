@@ -51,18 +51,13 @@ resource "azurerm_key_vault" "vault" {
     environment = var.environment
   }
 
-  # access policy for hashicorp vault.
+  # access policy for the hashicorp vault service principal.
   access_policy {
     tenant_id = var.tenant_id
     object_id = data.azuread_service_principal.vault.object_id
 
-    # TODO does vault really needs all of these permissions?
     key_permissions = [
       "get",
-      "list",
-      "create",
-      "delete",
-      "update",
       "wrapKey",
       "unwrapKey",
     ]
@@ -90,20 +85,16 @@ resource "azurerm_key_vault" "vault" {
 }
 
 # TODO the "generated" resource name is not very descriptive; why not use "vault" instead?
+# hashicorp vault will use this azurerm_key_vault_key to wrap/encrypt its master key.
 resource "azurerm_key_vault_key" "generated" {
   name         = var.key_name
   key_vault_id = azurerm_key_vault.vault.id
   key_type     = "RSA"
   key_size     = 2048
 
-  # TODO does vault key really need all of these purposes?
   key_opts = [
-    "decrypt",
-    "encrypt",
-    "sign",
-    "unwrapKey",
-    "verify",
     "wrapKey",
+    "unwrapKey",
   ]
 }
 

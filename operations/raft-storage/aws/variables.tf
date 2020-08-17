@@ -45,9 +45,3 @@ variable "instance_type" {
 # SSH key name to access EC2 instances (should already exist) in the AWS Region
 variable "key_name" {
 }
-
-# Instance tags for HashiBot AWS resource reaper
-# variable hashibot_reaper_owner {}
-variable "hashibot_reaper_ttl" {
-  default = 48
-}

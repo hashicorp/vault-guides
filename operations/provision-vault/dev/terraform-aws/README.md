@@ -87,4 +87,4 @@ $ terraform apply
 
 ## Next Steps
 
-Now that you've provisioned and configured a Development Vault Cluster in AWS, visit our [learn](https://learn.hashicorp.com/vault/?track=secrets-management#secrets-managemen) site.
+Now that you've provisioned and configured a Development Vault Cluster in AWS, visit our [learn](https://learn.hashicorp.com/collections/vault/secrets-management) site.

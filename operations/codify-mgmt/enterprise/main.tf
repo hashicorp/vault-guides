@@ -21,7 +21,7 @@ terraform {
 }
 
 #------------------------------------------------------------------------------
-# To leverate more than one namespace, define a vault provider per namespace
+# To leverage more than one namespace, define a vault provider per namespace
 #------------------------------------------------------------------------------
 provider "vault" {
   alias = "finance"

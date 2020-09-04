@@ -5,8 +5,8 @@
 import "http"
 import "json"
 
-param vault_addr default "https://cam-vault.hashidemos.io:8200"
-param vault_token default "s.JJPLLsZtiKFNn4gSRCOltFQ5"
+param vault_addr default "https://<your_vault_domain>:8200"
+param vault_token default "<your_token>"
 
 # Print some information about the request
 print("Namespace path:", namespace.path)

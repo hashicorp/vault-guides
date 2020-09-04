@@ -49,6 +49,76 @@ If any subgroups or entities assigned to the group being created are not in the 
 ## Using the Policies
 To use these policies, you will need to run a Vault Enterprise server or cluster with multiple namespaces. You should also create a few groups and entities in different namespaces.
 
+Additionally, you will need to replace `<your_vault_domain>` in the `vault_addr` parameter of both policies with the domain of your Vault Enterprise server or cluster and `<your_token>` in the `vault_token` parameter of both Sentinel policies with an actual Vault token in the root namespace of that server or cluster that has all of the following Vault ACL policies:
+	* Policy to write to and read from `secret/get-namespace-map` and `secret/current-namespace-map`.
+	* Policy to list and read against `sys/namespaces` in all namespaces.
+	* Policy to read from `identity/group/id/*` in all namespaces.
+	* Policy to read from `identity/entity/id/*` in all namespaces.
+
+Here is a partial example of what such a policy in the root namespace might look like, but you would need to customize to adjust to your namespace map:
+```
+# Read from and write to secret/get-namespace-map
+path "secret/get-namespace-map" {
+   capabilities = ["create", "read", "update"]
+}
+
+# Read from and write to secret/current-namespace-map
+path "secret/current-namespace-map" {
+   capabilities = ["create", "read", "update"]
+}
+
+# Read and list namespaces in all namespaces
+path "sys/namespaces/*" {
+   capabilities = ["read", "list"]
+}
+path "Sales/sys/namespaces/*" {
+   capabilities = ["read", "list"]
+}
+path "Sales/SE/sys/namespaces/*" {
+   capabilities = ["read", "list"]
+}
+path "Sales/CAM/sys/namespaces/*" {
+   capabilities = ["read", "list"]
+}
+path "CustomerSuccess/sys/namespaces/*" {
+   capabilities = ["read", "list"]
+}
+
+# Read groups in all namespaces
+path "identity/group/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/identity/group/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/SE/identity/group/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/CAM/identity/group/id/*" {
+  capabilities = ["read"]
+}
+path "CustomerSuccess/identity/group/id/*" {
+  capabilities = ["read"]
+}
+
+# Read entities in all namespaces
+path "identity/entity/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/identity/entity/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/SE/identity/entity/id/*" {
+  capabilities = ["read"]
+}
+path "Sales/CAM/identity/entity/id/*" {
+  capabilities = ["read"]
+}
+path "CustomerSuccess/identity/entity/id/*" {
+  capabilities = ["read"]
+}
+```
+
 ### My Namespaces
 On my Vault cluster, I have multiple namespaces several layers deep. The hierarchy is as follows:
 ```

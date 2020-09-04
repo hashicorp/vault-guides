@@ -1,0 +1,69 @@
+# policy with function that builds map of all namespaces
+# with each one associated with namespace paths of itself
+# and all descendant namespaces
+
+import "http"
+import "json"
+
+param vault_addr default "https://<your_vault_domain>:8200"
+param vault_token default "<your_token>"
+
+# Print some information about the request
+print("Namespace path:", namespace.path)
+
+get_namespace_map = func(base_ns_name) {
+
+  # Initialize namespace_map
+  namespace_map = {}
+
+  # Initialize namespace_map value for current namespace
+  namespace_map[base_ns_name] = [base_ns_name]
+
+  # Set up HTTP request
+  if base_ns_name is "" {
+    req = http.request(vault_addr + "/v1/sys/namespaces?list=true").
+    			with_header("X-Vault-Token", vault_token)
+  } else {
+  	req = http.request(vault_addr + "/v1/" + base_ns_name + "/sys/namespaces?list=true").
+    			with_header("X-Vault-Token", vault_token)
+  }
+
+  # Make HTTP request and parse response
+  resp = http.accept_status_codes([200, 404]).get(req)
+  body = json.unmarshal(resp.body)
+
+  if "data" in keys(body) and "key_info" in keys(body.data) {
+  	for body.data.key_info as ns_name {
+    	if base_ns_name is "" {
+      	print("Found namespace:", ns_name)
+      	# Make recursive call and append results
+        nested_namespace_map = get_namespace_map(ns_name)
+        for nested_namespace_map as ns, namespace_paths {
+          namespace_map[ns] = namespace_paths
+        }
+        namespace_map[""] += nested_namespace_map[ns_name]
+    	} else {
+    		print("Found namespace:", base_ns_name + ns_name)
+      	# Make recursive call and append results
+        nested_namespace_map = get_namespace_map(base_ns_name + ns_name)
+        for nested_namespace_map as ns, namespace_paths {
+          namespace_map[ns] = namespace_paths
+        }
+        namespace_map[base_ns_name] += nested_namespace_map[base_ns_name + ns_name]
+    	} // end base_ns_name check
+  	} // end for
+  } // end data.key_info check
+
+  return namespace_map
+}
+
+# Call get_namespace_map against current namespace
+print("Getting namespaces in the root namespace")
+namespace_map = get_namespace_map("")
+
+print("Complete Namespace Map:", json.marshal(namespace_map))
+
+# main rule
+main = rule {
+  false
+}

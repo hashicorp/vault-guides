@@ -1,0 +1,115 @@
+# Validate that a group only contain sub-groups and entities from
+# the same or children namespaces using namespace paths
+
+import "http"
+import "json"
+import "strings"
+
+param vault_addr default "https://<your_vault_domain>:8200"
+param vault_token default "<your_token>"
+
+# Print some information about the request
+# Note that these messages will only be printed when the policy is violated
+print("Namespace path:", namespace.path)
+print("Request path:", request.path)
+print("Request data:", request.data)
+print("Request operation:", request.operation)
+
+validate_group = func(group, namespace) {
+  # Set validated to true
+  validated = true
+
+  # Fetch Namespace Map
+  req_nsm = http.request(vault_addr + "/v1/secret/current-namespace-map").
+    with_header("X-Vault-Token", vault_token)
+  resp_nsm = http.accept_status_codes([200, 403, 404]).get(req_nsm)
+  body_nsm = json.unmarshal(resp_nsm.body)
+  resp_code_nsm = resp_nsm.status_code
+  if resp_code_nsm is 200 {
+    if "data" in keys(body_nsm) and "namespace_map" in keys(body_nsm.data) {
+      namespace_map = json.unmarshal(body_nsm.data.namespace_map)
+      print("namespace_map:", namespace_map)
+    } else {
+      return false
+    }
+  } else {
+    return false
+  }
+  allowed_namespaces = namespace_map[namespace]
+  print("")
+  print("allowed_namespaces:", allowed_namespaces)
+
+  if "member_group_ids" in group {
+    print("Evaluating member_group_ids")
+    # Iterate over sub-groups assigned in member_group_ids
+    subgroup_ids = strings.split(group.member_group_ids, ",")
+    for subgroup_ids as subgroup {
+      # Iterate over all namespaces until we find subgroup
+      for namespace_map as ns {
+      	# Call Vault API to see if subgroup in namespace
+      	if ns is "" {
+        	req = http.request(vault_addr + "/v1/identity/group/id/" + subgroup).
+    				with_header("X-Vault-Token", vault_token)
+      	} else {
+        	req = http.request(vault_addr + "/v1/" + ns + "identity/group/id/" + subgroup).
+    				with_header("X-Vault-Token", vault_token)
+      	} // end ns check
+      	resp = http.accept_status_codes([200, 403]).get(req)
+        resp_code = resp.status_code
+        if resp_code is 200 {
+          # Found right namespace
+          # Check that namespace of subgroup is allowed
+          if ns in allowed_namespaces {
+            print("Group", subgroup, "in namespace", ns, "is allowed")
+          } else {
+            print("Group", subgroup, "in namespace", ns, "is not allowed")
+            validated = false
+          } // end if ns allowed
+          # we don't need to process more namespaces for this subgroup
+          break
+        } // end if resp_code is 200
+      } // end for namespace_map
+    } // end for subgroups
+  } // end if member_group_ids exists
+
+  if "member_entity_ids" in group {
+    print("Evaluating member_entity_ids")
+    # Iterate over entities assigned in member_entity_ids
+    entity_ids = strings.split(group.member_entity_ids, ",")
+    for entity_ids as ent {
+      # Iterate over all namespaces until we find entity
+      for namespace_map as ns {
+      	# Call Vault API to see if entity in namespace
+      	if ns is "" {
+        	req = http.request(vault_addr + "/v1/identity/entity/id/" + ent).
+    				with_header("X-Vault-Token", vault_token)
+      	} else {
+        	req = http.request(vault_addr + "/v1/" + ns + "identity/entity/id/" + ent).
+    				with_header("X-Vault-Token", vault_token)
+      	} // end ns check
+      	resp = http.accept_status_codes([200, 403, 404]).get(req)
+        resp_code = resp.status_code
+        if resp_code is 200 {
+          # Found right namespace
+          # Check that namespace of entity is allowed
+          if ns in allowed_namespaces {
+            print("Entity", ent, "in namespace", ns, "is allowed")
+          } else {
+            print("Entity", ent, "in namespace", ns, "is not allowed")
+            validated = false
+          } // end if ns allowed
+          # we don't need to process more namespaces for this entity
+          break
+        } // end if resp_code is 200
+      } // end for namespace_map
+    } // end for entitys
+  } // end if member_entity_ids exists
+
+  return validated
+}
+
+# Main rule
+main = rule when request.path matches "identity/group(.*)" and
+								 request.operation in ["create", "update"] {
+  validate_group(request.data, namespace.path)
+}

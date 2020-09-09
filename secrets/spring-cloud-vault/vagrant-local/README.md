@@ -27,7 +27,7 @@ dc6a3454b323     vault:0.10.0     "docker-entrypoint..."   7 minutes ago     Up 
 [vagrant@demo ~]$ docker logs vault
 
 # The Spring server takes about 20 seconds to start. Check the Spring logs
-[vagrant@demo ~]$ docker logs spring -f
+[vagrant@demo ~]$ sleep 20s; docker logs spring -f
 ```
 
 ### Test the App

@@ -38,7 +38,9 @@ vault secrets enable database
 vault write database/config/postgresql \
   plugin_name=postgresql-database-plugin \
   allowed_roles="*" \
-  connection_url="postgresql://postgres:postgres@localhost:5432/postgres?sslmode=disable"
+  connection_url="postgresql://{{username}}:{{password}}@localhost:5432/postgres?sslmode=disable" \
+  username="postgres" \
+  password="p@sSw0rd_"
 
 #Create the DB order role
 vault write database/roles/order \

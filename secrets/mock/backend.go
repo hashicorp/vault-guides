@@ -94,7 +94,13 @@ func (b *backend) handleRead(ctx context.Context, req *logical.Request, data *fr
 
 	// Decode the data
 	var rawData map[string]interface{}
-	if err := jsonutil.DecodeJSON(b.store[req.ClientToken+"/"+path], &rawData); err != nil {
+	fetchedData := b.store[req.ClientToken+"/"+path]
+	if fetchedData == nil {
+		resp := logical.ErrorResponse("No value at %v%v", req.MountPoint, path)
+		return resp, nil
+	}
+
+	if err := jsonutil.DecodeJSON(fetchedData, &rawData); err != nil {
 		return nil, errwrap.Wrapf("json decoding failed: {{err}}", err)
 	}
 
@@ -138,7 +144,7 @@ func (b *backend) handleDelete(ctx context.Context, req *logical.Request, data *
 	path := data.Get("path").(string)
 
 	// Remove entry for specified path
-	delete(b.store, path)
+	delete(b.store, req.ClientToken+"/"+path)
 
 	return nil, nil
 }

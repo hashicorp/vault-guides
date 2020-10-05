@@ -13,7 +13,7 @@ There are two Sentinel [Endpoint Governing Policies](https://www.vaultproject.io
 1. [get-namespace-map.sentinel](./get-namespace-map.sentinel)
 2. [restrict-namespaces-of-group-members.sentinel](./restrict-namespaces-of-group-members.sentinel)
 
-Both of these policies should be created in the root namespace of your Vault cluster.
+Both of these policies should be created in the root namespace of your Vault cluster using the Vault UI, CLI, or HTTP API.
 
 ## The get-namespace-map Policy
 The first policy, `get-namespace-map.sentinel`, builds a complete map of all namespaces in a Vault cluster. It returns a JSON map with the names of all Vault namespaces as keys and lists of descendant namespaces of the keys' namespaces as values. This policy can be invoked periodically to retrieve the current namespace map.

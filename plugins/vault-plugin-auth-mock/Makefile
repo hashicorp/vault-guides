@@ -21,7 +21,7 @@ start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
 enable:
-	vault auth enable -path=mock vault-plugin-auth-mock
+	vault auth enable -path=mock-auth vault-plugin-auth-mock
 
 clean:
 	rm -f ./vault/plugins/vault-plugin-auth-mock

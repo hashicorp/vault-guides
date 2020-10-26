@@ -23,13 +23,13 @@ $ export VAULT_ADDR='http://127.0.0.1:8200'
 $ make enable
 
 # Create a new user, "john" with password, "password"
-$ vault write auth/my-auth/user/john password=password
+$ vault write auth/mock-auth/user/john password=password
 ```
 
 To login using the mock auth method:
 
 ```
-$ vault write auth/my-auth/login user=john password=password
+$ vault write auth/mock-auth/login user=john password=password
 
 Key                  Value
 ---                  -----

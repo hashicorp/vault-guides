@@ -21,7 +21,7 @@ start:
 	vault server -dev -dev-root-token-id=root -dev-plugin-dir=./vault/plugins
 
 enable:
-	vault secrets enable -path=mock vault-plugin-secrets-mock
+	vault secrets enable -path=mock-secrets vault-plugin-secrets-mock
 
 clean:
 	rm -f ./vault/plugins/vault-plugin-secrets-mock

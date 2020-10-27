@@ -55,9 +55,6 @@ Tips:
     $ terraform init
 
     $ terraform plan -out tfplan
-
-    # Output provides the SSH instruction
-    $ terraform apply tfplan
     ...
     Outputs:
 

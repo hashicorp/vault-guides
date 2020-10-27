@@ -12,8 +12,34 @@ import (
 	"github.com/hashicorp/vault/sdk/logical"
 )
 
+// backend wraps the backend framework and adds a map for storing key value pairs
+type backend struct {
+	*framework.Backend
+
+	store map[string][]byte
+}
+
+var _ logical.Factory = Factory
+
 // Factory configures and returns Mock backends
 func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend, error) {
+	b, err := newBackend()
+	if err != nil {
+		return nil, err
+	}
+
+	if conf == nil {
+		return nil, fmt.Errorf("configuration passed into backend is nil")
+	}
+
+	if err := b.Setup(ctx, conf); err != nil {
+		return nil, err
+	}
+
+	return b, nil
+}
+
+func newBackend() (*backend, error) {
 	b := &backend{
 		store: make(map[string][]byte),
 	}
@@ -21,24 +47,12 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 	b.Backend = &framework.Backend{
 		Help:        strings.TrimSpace(mockHelp),
 		BackendType: logical.TypeLogical,
+		Paths: framework.PathAppend(
+			b.paths(),
+		),
 	}
-
-	b.Backend.Paths = append(b.Backend.Paths, b.paths()...)
-
-	if conf == nil {
-		return nil, fmt.Errorf("configuration passed into backend is nil")
-	}
-
-	b.Backend.Setup(ctx, conf)
 
 	return b, nil
-}
-
-// backend wraps the backend framework and adds a map for storing key value pairs
-type backend struct {
-	*framework.Backend
-
-	store map[string][]byte
 }
 
 func (b *backend) paths() []*framework.Path {
@@ -94,7 +108,13 @@ func (b *backend) handleRead(ctx context.Context, req *logical.Request, data *fr
 
 	// Decode the data
 	var rawData map[string]interface{}
-	if err := jsonutil.DecodeJSON(b.store[req.ClientToken+"/"+path], &rawData); err != nil {
+	fetchedData := b.store[req.ClientToken+"/"+path]
+	if fetchedData == nil {
+		resp := logical.ErrorResponse("No value at %v%v", req.MountPoint, path)
+		return resp, nil
+	}
+
+	if err := jsonutil.DecodeJSON(fetchedData, &rawData); err != nil {
 		return nil, errwrap.Wrapf("json decoding failed: {{err}}", err)
 	}
 
@@ -138,7 +158,7 @@ func (b *backend) handleDelete(ctx context.Context, req *logical.Request, data *
 	path := data.Get("path").(string)
 
 	// Remove entry for specified path
-	delete(b.store, path)
+	delete(b.store, req.ClientToken+"/"+path)
 
 	return nil, nil
 }

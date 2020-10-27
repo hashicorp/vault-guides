@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # sudo apt-get install -y unzip jq
-sudo apt update && sudo apt install -y unzip
+sudo apt update && sudo apt install -y unzip jq
 
 VAULT_ZIP="vault.zip"
 VAULT_URL="${vault_download_url}"

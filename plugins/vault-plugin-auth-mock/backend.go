@@ -71,11 +71,11 @@ func (b *backend) pathLogin() *framework.Path {
 		Pattern: "login$",
 		Fields: map[string]*framework.FieldSchema{
 			"password": {
-				Type: framework.TypeString,
+				Type:        framework.TypeString,
 				Description: "Password to login",
 			},
 			"user": {
-				Type: framework.TypeString,
+				Type:        framework.TypeString,
 				Description: "User to login",
 			},
 		},
@@ -101,13 +101,11 @@ func (b *backend) handleLogin(ctx context.Context, req *logical.Request, data *f
 
 	pw, ok := b.users[user]
 	if !ok {
-		// return nil, logical.ErrPermissionDenied
-		return nil, errors.New("missing user in store")
+		return nil, logical.ErrPermissionDenied
 	}
 
 	if subtle.ConstantTimeCompare([]byte(password), []byte(pw)) != 1 {
-		// return nil, logical.ErrPermissionDenied
-		return nil, fmt.Errorf("%s, %s", password, pw)
+		return nil, logical.ErrPermissionDenied
 	}
 
 	// Compose the response
@@ -136,7 +134,7 @@ func (b *backend) handleLogin(ctx context.Context, req *logical.Request, data *f
 func (b *backend) pathUsers() []*framework.Path {
 	return []*framework.Path{
 		{
-			Pattern:  "user/" + framework.GenericNameRegex("name"),
+			Pattern: "user/" + framework.GenericNameRegex("name"),
 
 			Fields: map[string]*framework.FieldSchema{
 				"name": {
@@ -173,7 +171,7 @@ func (b *backend) handleExistenceCheck(ctx context.Context, req *logical.Request
 	username := data.Get("name").(string)
 	_, ok := b.users[username]
 
-	return ok , nil
+	return ok, nil
 }
 
 func (b *backend) pathUsersList() *framework.Path {
@@ -199,7 +197,7 @@ func (b *backend) handleUsersList(ctx context.Context, req *logical.Request, dat
 
 	sort.Strings(userList)
 
-	return  logical.ListResponse(userList), nil
+	return logical.ListResponse(userList), nil
 }
 
 func (b *backend) handleUserWrite(ctx context.Context, req *logical.Request, data *framework.FieldData) (*logical.Response, error) {
@@ -235,7 +233,7 @@ func (b *backend) pathAuthRenew(ctx context.Context, req *logical.Request, d *fr
 	username := req.Auth.Metadata["user"]
 	pw := req.Auth.InternalData["password"].(string)
 
-	storedPassword, ok := b.users[username];
+	storedPassword, ok := b.users[username]
 	if !ok {
 		return nil, errors.New("user on the token could not be found")
 	}

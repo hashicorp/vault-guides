@@ -284,7 +284,9 @@ function setup_vault_1 {
 
   set -aex
   # Kill all previous server instances
-  ps aux | grep "vault server" | grep -v grep | awk '{print $2}' | xargs kill
+  for pid in $(ps aux | grep "vault server" | grep -v grep | awk '{print $2}'); do
+      kill ${pid}
+  done
 
   local vault_node_name="vault_1"
   local vault_config_file=$demo_home/config-$vault_node_name.hcl

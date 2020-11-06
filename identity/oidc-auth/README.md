@@ -38,8 +38,8 @@ vault auth enable oidc
 
 vault write auth/oidc/config \
     oidc_discovery_url="https://accounts.google.com" \
-    oidc_client_id="YOUR_GOOGLE_API_CLIENT_ID", \
-    oidc_client_secret="YOUR_GOOGLE_API_CLIENT_SECRET", \
+    oidc_client_id="YOUR_GOOGLE_API_CLIENT_ID" \
+    oidc_client_secret="YOUR_GOOGLE_API_CLIENT_SECRET" \
     default_role="gmail"
 
 ```

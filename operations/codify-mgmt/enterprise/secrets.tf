@@ -57,15 +57,17 @@ resource "vault_transform_role" "payments" {
 #-------------------------------------------------------------------
 # Test the transformation
 #-------------------------------------------------------------------
-# data "vault_transform_encode" "encoded" {
-#   path = vault_transform_role.payments.path
-#   role_name = "payments"
-#   value = "1111-2222-3333-4444"
-# }
-#
-# output "encoded" {
-#   value = data.vault_transform_encode.encoded.encoded_value
-# }
+data "vault_transform_encode" "encoded" {
+  path = vault_transform_role.payments.path
+  role_name = "payments"
+  value = "1111-2222-3333-4444"
+
+  depends_on = [vault_transform_role.payments]
+}
+
+output "encoded" {
+  value = data.vault_transform_encode.encoded.encoded_value
+}
 
 # resource "local_file" "encoded" {
 #   content = data.vault_transform_encode.encoded.encoded_value

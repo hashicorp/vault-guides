@@ -61,6 +61,8 @@ data "vault_transform_encode" "encoded" {
   path = vault_transform_role.payments.path
   role_name = "payments"
   value = "1111-2222-3333-4444"
+
+  depends_on = [vault_transform_role.payments]
 }
 
 output "encoded" {

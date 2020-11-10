@@ -1,55 +1,26 @@
 # Exampleapp in Ruby
 
-## Local Development
-
-This application is built to run in a cluster and not locally. It would take
-some additional changes to have it work locally.
-
-```shell
-$ bundle install
-$ rackup
-```
+These assets are provided to perform the tasks described in the [Vault GitHub
+Action](https://learn.hashicorp.com/tutorials/vault/github-actions) tutorial.
 
 ## Docker Image
 
-Create the Docker image.
+Create a Docker image for the application and label it
+`vault-action-exampleapp`.
 
 ```shell
-$ docker build . -t exampleapp-ruby
+$ docker build . --file Dockerfile -t vault-action-exampleapp
 ```
 
-Test the Docker image.
+View the contents of the app_secret file in the Docker image.
 
 ```shell
-$ docker run -it -p 8080:8080 exampleapp-ruby:k8s
+$ docker run vault-action-exampleapp /bin/bash -c "cat ./app_secret"
 ```
 
-Push the Docker image.
+Create a Docker image for the application and label it
+`vault-action-exampleapp` and override the secret.
 
 ```shell
-$ docker push USERNAME/exampleapp-ruby:k8s
-```
-
-## Load it into Kubernetes
-
-The assumption is Kubernetes, Vault, and Consul are configured correctly.
-
-Update the configuration file to use your Docker image.
-
-Apply the configuration that describes the exampleapp-simple pod.
-
-```shell
-$ kubectl apply -f exampleapp.yaml
-```
-
-Check the logs of the server.
-
-```shell
-$ kubectl logs exampleapp-simple-c54944b4c-pjqlc
-```
-
-Login to the instance.
-
-```shell
-$ kubectl exec -it exampleapp-simple-c54944b4c-pjqlc /bin/bash
+$ docker build . --file Dockerfile --build-arg app_secret="SECRET_OVERRIDE" -t vault-action-exampleapp
 ```

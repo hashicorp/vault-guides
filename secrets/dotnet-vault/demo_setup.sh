@@ -27,8 +27,8 @@ vault write projects-api/database/roles/projects-api-role \
 				USE HashiCorp;\
 				CREATE USER [{{name}}] FOR LOGIN [{{name}}];\
         GRANT SELECT,UPDATE,INSERT,DELETE TO [{{name}}];" \
-    default_ttl="10m" \
-    max_ttl="60m"
+    default_ttl="2m" \
+    max_ttl="5m"
 
 vault policy write projects-api ./projects-role-policy.hcl
 
@@ -38,3 +38,6 @@ vault write auth/approle/role/projects-api-role \
 		token_ttl=1h \
 		token_max_ttl=2h \
 		secret_id_num_uses=0
+
+echo "projects-api-role" > ProjectApi/vault-agent/role-id
+vault write -f -field=secret_id auth/approle/role/projects-api-role/secret-id > ProjectApi/vault-agent/secret-id

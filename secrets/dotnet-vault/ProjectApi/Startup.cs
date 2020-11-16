@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Microsoft.EntityFrameworkCore;
 using ProjectApi.Models;
+using ProjectApi.CustomOptions;
+using System.Data.SqlClient;
+using System;
 
 namespace ProjectApi
 {
@@ -16,20 +19,26 @@ namespace ProjectApi
       Configuration = configuration;
     }
 
-    public IConfiguration Configuration { get; }
+    public static IConfiguration Configuration { get; private set; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
-      var databaseConnectionString = Configuration.GetConnectionString("Database");
+      services.Configure<VaultOptions>(Configuration.GetSection("Vault"));
 
-      if (Configuration["vault:database"] != "")
-      {
-        databaseConnectionString = Configuration["vault:database"];
+      var dbBuilder = new SqlConnectionStringBuilder(
+        Configuration.GetConnectionString("Database")
+      );
+
+      if (Configuration["database:userID"] != null) {
+        dbBuilder.UserID = Configuration["database:userID"];
+        dbBuilder.Password = Configuration["database:password"];
+
+        Configuration.GetSection("ConnectionStrings")["Database"] = dbBuilder.ConnectionString;
       }
 
       services.AddDbContext<ProjectContext>(opt =>
-          opt.UseSqlServer(databaseConnectionString));
+          opt.UseSqlServer(Configuration.GetConnectionString("Database")));
       services.AddControllers();
       services.AddSwaggerGen(c =>
       {

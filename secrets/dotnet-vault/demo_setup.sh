@@ -5,7 +5,7 @@ export VAULT_TOKEN='some-root-token'
 
 docker-compose up -d --build
 
-sleep 15
+sleep 30
 
 vault auth enable approle
 
@@ -37,7 +37,7 @@ vault write auth/approle/role/projects-api-role \
 		token_policies="projects-api" \
 		token_ttl=1h \
 		token_max_ttl=2h \
-		secret_id_num_uses=0
+		secret_id_num_uses=5
 
 echo "projects-api-role" > ProjectApi/vault-agent/role-id
 vault write -f -field=secret_id auth/approle/role/projects-api-role/secret-id > ProjectApi/vault-agent/secret-id

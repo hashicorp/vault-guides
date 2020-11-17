@@ -32,7 +32,15 @@ The following files are provided as demo scripts:
 - `run_app.sh`
   * Retrieves a secret ID
   * Runs the example app
-- `dynamic_secrets.sh`: Creates an instance of Vault agent for use with dynamic database secrets
+- `vault_agent_template.sh`
+  * Runs Vault agent to authenticate to Vault
+  * Writes token to file
+  * Creates `appsettings.json` file with database connection string.
+- `vault_agent_token.sh`
+  * Runs Vault agent to authenticate to Vault
+  * Writes token to file
+  * Runs Consul template to reload application each time template changes.
+- `cleanup_vault_agent.sh`: remove Vault agent containers
 - `cleanup.sh`: re-set your environment
 - `list_passwords.sh`: show a list of Vault-generated database passwords
 - `revoke_passwords.sh`: revoke all of the Vault-generated database passwords
@@ -161,7 +169,7 @@ new `appsettings.json` is updated.
    }
    ```
 
-1. Run `bash dynamic_secrets.sh`.
+1. Run `bash vault_agent_template.sh`.
 
 1. Open `ProjectApi/appsettings.json`. You will see the database connection string update with the Vault generated
    username and password.

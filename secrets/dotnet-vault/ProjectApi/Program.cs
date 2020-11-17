@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using ProjectApi.CustomOptions;
-using System;
 
 
 namespace ProjectApi

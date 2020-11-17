@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker-compose -f docker-compose-agent.yml down
-docker-compose -f docker-compose-agent.yml rm
-docker-compose down
+bash cleanup_vault_agent.sh
+
+docker-compose down --remove-orphans
 docker-compose rm

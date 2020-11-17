@@ -10,7 +10,7 @@ variable "environment_name" {
 
 # URL for Vault OSS binary
 variable "vault_zip_file" {
-  default = "https://releases.hashicorp.com/vault/1.5.4/vault_1.5.4_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.6.0/vault_1.6.0_linux_amd64.zip"
 }
 
 # Instance size

@@ -6,6 +6,12 @@ It uses two patterns:
 - Vault C# Library for Static Secrets Injection
 - Vault Agent for Dynamic Secrets
 
+For complete instructions, visit the following links:
+
+- [Using HashiCorp Vault C# Client with .NET Core](https://learn.hashicorp.com/tutorials/vault/dotnet-httpclient)
+- [Using HashiCorp Vault Agent with .NET Core](https://learn.hashicorp.com/tutorials/vault/dotnet-vault-agent)
+
+
 ---
 
 ## Requirements

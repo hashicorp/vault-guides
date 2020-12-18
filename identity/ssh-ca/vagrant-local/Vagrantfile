@@ -23,6 +23,15 @@ nohup /usr/local/bin/vault server -dev \
   -dev-listen-address="0.0.0.0:8200" 0<&- &>/dev/null &
 VAULT_RUN
 
+# vagrant-hosts plugin is required
+required_plugins = %w(vagrant-hosts)
+return if !Vagrant.plugins_enabled?
+plugins_to_install = required_plugins.select { |plugin| !Vagrant.has_plugin? plugin }
+if plugins_to_install.any?
+  system "vagrant plugin install #{plugins_to_install.join(' ')}"
+  exit system 'vagrant up'
+end
+
 Vagrant.configure("2") do |config|
   config.vm.provider "virtualbox" do |vb|
     vb.customize ["modifyvm", :id, "--memory", "512"]

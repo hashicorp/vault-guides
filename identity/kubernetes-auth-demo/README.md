@@ -200,7 +200,7 @@ You should see log output similar to:
 2021/01/04 14:12:42 Successfully renewed: &api.RenewOutput{RenewedAt:time.Time{wall:0x31698fdc, ext:63745366362, loc:(*time.Location)(nil)}, Secret:(*api.Secret)(0xc00006d3e0)}
 ```
 
-Then you should see a token renewal happen approximately every 120s. Congratulations, you made it to the end of the demo!
+Then you should see a token renewal and secret read happen approximately every 120s. 
 
 #### 4. Troubleshooting
 In case you are getting errors above, its helpful to try the login process using Vault CLI. Use the commands below to export the application JWT, then login and read the secret from Vault.

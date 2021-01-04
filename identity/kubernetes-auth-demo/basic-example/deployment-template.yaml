@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment 
+metadata:
+  name: my-deployment
+  namespace: my-namespace
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app-name
+  template:
+    metadata:
+      labels:
+        app: my-app-name
+    spec:
+      serviceAccountName: my-app-sa
+      containers:
+        - name: app 
+          image: "kawsark/vault-example-init:0.0.8"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: VAULT_ADDR
+              value: "http://vault-k8s.default.svc.cluster.local:8200"
+            - name: VAULT_ROLE
+              value: my-role
+            - name: SECRET_KEY
+              value: secret-path
+            - name: VAULT_LOGIN_PATH
+              value: login-path

@@ -8,7 +8,7 @@ The application used in this demo is a simple Golang application that uses Vault
 
 ## Pre-requisites
 1. Vault server (>0.9.0), and a root or administrative token. There are a few ways to deploy Vault, below are some options. 
-  - To deploy a Vault server on Kubernetes, please see the [Running Vault with Kubernetes](https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube) documentation. This demo assumes that Vault is deployed on Kubernetes and the `VAULT_ADDR` environment variable is set to Vault service name: `http://vault-k8s.default.svc.cluster.local:8200` in the application deployment.yaml file.  
+  - To deploy a Vault server on Kubernetes, please see the [Running Vault with Kubernetes](https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube) documentation. This demo assumes that Vault is deployed on Kubernetes and the `VAULT_ADDR` environment variable is set to Vault service name: `http://vault.default.svc.cluster.local:8200` in the application deployment.yaml file.  
   - To deploy a Vault server on a VM please see the [Vault getting started guide](https://learn.hashicorp.com/vault/getting-started/deploy). 
   - You can also quickly deploy it using Docker as shown below:
 ```

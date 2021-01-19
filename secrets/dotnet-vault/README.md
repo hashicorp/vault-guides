@@ -1,6 +1,6 @@
-# HashiCorp Vault with .NET Core Example
+# HashiCorp Vault with .NET Example
 
-These assets are provided to show how to use HashiCorp Vault with .NET Core.
+These assets are provided to show how to use HashiCorp Vault with .NET.
 It uses two patterns:
 
 - Vault C# Library for Static Secrets Injection
@@ -8,8 +8,8 @@ It uses two patterns:
 
 For complete instructions, visit the following links:
 
-- [Using HashiCorp Vault C# Client with .NET Core](https://learn.hashicorp.com/tutorials/vault/dotnet-httpclient)
-- [Using HashiCorp Vault Agent with .NET Core](https://learn.hashicorp.com/tutorials/vault/dotnet-vault-agent)
+- [Using HashiCorp Vault C# Client with .NET](https://learn.hashicorp.com/tutorials/vault/dotnet-httpclient)
+- [Using HashiCorp Vault Agent with .NET](https://learn.hashicorp.com/tutorials/vault/dotnet-vault-agent)
 
 
 ---
@@ -18,7 +18,7 @@ For complete instructions, visit the following links:
 
 - [Docker Compose](https://docs.docker.com/compose/)
 - [Docker](https://docs.docker.com/get-docker/)
-- [.NET Core 5.0+](https://dotnet.microsoft.com/download/dotnet/5.0)
+- [.NET 5.0+](https://dotnet.microsoft.com/download/dotnet/5.0)
 - [VaultSharp](https://github.com/rajanadar/VaultSharp)
 
 ## Demo Script Guide
@@ -53,7 +53,7 @@ The following files are provided as demo scripts:
 
 ### Demo Workflow
 
-> **NOTE:** DON'T FORGET that this demo requires .NET Core and Docker Compose to run the example application!
+> **NOTE:** DON'T FORGET that this demo requires .NET 5.0+ and Docker Compose to run the example application!
 
 1. Run `demo_setup.sh`. This creates a Vault instance (in development mode) and
    a Microsoft SQL Server database with a table prepopulated with data.
@@ -149,7 +149,7 @@ username and password with a lifetime of five minutes.
      Microsoft.Data.SqlClient.SqlException (0x80131904): Login failed for user 'v-approle-projects-api-role-rOrdDahOU9G28eL6tWyD-1605535468'.
    ```
 
-1. To get the application working again, exit out of `run_app.sh` and restart the .NET Core application.
+1. To get the application working again, exit out of `run_app.sh` and restart the .NET application.
    This issues a new set of database credentials.
 
 To handle dynamic database credentials (rotate them every five minutes), you can use Vault Agent

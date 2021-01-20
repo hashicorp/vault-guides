@@ -8,7 +8,7 @@ The application used in this demo is a simple Golang application that uses Vault
 
 ## Pre-requisites
 1. Vault server (>0.9.0), and a root or administrative token. There are a few ways to deploy Vault, below are some options. 
-  - To deploy a Vault server on Kubernetes, please see the [Running Vault with Kubernetes](https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube) documentation. This demo assumes that Vault is deployed on Kubernetes and the `VAULT_ADDR` environment variable is set to Vault service name: `http://vault-k8s.default.svc.cluster.local:8200` in the application deployment.yaml file.  
+  - To deploy a Vault server on Kubernetes, please see the [Running Vault with Kubernetes](https://learn.hashicorp.com/tutorials/vault/kubernetes-minikube) documentation. This demo assumes that Vault is deployed on Kubernetes and the `VAULT_ADDR` environment variable is set to Vault service name: `http://vault.default.svc.cluster.local:8200` in the application deployment.yaml file.  
   - To deploy a Vault server on a VM please see the [Vault getting started guide](https://learn.hashicorp.com/vault/getting-started/deploy). 
   - You can also quickly deploy it using Docker as shown below:
 ```
@@ -76,11 +76,11 @@ openssl x509 -in ${CA_CRT_PATH} -text -noout
 
 - Note: `vault-reviewer-rbac.yaml` creates a Kubernetes `ClusterRoleBinding` for the `vault-reviewer` service account for the `system:auth-delegator` ClusterRole. To view the permissions of this role, please issue: `kubectl describe ClusterRole system:auth-delegator`. You will notice PolicyRule that allows tokenreview and subjectaccessreview API calls.
 
-#### Create application namespace and service accounts
-We will name the demo application `app1` and it deploy it in the Kubernetes Namespace called `retail`. We are assuming that a Namespace corresponds to a Line-of-Business (LOB). Please create a service account for this application and the Namespace as shown below.
+#### Create an application Namespace and a Service Account
+We will name the demo application `app123` and it deploy it in the Kubernetes Namespace called `retail`. We are assuming that a Namespace corresponds to a Line-of-Business (LOB). Please create a service account for this application and the Namespace as shown below.
 ```bash
 export ns="retail"
-export app="app1"
+export app="app123"
 kubectl create ns ${ns}
 kubectl create sa ${app} -n ${ns}
 ```
@@ -101,8 +101,8 @@ vault audit enable file file_path=/tmp/audit_log.json
 #### Enable the Kubernetes Authentication Method
 The default path for the Kubernetes Auth Method is `kubernetes`, but we will make it specific to a cluster name, since each cluster has a different API endpoint. Please adjust the `cluster_name` variable as needed.
 ```bash
-# export cluster_name="docker-k8s"
-export cluster_name="gke-useast1"
+# export cluster_name="gke-useast1"
+export cluster_name="minikube"
 vault auth enable -path=${cluster_name} kubernetes
 vault write auth/${cluster_name}/config \
     token_reviewer_jwt=${SA_JWT_TOKEN}  \
@@ -110,15 +110,21 @@ vault write auth/${cluster_name}/config \
     kubernetes_ca_cert=@${CA_CRT_PATH}
 ```
 
+#### Enable the Key/Value Secrets Engine
+The default path for the KV Secrets Engine is `kv`. Similar to the auth method, we will customize the mount path. In this case we will make it specific to the Namespace. The Namespace represents a logical group of applications and this secrets engine instance will service the entire group.
+```bash
+vault secrets enable -path=kv/${ns} -version=1 kv
+```
+
 ### <a name="step3"></a> 3. Deploy the application
 In this step we will configure an Role for the application under the Authentication method. Then we will deploy the application and test that the login and secret retrieval process is successful. 
 
 #### Create an application policy and role
-Roles are used to bind Kubernetes Service Account names and namespaces to a set of Vault policies and token settings. Please issue the commands below to create an ACL policy called `app1-policy`. We will then map the policy to an application specific Role. Note that we will change directory first to `basic-example/`.
+Roles are used to bind Kubernetes Service Account names and namespaces to a set of Vault policies and token settings. Please issue the commands below to create an ACL policy called `app123-policy`. We will then map the policy to an application specific Role. Note that we will change directory first to `basic-example/`.
 ```bash
 cd basic-example/
 
-# Ensure that the app and namespace variables are set to app1 and retail
+# Ensure that the app and namespace variables are set to app123 and retail
 echo ${app} && echo ${ns}
 
 # View the app policy file and create the policy
@@ -139,12 +145,10 @@ A few notes:
 #### Write an application secret
 Please issue the commands below to mount the KV version 1 engine and write a static secret that will be read by the application. Note that we are mounting the secret engine at a path where there will be one secret engine per Kubernetes Namespace.
 ```bash
-# Mount the kv secrets engine
-vault secrets enable -path=kv/${ns} -version=1 kv
 vault write kv/${ns}/${app} app=${app} username=demo password=test
 ```
 
-Create a token with the `app1-policy` to ensure we can read the above path as below:
+Create a token with the `app123-policy` to ensure we can read the above path as below:
 ```bash
 token=$(vault token create -format=json -policy=${app}-policy | jq -r .auth.client_token)
 VAULT_TOKEN=$token vault read kv/${ns}/${app}
@@ -154,7 +158,7 @@ The output from the vault read command should be similar to below.
 Key                 Value
 ---                 -----
 refresh_interval    768h
-app                 app1
+app                 app123
 password            test
 username            demo
 ```
@@ -162,7 +166,7 @@ username            demo
 #### Deploy the application
 Please create a Kubernetes Deployment object for our application as shown below. We will substitute various identifiers for the Deployment based on the Namespace and application names. Please open the resulting yaml file and ensure that all of the fields are correct including `VAULT_ADDR`. 
 
-Note that by default the application image will be sourced from Dockerhub: `kawsark/vault-example-init:0.0.8`. If you prefer to build an image on your own, please see the steps in [app/build.md](app/build.md) and update the `image:` property in the deployment.yaml file.
+Note that by default the application image will be sourced from Dockerhub: `kawsark/vault-example-init:0.0.9`. If you prefer to build an image on your own, please see the steps in [basic-example/app/build.md](basic-example/app/build.md) and update the `image:` property in the deployment.yaml file.
 
 ```bash
 # Create the app deployment yaml file with a set of substitutions
@@ -195,7 +199,7 @@ You should see log output similar to:
 2021/01/04 14:12:42 ==> WARNING: Don't ever write secrets to logs.
 2021/01/04 14:12:42 ==>          This is for demonstration only.
 2021/01/04 14:12:42 s.6oV7pIDnB7AQUZO6a4dIzKyF
-2021/01/04 14:12:42 secret kv/retail/app1 -> &{2e83c248-69f7-70a2-e6cb-7d70e6ce7b9e  2764800 false map[app:app1 password:test username:demo] [] <nil> <nil>}
+2021/01/04 14:12:42 secret kv/retail/app123 -> &{2e83c248-69f7-70a2-e6cb-7d70e6ce7b9e  2764800 false map[app:app123 password:test username:demo] [] <nil> <nil>}
 2021/01/04 14:12:42 Starting renewal loop
 2021/01/04 14:12:42 Successfully renewed: &api.RenewOutput{RenewedAt:time.Time{wall:0x31698fdc, ext:63745366362, loc:(*time.Location)(nil)}, Secret:(*api.Secret)(0xc00006d3e0)}
 ```
@@ -225,7 +229,7 @@ VAULT_TOKEN=$token vault read kv/${ns}/${app}
 ### <a name="step4"></a> 4. Deploying additional applications
 As you noted above, we needed to create a specific policy for our application. This can cause high policy management overhead when onboarding 100s of applications to Vault. In this step we will use a templetized approach using [Vault ACL Policy Path templates](https://learn.hashicorp.com/tutorials/vault/policy-templating#step-1-write-templated-acl-policies) to define a single policy per cluster for all applications.
 
-#### Create templetized policy and re-test app1
+#### Create templetized policy and re-test app123
 Use the commands below to create a templetized policy where Vault will dynamically substitute the Namespace and Application service account names.
 ```bash
 # Save the mount accessor ID
@@ -261,10 +265,10 @@ If you view the Vault audit logs, you should see an entry showing a successful l
 tail /vault/audit/audit_log.txt
 
 # Authentication
-{"time":"2021-01-04T16:10:45.881794702Z","type":"response","auth":{"client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","display_name":"gke-useast1-retail-app1","policies":["default","gke-useast1-kv-read"],"token_policies":["default","gke-useast1-kv-read"],"metadata":{"role":"retail-app1-template","service_account_name":"app1","service_account_namespace":"retail","service_account_secret_name":"app1-token-x4npd","service_account_uid":"c0fed346-308e-4bdf-a18c-f9d0e8ea4639"},"entity_id":"6021bd59-6f00-e459-3c69-21cc25fb871c","token_type":"service","token_ttl":120},"request":{"id":"164ef954-a246-b6bc-9b12-ae69b3c5e1d7","operation":"update","mount_type":"kubernetes","namespace":{"id":"root"},"path":"auth/gke-useast1/login","data":
+{"time":"2021-01-04T16:10:45.881794702Z","type":"response","auth":{"client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","display_name":"gke-useast1-retail-app123","policies":["default","gke-useast1-kv-read"],"token_policies":["default","gke-useast1-kv-read"],"metadata":{"role":"retail-app123","service_account_name":"app123","service_account_namespace":"retail","service_account_secret_name":"app123-token-x4npd","service_account_uid":"c0fed346-308e-4bdf-a18c-f9d0e8ea4639"},"entity_id":"6021bd59-6f00-e459-3c69-21cc25fb871c","token_type":"service","token_ttl":120},"request":{"id":"164ef954-a246-b6bc-9b12-ae69b3c5e1d7","operation":"update","mount_type":"kubernetes","namespace":{"id":"root"},"path":"auth/gke-useast1/login","data":
 
 # Secret Access attempt
-{"time":"2021-01-04T16:13:40.21441436Z","type":"response","auth":{"client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","display_name":"gke-useast1-retail-app1","policies":["default","gke-useast1-kv-read"],"token_policies":["default","gke-useast1-kv-read"],"metadata":{"role":"retail-app1-template","service_account_name":"app1","service_account_namespace":"retail","service_account_secret_name":"app1-token-x4npd","service_account_uid":"c0fed346-308e-4bdf-a18c-f9d0e8ea4639"},"entity_id":"6021bd59-6f00-e459-3c69-21cc25fb871c","token_type":"service","token_ttl":120,"token_issue_time":"2021-01-04T16:10:45Z"},"request":{"id":"1db4fd9e-86d5-b491-5f53-4a0fb693439e","operation":"read","mount_type":"kv","client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","client_token_accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","namespace":{"id":"root"},"path":"kv/retail/app1","remote_address":"10.84.3.21"},"response":{"mount_type":"kv","secret":{},"data":{"app":"hmac-sha256:7af4ccfd74db42c23fa42930183a7959b9b55fe26de427f6aeab427e7a4faa04","password":"hmac-sha256:da5ff1936539df45a2a1c3f8a1c8d905905662c2fd8da58652383f5c04f86d31","username":"hmac-sha256:ff948a5ec9b2577505e51cfb5541a424d22be54da3a1f71eca8a4a63349350ec"}}}
+{"time":"2021-01-04T16:13:40.21441436Z","type":"response","auth":{"client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","display_name":"gke-useast1-retail-app123","policies":["default","gke-useast1-kv-read"],"token_policies":["default","gke-useast1-kv-read"],"metadata":{"role":"retail-app123","service_account_name":"app123","service_account_namespace":"retail","service_account_secret_name":"app123-token-x4npd","service_account_uid":"c0fed346-308e-4bdf-a18c-f9d0e8ea4639"},"entity_id":"6021bd59-6f00-e459-3c69-21cc25fb871c","token_type":"service","token_ttl":120,"token_issue_time":"2021-01-04T16:10:45Z"},"request":{"id":"1db4fd9e-86d5-b491-5f53-4a0fb693439e","operation":"read","mount_type":"kv","client_token":"hmac-sha256:97aaf5c989fe2d300c36b5bda89bf69ad34fc30f79e6714f626db461c9093936","client_token_accessor":"hmac-sha256:0363a79b20d9a08c7faf30ca6d07b9821ed08a875866b6b74cd54802a1076c5d","namespace":{"id":"root"},"path":"kv/retail/app123","remote_address":"10.84.3.21"},"response":{"mount_type":"kv","secret":{},"data":{"app":"hmac-sha256:7af4ccfd74db42c23fa42930183a7959b9b55fe26de427f6aeab427e7a4faa04","password":"hmac-sha256:da5ff1936539df45a2a1c3f8a1c8d905905662c2fd8da58652383f5c04f86d31","username":"hmac-sha256:ff948a5ec9b2577505e51cfb5541a424d22be54da3a1f71eca8a4a63349350ec"}}}
 ```
 
 #### Deploy app2

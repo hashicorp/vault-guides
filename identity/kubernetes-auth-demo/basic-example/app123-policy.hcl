@@ -1,3 +1,3 @@
-path "kv/retail/app1" {
+path "kv/retail/app123" {
   capabilities = ["read", "list"]
 }

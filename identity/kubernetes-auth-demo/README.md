@@ -20,7 +20,7 @@ export VAULT_ADDR="http://localhost:8200"
 export VAULT_TOKEN="devroottoken"
 vault status
 ```
-2. An existing Kubernetes cluster or Minikube installation. This guide has beek tested on GKE and OpenShift.
+2. An existing Kubernetes cluster or Minikube installation. This guide has beek tested on Minikube, GKE and OpenShift.
 3. Connectivity between Vault Server and Kubernetes. 
 4. The `ca.crt` file from Kubernetes cluster creation.
 
@@ -282,7 +282,7 @@ export app="app2"
 kubectl create sa ${app} -n ${ns}
 
 # Create app2 role
-export cluster_name="gke-useast1"
+export cluster_name="minikube"
 vault write auth/${cluster_name}/role/${ns}-${app} \
     bound_service_account_names=${app} \
     bound_service_account_namespaces=${ns} \

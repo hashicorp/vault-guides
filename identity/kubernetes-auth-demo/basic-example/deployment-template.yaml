@@ -16,14 +16,14 @@ spec:
       serviceAccountName: my-app-sa
       containers:
         - name: app 
-          image: "kawsark/vault-example-init:0.0.8"
+          image: "kawsark/vault-example-init:0.0.9"
           imagePullPolicy: IfNotPresent
           env:
             - name: VAULT_ADDR
               value: "http://vault.default.svc.cluster.local:8200"
             - name: VAULT_ROLE
               value: my-role
-            - name: SECRET_KEY
+            - name: SECRET_PATH
               value: secret-path
             - name: VAULT_LOGIN_PATH
               value: login-path

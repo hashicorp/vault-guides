@@ -53,12 +53,20 @@ func main() {
 	log.Println("==>          This is for demonstration only.")
 	log.Println(s.Auth.ClientToken)
 
-	//Lookup SECRET_KEY Environment variable
-	keyName, set := os.LookupEnv("SECRET_KEY")
+	//Lookup SECRET_PATH Environment variable
+	keyName, set := os.LookupEnv("SECRET_PATH")
 	if !set {
-		keyName = "secret/creds"
+		//Looking SECRET_KEY for previous version compatibility
+		keyName, set := os.LookupEnv("SECRET_KEY")
+		if !set {
+			keyName = "secret/creds"
+			fmt.Printf("Using default secret key=%s", keyName)
+		} else {
+			fmt.Printf("Using secret key=%s", keyName)
+		}
+	} else {
+		fmt.Printf("Using secret path=%s", keyName)
 	}
-	fmt.Printf("Using key=%s", keyName)
 
 	//Read secret
 	vaultClient.SetToken(s.Auth.ClientToken)

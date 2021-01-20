@@ -76,7 +76,7 @@ openssl x509 -in ${CA_CRT_PATH} -text -noout
 
 - Note: `vault-reviewer-rbac.yaml` creates a Kubernetes `ClusterRoleBinding` for the `vault-reviewer` service account for the `system:auth-delegator` ClusterRole. To view the permissions of this role, please issue: `kubectl describe ClusterRole system:auth-delegator`. You will notice PolicyRule that allows tokenreview and subjectaccessreview API calls.
 
-#### Create application namespace and service accounts
+#### Create an application Namespace and a Service Account
 We will name the demo application `app123` and it deploy it in the Kubernetes Namespace called `retail`. We are assuming that a Namespace corresponds to a Line-of-Business (LOB). Please create a service account for this application and the Namespace as shown below.
 ```bash
 export ns="retail"
@@ -101,13 +101,19 @@ vault audit enable file file_path=/tmp/audit_log.json
 #### Enable the Kubernetes Authentication Method
 The default path for the Kubernetes Auth Method is `kubernetes`, but we will make it specific to a cluster name, since each cluster has a different API endpoint. Please adjust the `cluster_name` variable as needed.
 ```bash
-# export cluster_name="docker-k8s"
-export cluster_name="gke-useast1"
+# export cluster_name="gke-useast1"
+export cluster_name="minikube"
 vault auth enable -path=${cluster_name} kubernetes
 vault write auth/${cluster_name}/config \
     token_reviewer_jwt=${SA_JWT_TOKEN}  \
     kubernetes_host=${K8S_API_SERVER} \
     kubernetes_ca_cert=@${CA_CRT_PATH}
+```
+
+#### Enable the Key/Value Secrets Engine
+The default path for the KV Secrets Engine is `kv`. Similar to the auth method, we will customize the mount path. In this case we will make it specific to the Namespace. The Namespace represents a logical group of applications and this secrets engine instance will service the entire group.
+```bash
+vault secrets enable -path=kv/${ns} -version=1 kv
 ```
 
 ### <a name="step3"></a> 3. Deploy the application
@@ -139,8 +145,6 @@ A few notes:
 #### Write an application secret
 Please issue the commands below to mount the KV version 1 engine and write a static secret that will be read by the application. Note that we are mounting the secret engine at a path where there will be one secret engine per Kubernetes Namespace.
 ```bash
-# Mount the kv secrets engine
-vault secrets enable -path=kv/${ns} -version=1 kv
 vault write kv/${ns}/${app} app=${app} username=demo password=test
 ```
 
@@ -162,7 +166,7 @@ username            demo
 #### Deploy the application
 Please create a Kubernetes Deployment object for our application as shown below. We will substitute various identifiers for the Deployment based on the Namespace and application names. Please open the resulting yaml file and ensure that all of the fields are correct including `VAULT_ADDR`. 
 
-Note that by default the application image will be sourced from Dockerhub: `kawsark/vault-example-init:0.0.8`. If you prefer to build an image on your own, please see the steps in [app/build.md](app/build.md) and update the `image:` property in the deployment.yaml file.
+Note that by default the application image will be sourced from Dockerhub: `kawsark/vault-example-init:0.0.9`. If you prefer to build an image on your own, please see the steps in [basic-example/app/build.md](basic-example/app/build.md) and update the `image:` property in the deployment.yaml file.
 
 ```bash
 # Create the app deployment yaml file with a set of substitutions

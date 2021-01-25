@@ -1,0 +1,78 @@
+# Validate that max_lease_ttl of auth methods is below a threshold
+# Note that max_lease_ttl can be given in seconds or with
+# the s, m, or h suffices. One can even use something like
+# 1h30m15s. Sentinel will combine into something like that, but
+# without the hours if less than 3600 seconds and without the minutes
+# if less than 60 seconds.
+
+import "strings"
+
+# Parameter giving maximum number of seconds for max_lease_ttl
+param MAX_TTL default 3600
+
+# Print some information about the request
+# Note that these messages will only be printed when the policy is violated
+print("Namespace path:", namespace.path)
+print("Request path:", request.path)
+print("Request data:", request.data)
+print("Request operation:", request.operation)
+
+validate_max_ttl = func() {
+  # Set validated to true
+  validated = true
+
+  # Process requests to tune paths
+  if strings.has_suffix(request.path, "tune") {
+    # Check if max_lease_ttl in request.data
+    if "max_lease_ttl" in keys(request.data) {
+      max_lease_ttl = request.data.max_lease_ttl
+      # Treat max_lease_ttl as integer giving seconds
+      if max_lease_ttl > MAX_TTL {
+        print("The value of max_lease_ttl", max_lease_ttl,
+              "exceeds the maximum allowed value:", MAX_TTL)
+        validated = false
+      } // end max_lease_ttl check
+    } // end tune path
+  } else {
+    # Process enabling of auth methods
+    if "config" in keys(request.data) and
+       "max_lease_ttl" in keys(request.data.config) {
+      max_lease_ttl = request.data.config.max_lease_ttl
+      # Treat max_lease_ttl as string that will have h and m separators
+      # and compute total seconds
+      split_mlttl_by_hours = strings.split(max_lease_ttl, "h")
+      if length(split_mlttl_by_hours) is 2 {
+        hours = int(split_mlttl_by_hours[0])
+        mins_and_secs = split_mlttl_by_hours[1]
+      } else {
+        hours = 0
+        mins_and_secs = max_lease_ttl
+      }
+      split_mlttl_by_minutes = strings.split(mins_and_secs, "m")
+      if length(split_mlttl_by_minutes) is 2 {
+        minutes = int(split_mlttl_by_minutes[0])
+        seconds = int(strings.split(split_mlttl_by_minutes[1], "s")[0])
+      } else {
+        minutes = 0
+        seconds = int(strings.split(split_mlttl_by_minutes[0], "s")[0])
+      }
+      total_mlttl_seconds = hours*3600 + minutes*60 + seconds
+      if total_mlttl_seconds > MAX_TTL {
+        print("The value of max_lease_ttl", max_lease_ttl, "which is",
+              total_mlttl_seconds, "seconds exceeds the maximum allowed value",
+              MAX_TTL)
+        validated = false
+      } // end max_lease_ttl_seconds check
+    } // end request.data.config.max_lease_ttl
+  } // end enable path
+
+  return validated
+}
+
+# Main rule
+main = rule when (request.path matches "sys/auth/[^/]*" or
+                  request.path matches "sys/auth/[^/]*/tune" or
+                  request.path matches "sys/mounts/auth/[^/]*/tune") and
+								 request.operation in ["create", "update"] {
+  validate_max_ttl()
+}

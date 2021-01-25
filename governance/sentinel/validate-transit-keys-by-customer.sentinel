@@ -1,0 +1,51 @@
+# Policy that requires that customer parameter matches transit key
+# This assumes that an extra non-standard parameter, `customer`
+# is added to the request sent to transit/encrypt or transit/decrypt endpoints.
+
+# This was created for a customer who had an application service which must
+# encrypt data with a unique set of keys per customer.  Using the transit secrets
+# engine, the service would use a single app role per environment (dev/qa/prod)
+# to authenticate with Vault to access the transit secrets engine. For each
+# customer a distinct Transit key would be created so that the resulting path
+# would be transit/keys/<customer>.
+
+# They wanted a Sentinel policy that the single app role could
+# use in all instances of the app regardless of which customer
+# logged in, but they wanted to make sure that the currently logged
+# in customer could only access their assigned transit key.
+
+# Standard strings import
+import "strings"
+
+# Function that validates states
+validate_customer = func() {
+  # Print some information about the request
+  # Note that these messages will only be printed when the policy is violated
+  print("Namespace path:", namespace.path)
+  print("Request path:", request.path)
+  print("Request data:", request.data)
+  # Parse path.  We assume path starts with transit/encrypt or transit/decrypt
+  # by specifying those paths in this EGP Sentinel policy
+  path_segments = strings.split(request.path, "/")
+	if length(path_segments) is 3 {
+     if "customer" in keys(request.data) {
+  	   if request.data.customer is not path_segments[2] {
+         print("incorrect customer", request.data.customer, "for key", request.path)
+         return false
+       } else {
+         return true
+       } // end customer match check
+     } else {
+       print("no customer provided for key", request.path)
+       return false
+     } // end check customer provided
+  } else {
+    return true
+  } // end path inspection
+}
+
+# Main Rule
+customer_validated = validate_customer()
+main = rule {
+  customer_validated
+}

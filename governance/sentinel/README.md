@@ -39,11 +39,13 @@ inline-iam-resources.sentinel | Sentinel policy that restricts inline AWS IAM po
 max-kv-value-size.sentinel | Sentinel policy that restricts the size of keys written to KVv2 secrets | Needs to be converted to base64 prior to being added with the Vault HTTP API
 my-acl-policy.json | ACL policy to be associated to an user | This policy will allow access to the secret path that will be protected by Sentinel
 prevent-kv-v1-engines.sentinel | Sentinel policy that prevents KVv1 secrets engines from being created in any namespace | This should be deployed in the root namespace and needs to be converted to base64 prior to being added with the Vault HTTP API
+restrict-ttls-of-auth-methods.sentinel | Sentinel policy that imposes maximum limit on `max_lease_ttl` set when enabling Vault auth methods | This should be deployed in the root namespace and needs to be converted to base64 prior to being added with the Vault HTTP API
 secret-example.json | Value representing sensitive information to be stored in Vault | Used to test if user can read/write a secret when Sentinel policy is in place
 user-password.json | Contains user password | Used to create a new user with the permissive ACL policy
 user-payload | Information to create an user | This user will test the Sentinel check
 userpass-auth-payload.json | userpass auth method payload | Used to enable userpass authentication method for our tests
 userpass-password-check.sentinel | Sentinel policy that requires strong passwords for the Userpass auth method | Needs to be converted to base64 prior to being added with the Vault HTTP API
+validate-transit-keys-by-customer.sentinel | Sentinel policy that ensures that each customer logged into an app can only access their own Transit key | The app authenticates against Vault with the same credentials regardless of which customer has logged into it
 
 ### Base64
 The Sentinel policy needs to be encoded as a base64 string prior to submitting to Vault with the Vault HTTP API. In this repository the Sentinel policy "cidr-policy.sentinel" and a few others are already encoded, however if you would like to change or use your own you can run the following command:

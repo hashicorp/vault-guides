@@ -1,12 +1,12 @@
 # Vault Autounseal using AWS KMS
 
-In this guide, we'll show an example of how to use Terraform to provision a cluster that can utilize an encryption key from AWS Key Management Services to unseal Vault.
+In this guide, we'll show an example of how to use Terraform to provision a cluster that can utilize an encryption key from AWS Key Management Services to unseal Vault. 
 
 ## Overview
 Vault unseal operation either requires either a number of people who each possess a shard of a key, split by Shamir's Secret sharing algorithm, or protection of the master key via an HSM or cloud key management services (Google CKMS or AWS KMS). 
 
 This guide has a guide on how to implement and use this feature in AWS. Included is a Terraform configuration that has the following features:  
-* Ubuntu 16.04 LTS with Vault Enterprise (0.9.0+prem.hsm).   
+* Ubuntu 20.04 LTS with Vault 1.x (1.6.3 for the update to the README)  
 * An instance profile granting the AWS EC2 instance to a KMS key.   
 * Vault configured with access to a KMS key.   
 
@@ -15,10 +15,10 @@ This guide has a guide on how to implement and use this feature in AWS. Included
 
 This guide assumes the following:   
 
-1. Access to Vault Enterprise > 0.9.0 which supports AWS KMS as an unseal mechanism. 
-1. A URL to download Vault Enterprise from (an S3 bucket will suffice). 
-1. AWS account for provisioning cloud resources. 
-1. Terraform installed, and basic understanding of its usage
+1. Either access to Vault OSS or Enterprise > 1.0.0 which supports AWS KMS as an unseal mechanism. 
+2. A URL to download Vault Enterprise from (an S3 bucket will suffice). 
+3. AWS account for provisioning cloud resources. 
+4. Terraform installed, and basic understanding of its usage
 
 
 ## Usage
@@ -62,36 +62,36 @@ Code: 400. Errors:
 * server is not yet initialized
 
 # Active a primary node
-# vault init -stored-shares=1 -recovery-shares=1 -recovery-threshold=1 -key-shares=1 -key-threshold=1
-Recovery Key 1: oOxAQfxcZitjqZfF3984De8rUckPeahQDUvmJ1A4JrQ=
-Initial Root Token: 54c4dbe3-d45b-79d9-18d0-602831a6a991
+# vault operator init 
 
-Vault initialized successfully.
+Recovery Key 1: OXpd/9SI8qDtChqeQcvJHcco89jcx5JV6GM6XluyiLIj
+Recovery Key 2: HW0ljJ2kDenh22Zij4Ur2snpZwAYiSkgH9415ZDOyBHT
+Recovery Key 3: 8BIfyTjbjvlvyHioc+oUt4SZ6iWDBI2Iw1LMOD43ZGv/
+Recovery Key 4: tBnPT4CpJQUAPX3EtmFYgzn9jAANhJ4wLTj/l3uoHKej
+Recovery Key 5: M62dm2KbaeaNxKHepKGJ5VtqG3dTQKnqJ3e3J+vKlrzX
 
-Recovery key initialized with 1 keys and a key threshold of 1. Please
-securely distribute the above keys.
+Initial Root Token: s.WuLv0ZUacCmieZIzTNBi4BwX
 
-# systemctl stop vault
-root@ip-192-168-100-100:~# vault status
-Error checking seal status: Get http://127.0.0.1:8200/v1/sys/seal-status: dial tcp 127.0.0.1:8200: getsockopt: connection refused
+Success! Vault is initialized
 
-# systemctl start vault
+Recovery key initialized with 5 key shares and a key threshold of 3. Please
+securely distribute the key shares printed above.
+
 $ vault status
 Key                      Value
 ---                      -----
 Recovery Seal Type       shamir
+Initialized              true
 Sealed                   false
-Total Recovery Shares    1
-Threshold                1
-Version                  0.9.4+ent
-Cluster Name             vault-cluster-17200d37
-Cluster ID               81c09b45-0ff3-a1c6-65c6-4df2964b261e
+Total Recovery Shares    5
+Threshold                3
+Version                  1.6.3
+Storage Type             consul
+Cluster Name             vault-cluster-0c8d1b28
+Cluster ID               2fdab61d-5f49-081c-f2c4-5f345c64864b
 HA Enabled               true
-HA Cluster               https://192.168.100.166:8201
-HA Mode                  standby
-Active Node Address:     http://192.168.100.166:82001
-
-High-Availability Enabled: false
+HA Cluster               https://192.168.100.4:8201
+HA Mode                  active
 
 # vault auth 54c4dbe3-d45b-79d9-18d0-602831a6a991
 Successfully authenticated! You are now logged in.

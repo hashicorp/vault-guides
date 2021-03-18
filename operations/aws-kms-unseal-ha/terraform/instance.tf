@@ -2,9 +2,9 @@ resource "aws_kms_key" "vault" {
   description             = "Vault unseal key"
   deletion_window_in_days = 10
 
-  tags {
-    Name = "vault-kms-unseal-${random_pet.env.id}"
-  }
+  # tags {
+  #   Name = "vault-kms-unseal-${random_pet.env.id}"
+  # }
 }
 
 data "aws_ami" "ubuntu" {
@@ -13,7 +13,8 @@ data "aws_ami" "ubuntu" {
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+    # values = ["ubuntu/images/hvm-ssd/ubuntu-xenial-16.04-amd64-server-*"]
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
   filter {
@@ -23,35 +24,46 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_instance" "vault" {
-  ami           = "${data.aws_ami.ubuntu.id}"
+#  ami           = "${data.aws_ami.ubuntu.id}"  
+  ami           = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
   count         = 3
-  subnet_id     = "${aws_subnet.public_subnet.id}"
+  #subnet_id     = "${aws_subnet.public_subnet.id}"
+  subnet_id     = aws_subnet.public_subnet.id
   key_name      = "vault-kms-unseal-${random_pet.env.id}"
 
   security_groups = [
-    "${aws_security_group.vault.id}",
+    #"${aws_security_group.vault.id}",
+    aws_security_group.vault.id,
+
   ]
 
   associate_public_ip_address = true
   ebs_optimized               = false
-  iam_instance_profile        = "${aws_iam_instance_profile.vault-kms-unseal.id}"
+  # iam_instance_profile        = "${aws_iam_instance_profile.vault-kms-unseal.id}"
+  iam_instance_profile        = aws_iam_instance_profile.vault-kms-unseal.id
 
-  tags {
+
+  tags = {
     Name = "Vault_KMS_unseal_cluster"
     environment_name = "vault-kms-unseal-${random_pet.env.id}"
   }
 
-  user_data = "${data.template_file.vault.rendered}"
+  #user_data = "${data.template_file.vault.rendered}"
+  user_data = data.template_file.vault.rendered
 }
 
 data "template_file" "vault" {
-  template = "${file("userdata.tpl")}"
+  # template = "${file("userdata.tpl")}"
+  template = file("userdata.tpl")
 
   vars = {
-    kms_key    = "${aws_kms_key.vault.id}"
-    vault_url  = "${var.vault_url}"
-    aws_region = "${var.aws_region}"
+    #kms_key    = "${aws_kms_key.vault.id}"
+    #vault_url  = "${var.vault_url}"
+    #aws_region = "${var.aws_region}"
+    kms_key    = aws_kms_key.vault.id
+    vault_url  = var.vault_url
+    aws_region = var.aws_region 
     cluster_size = "3"
     environment_name = "vault-kms-unseal-${random_pet.env.id}"
   }
@@ -60,8 +72,9 @@ data "template_file" "vault" {
 data "template_file" "format_ssh" {
   template = "connect to host with following command: ssh ubuntu@$${admin} -i private.key"
 
-  vars {
-    admin = "${aws_instance.vault.0.public_ip}"
+  vars = {
+    #admin = "${aws_instance.vault.0.public_ip}"
+    admin = aws_instance.vault.0.public_ip
   }
 }
 
@@ -81,9 +94,10 @@ VAULT
 resource "aws_security_group" "vault" {
   name        = "vault-kms-unseal-${random_pet.env.id}"
   description = "vault access"
-  vpc_id      = "${aws_vpc.vpc.id}"
+  #vpc_id      = "${aws_vpc.vpc.id}"
+  vpc_id      = aws_vpc.vpc.id
 
-  tags {
+  tags = {
     Name = "vault-kms-unseal-${random_pet.env.id}"
   }
 

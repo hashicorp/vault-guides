@@ -16,9 +16,9 @@ This guide has a guide on how to implement and use this feature in AWS. Included
 This guide assumes the following:   
 
 1. Either access to Vault OSS or Enterprise > 1.0.0 which supports AWS KMS as an unseal mechanism. 
-2. A URL to download Vault Enterprise from (an S3 bucket will suffice). 
-3. AWS account for provisioning cloud resources. 
-4. Terraform installed, and basic understanding of its usage
+1. A URL to download Vault Enterprise from (an S3 bucket will suffice). 
+1. AWS account for provisioning cloud resources. 
+1. Terraform installed, and basic understanding of its usage
 
 
 ## Usage

@@ -30,4 +30,4 @@
 # Generated private key
 *.key
 
-operations/aws-kms-unseal-ha/terraform/.terraform.lock.hcl
+**/.terraform.lock.hcl

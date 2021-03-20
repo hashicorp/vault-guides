@@ -8,7 +8,7 @@ variable aws_zone {
 
 variable vpc_cidr {
   description = "CIDR of the VPC"
-  default     = "10.200.0.0/16"
+  default     = "192.168.100.0/24"
 }
 
 variable vault_url {

@@ -5,11 +5,6 @@
 # Module directory in any sub-folder
 **/.terraform
 
-# Ignore lock files
-
-
-
-
 # State file in any sub-folder
 **/terraform.tfstate
 **/terraform.tfstate.backup
@@ -30,4 +25,5 @@
 # Generated private key
 *.key
 
+# Ignore local lock files 
 **/.terraform.lock.hcl

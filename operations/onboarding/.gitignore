@@ -1,0 +1,14 @@
+vault.txt
+terraform.tfstate*
+.terraform/
+.terraform.lock.hcl
+*.tfvars
+
+# Approle files
+*role_id
+*secret_id
+
+# Vault agent files
+token
+index.html
+kv.html

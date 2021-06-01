@@ -2,11 +2,18 @@
 
 all: clean up-detach init terraform approle token
 
-.PHONY: clean up up-detach init terraform approle info
+.PHONY: clean up up-detach init terraform approle info admin
 
 info:
 	$(info Targets are: all, up, up-detach, init, terraform, clean. Run all to execute them in order.)
 	$(info up will block and docker compose in foreground, up-detach will run docker compose in background.)
+
+admin:
+	$(info this target will create an admin policy. Note: the root token needs to be set with the VAULT_TOKEN environment variable)
+	export VAULT_ADDR=http://localhost:8200 \
+	  && vault policy write learn-admin admin-policy.hcl \
+	  && vault token create -policy=learn-admin
+	$(info **please export the above token as part as the VAULT_TOKEN environment variable**)
 
 up:
 	cd docker-compose \
@@ -24,6 +31,9 @@ terraform:
 	rm -rf terraform/terraform.tfstate*
 	cd docker-compose/scripts \
 	  && ./run_terraform.sh
+
+destroy:
+	cd terraform && terraform destroy --auto-approve
 
 clean:
 	cd docker-compose \

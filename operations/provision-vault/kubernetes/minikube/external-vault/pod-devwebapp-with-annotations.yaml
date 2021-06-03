@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devwebapp-with-annotations
+  labels:
+    app: devwebapp-with-annotations
+  annotations:
+    vault.hashicorp.com/agent-inject: "true"
+    vault.hashicorp.com/role: "devweb-app"
+    vault.hashicorp.com/agent-inject-secret-credentials.txt: "secret/data/devwebapp/config"
+spec:
+  serviceAccountName: internal-app
+  containers:
+    - name: app
+      image: burtlo/devwebapp-ruby:k8s
+      env:
+      - name: VAULT_ADDR
+        value: "http://external-vault:8200"
+      - name: VAULT_TOKEN
+        value: root

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: devwebapp-through-service
+  labels:
+    app: devwebapp-through-service
+spec:
+  serviceAccountName: internal-app
+  containers:
+    - name: app
+      image: burtlo/devwebapp-ruby:k8s
+      env:
+      - name: VAULT_ADDR
+        value: "http://external-vault:8200"
+      - name: VAULT_TOKEN
+        value: root

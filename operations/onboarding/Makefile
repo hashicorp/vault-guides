@@ -2,7 +2,7 @@
 
 all: clean up-detach init terraform approle token
 
-.PHONY: clean up up-detach init terraform approle info admin
+.PHONY: clean up up-detach init terraform approle info admin ip
 
 info:
 	$(info Targets are: all, up, up-detach, init, terraform, clean. Run all to execute them in order.)
@@ -22,6 +22,10 @@ up:
 up-detach:
 	cd docker-compose \
 	  && docker compose up --detach
+
+ip:
+	cd docker-compose/scripts \
+	  && ./api_addr.sh
 
 init:
 	cd docker-compose/scripts \

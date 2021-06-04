@@ -1,21 +1,11 @@
 #!/bin/bash
 
-# Docker compose IP address fix
-./api_addr.sh
-
-# Init and unseal vault_s1
-echo "Init and unseal vault_s1"
+# Unseal vault_s1
+echo "Unseal vault_s1"
 export VAULT_ADDR=http://localhost:8200
-sleep 5
-vault operator init -format=json -n 1 -t 1 > vault.txt
-
-export VAULT_TOKEN=$(cat vault.txt | jq -r '.root_token')
-echo "VAULT TOKEN: $VAULT_TOKEN"
-
 
 export unseal_key=$(cat vault.txt | jq -r '.unseal_keys_b64[0]')
 vault operator unseal ${unseal_key}
-vault token lookup
 
 # Unseal vault_s2
 echo "Unseal vault_s2"
@@ -27,7 +17,8 @@ echo "Unseal vault_s3"
 export VAULT_ADDR=http://localhost:28200
 vault operator unseal ${unseal_key}
 
-# Reset vault addr
+# Reset vault addr and add vault token
 export VAULT_ADDR=http://localhost:8200
 
-./benchmark.sh
+export VAULT_TOKEN=$(cat vault.txt | jq -r '.root_token')
+vault token lookup

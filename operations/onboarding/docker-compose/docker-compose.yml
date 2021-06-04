@@ -1,107 +1,14 @@
 version: '3.7'
+
+networks:
+  consul-dc1:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.5.0.0/16"
+
 services:
-  web:
-    image: "nginx:1.19.9-alpine"
-    ports:
-      - "8080:80"
-    volumes:
-      - ./nginx:/usr/share/nginx/html
-    environment:
-      CONFIG_FILE: '/config/config.json'
-    depends_on:
-      - db
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.20
-
-  vault-agent:
-    image: hashicorp/vault-enterprise:latest
-    restart: always
-    volumes:
-      - ./vault-agent:/vault-agent:rw
-      - ./nginx:/usr/share/nginx/html:rw
-    environment:
-      VAULT_ADDR: "http://vault_s1:8200"
-    container_name: vault-agent
-    entrypoint: "vault agent -log-level debug -config=/vault-agent/nginx-vault-agent.hcl"
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.21
-  
-  db:
-    image: "hashicorpdemoapp/product-api-db:v4280cf7"
-    ports:
-      - "5432:5432"
-    environment:
-      POSTGRES_DB: 'products'
-      POSTGRES_USER: 'postgres'
-      POSTGRES_PASSWORD: 'password'
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.12
-
-  vault_s1:
-    image: hashicorp/vault-enterprise:latest
-    restart: always
-    volumes:
-      - ./vault:/vault/config:rw
-      - /vault/data
-      - /etc/vault/logs
-    ports:
-      - "8200:8200/tcp"
-    cap_add:
-      - IPC_LOCK
-    depends_on:
-      - consul_a1
-
-    container_name: vault_s1
-    entrypoint: "vault server -config=/vault/config/vault-server_s1.hcl"
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.8
-
-  vault_s2:
-    image: hashicorp/vault-enterprise:latest
-    restart: always
-    volumes:
-      - ./vault:/vault/config:rw
-      - /vault/data
-      - /etc/vault/logs
-    ports:
-    - "18200:8200/tcp"
-    cap_add:
-      - IPC_LOCK
-    depends_on:
-      - consul_a2
-
-    container_name: vault_s2
-    entrypoint: "vault server -config=/vault/config/vault-server_s2.hcl"
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.9
-
-  vault_s3:
-    image: hashicorp/vault-enterprise:latest
-    restart: always
-    volumes:
-      - ./vault:/vault/config:rw
-      - /vault/data
-      - /etc/vault/logs
-    ports:
-    - "28200:8200/tcp"
-    cap_add:
-      - IPC_LOCK
-    depends_on:
-      - consul_a3
-
-    container_name: vault_s3
-    entrypoint: "vault server -config=/vault/config/vault-server_s3.hcl"
-    networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.10
-
-  consul_s1: &consul-server
-#    image: hashicorp/consul-enterprise
+  consul_s1:
     image: consul:latest
     restart: always
     volumes:
@@ -121,50 +28,150 @@ services:
     container_name: consul_s1
     command: "agent -config-file=/consul/config/consul-server.hcl"
     networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.2
+      - consul-dc1
 
-  consul_a1: &consul-agent
-#    image: hashicorp/consul-enterprise
+  consul_a1:
     image: consul:latest
     container_name: consul_a1
     restart: always
     volumes:
       - ./consul:/consul/config:rw
       - /consul/data
-#      - ./services/web.json:/consul/config/web.json
     command: "agent -config-file=/consul/config/consul-client.hcl"
     depends_on:
       - consul_s1
     networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.3
+      - consul-dc1
 
   consul_a2:
-    <<: *consul-agent
+    image: consul:latest
     container_name: consul_a2
+    restart: always
     volumes:
       - ./consul:/consul/config:rw
       - /consul/data
+    command: "agent -config-file=/consul/config/consul-client.hcl"
+    depends_on:
+      - consul_s1
     networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.4
+      - consul-dc1
 
   consul_a3:
-    <<: *consul-agent
+    image: consul:latest
     container_name: consul_a3
+    restart: always
     volumes:
       - ./consul:/consul/config:rw
       - /consul/data
+    command: "agent -config-file=/consul/config/consul-client.hcl"
+    depends_on:
+      - consul_s1
     networks:
-      consul-dc1:
-        ipv4_address: 10.5.0.5
+      - consul-dc1
 
+  web:
+    image: "nginx:1.19.9-alpine"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/usr/share/nginx/html
+    environment:
+      CONFIG_FILE: '/config/config.json'
+    networks:
+      - consul-dc1
 
-# Define Seperate Networks per DC
-networks:
-  consul-dc1:
-    driver: bridge
-    ipam:
-     config:
-       - subnet: 10.5.0.0/16
+  vault-agent:
+    image: hashicorp/vault-enterprise:latest
+    restart: always
+    volumes:
+      - ./vault-agent:/vault-agent:rw
+      - ./nginx:/usr/share/nginx/html:rw
+    environment:
+      VAULT_ADDR: "http://vault_s1:8200"
+    container_name: vault-agent
+    entrypoint: "vault agent -log-level debug -config=/vault-agent/nginx-vault-agent.hcl"
+    networks:
+      - consul-dc1
+  
+  db:
+    image: "hashicorpdemoapp/product-api-db:v4280cf7"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: 'products'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+    networks:
+      - consul-dc1
+
+  haproxy:
+    image: haproxy:2.3
+    depends_on:
+      - vault_s1
+      - vault_s2
+      - vault_s3
+    environment:
+      - BALANCE=roundrobin
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - 9200:80
+      - 1936:1936
+    networks:
+      - consul-dc1
+
+  vault_s1:
+    image: hashicorp/vault-enterprise:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+      - "8200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a1
+    container_name: vault_s1
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  vault_s2:
+    image: hashicorp/vault-enterprise:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+    - "18200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a2
+    container_name: vault_s2
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  vault_s3:
+    image: hashicorp/vault-enterprise:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+    - "28200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a3
+    container_name: vault_s3
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  

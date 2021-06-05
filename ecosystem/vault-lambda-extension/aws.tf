@@ -3,7 +3,6 @@
 
 provider "aws" {
   // Credentials set via env vars
-  version = "~> 3.6.0"
   region  = var.aws_region
 }
 
@@ -26,3 +25,6 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
+resource "aws_ecr_repository" "demo-function" {
+  name = "demo-function"
+}

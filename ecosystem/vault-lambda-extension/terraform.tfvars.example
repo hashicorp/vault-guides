@@ -1,8 +1,3 @@
-# AWS account ID
-# The account value returned by:
-# $ aws sts get-caller-identity
-aws_account = ""
-
 # AWS region and AZs in which to deploy
 # default: 'us-east-1'
 aws_region = "us-east-1"

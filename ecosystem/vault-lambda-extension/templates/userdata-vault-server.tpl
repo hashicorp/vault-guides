@@ -112,6 +112,8 @@ export VAULT_ADDR=http://$${PRIVATE_IP}:8200
 export VAULT_SKIP_VERIFY=true
 export DB_HOST=${tpl_rds_address}
 export AWS_ACCOUNT_ID=${tpl_account_id}
+export AWS_REGION="${tpl_aws_region}"
+
 EOF
 
 source /etc/environment

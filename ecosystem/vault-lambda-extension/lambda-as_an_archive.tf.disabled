@@ -25,7 +25,6 @@ output "lambda" {
 The lambda function is ready to run.
 
     aws lambda invoke --function-name ${aws_lambda_function.function.function_name} /dev/null \
-        --cli-binary-format raw-in-base64-out \
         --log-type Tail \
         --region ${var.aws_region} \
         | jq -r '.LogResult' \

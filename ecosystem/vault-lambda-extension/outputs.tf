@@ -4,8 +4,12 @@ output "info" {
 Postgres database address
     ${aws_db_instance.main.address}
 
+Elastic Container Registry (ECR) repository address
+    ${aws_ecr_repository.demo-function.repository_url}
+
 Vault Server IP (public)
     ${aws_instance.vault-server.public_ip}
+
 Vault UI URL
     http://${aws_instance.vault-server.public_ip}:8200/ui
 

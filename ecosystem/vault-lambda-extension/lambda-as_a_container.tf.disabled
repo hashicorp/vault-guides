@@ -1,11 +1,9 @@
 resource "aws_lambda_function" "function" {
   function_name = "${var.environment_name}-function"
-  description   = "Demo Vault AWS Lambda extension"
+  description   = "Demo Vault AWS Lambda extension in container"
   role          = aws_iam_role.lambda.arn
-  filename      = "./demo-function/demo-function.zip"
-  handler       = "main"
-  runtime       = "provided.al2"
-  layers        = ["arn:aws:lambda:${var.aws_region}:634166935893:layer:vault-lambda-extension:6"]
+  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/demo-function:latest"
+  package_type  = "Image"
 
   environment {
     variables = {
@@ -25,7 +23,6 @@ output "lambda" {
 The lambda function is ready to run.
 
     aws lambda invoke --function-name ${aws_lambda_function.function.function_name} /dev/null \
-        --cli-binary-format raw-in-base64-out \
         --log-type Tail \
         --region ${var.aws_region} \
         | jq -r '.LogResult' \

@@ -12,7 +12,7 @@ services:
     image: consul:latest
     restart: always
     volumes:
-      - ./consul:/consul/config:rw
+      - ./consul/server:/consul/config:rw
       - /consul/data
       - /etc/consul/logs
     ports:
@@ -26,7 +26,7 @@ services:
       - "8302:8302/udp"
 
     container_name: consul_s1
-    command: "agent -config-file=/consul/config/consul-server.hcl"
+    command: "agent -config-dir=/consul/config"
     networks:
       - consul-dc1
 
@@ -35,9 +35,11 @@ services:
     container_name: consul_a1
     restart: always
     volumes:
-      - ./consul:/consul/config:rw
+      - ./consul/client_a1:/consul/config:rw
       - /consul/data
-    command: "agent -config-file=/consul/config/consul-client.hcl"
+    ports:
+      - "18500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
     depends_on:
       - consul_s1
     networks:
@@ -48,9 +50,11 @@ services:
     container_name: consul_a2
     restart: always
     volumes:
-      - ./consul:/consul/config:rw
+      - ./consul/client:/consul/config:rw
       - /consul/data
-    command: "agent -config-file=/consul/config/consul-client.hcl"
+    ports:
+      - "28500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
     depends_on:
       - consul_s1
     networks:
@@ -61,15 +65,18 @@ services:
     container_name: consul_a3
     restart: always
     volumes:
-      - ./consul:/consul/config:rw
+      - ./consul/client:/consul/config:rw
       - /consul/data
-    command: "agent -config-file=/consul/config/consul-client.hcl"
+    ports:
+      - "38500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
     depends_on:
       - consul_s1
     networks:
       - consul-dc1
 
   web:
+    container_name: demo-webapp
     image: "nginx:1.19.9-alpine"
     ports:
       - "8080:80"
@@ -105,6 +112,7 @@ services:
       - consul-dc1
 
   haproxy:
+    container_name: demo-haproxy
     image: haproxy:2.3
     depends_on:
       - vault_s1
@@ -122,6 +130,7 @@ services:
 
   vault_s1:
     image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw
@@ -140,6 +149,7 @@ services:
 
   vault_s2:
     image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw
@@ -158,6 +168,7 @@ services:
 
   vault_s3:
     image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw

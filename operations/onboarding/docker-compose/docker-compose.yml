@@ -1,0 +1,188 @@
+version: '3.7'
+
+networks:
+  consul-dc1:
+    ipam:
+      driver: default
+      config:
+        - subnet: "10.5.0.0/16"
+
+services:
+  consul_s1:
+    image: consul:latest
+    restart: always
+    volumes:
+      - ./consul/server:/consul/config:rw
+      - /consul/data
+      - /etc/consul/logs
+    ports:
+      - "8300:8300"
+      - "8600:8600/tcp"
+      - "8500:8500/tcp"
+      - "8600:8600/udp"
+      - "8301:8301/tcp"
+      - "8301:8301/udp"
+      - "8302:8302/tcp"
+      - "8302:8302/udp"
+
+    container_name: consul_s1
+    command: "agent -config-dir=/consul/config"
+    networks:
+      - consul-dc1
+
+  consul_a1:
+    image: consul:latest
+    container_name: consul_a1
+    restart: always
+    volumes:
+      - ./consul/client_a1:/consul/config:rw
+      - /consul/data
+    ports:
+      - "18500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
+    depends_on:
+      - consul_s1
+    networks:
+      - consul-dc1
+
+  consul_a2:
+    image: consul:latest
+    container_name: consul_a2
+    restart: always
+    volumes:
+      - ./consul/client:/consul/config:rw
+      - /consul/data
+    ports:
+      - "28500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
+    depends_on:
+      - consul_s1
+    networks:
+      - consul-dc1
+
+  consul_a3:
+    image: consul:latest
+    container_name: consul_a3
+    restart: always
+    volumes:
+      - ./consul/client:/consul/config:rw
+      - /consul/data
+    ports:
+      - "38500:8500/tcp"
+    command: "agent -config-dir=/consul/config"
+    depends_on:
+      - consul_s1
+    networks:
+      - consul-dc1
+
+  web:
+    container_name: demo-webapp
+    image: "nginx:1.19.9-alpine"
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx:/usr/share/nginx/html
+    environment:
+      CONFIG_FILE: '/config/config.json'
+    networks:
+      - consul-dc1
+
+  vault-agent:
+    image: hashicorp/vault-enterprise:latest
+    restart: always
+    volumes:
+      - ./vault-agent:/vault-agent:rw
+      - ./nginx:/usr/share/nginx/html:rw
+    environment:
+      VAULT_ADDR: "http://vault_s1:8200"
+    container_name: vault-agent
+    entrypoint: "vault agent -log-level debug -config=/vault-agent/nginx-vault-agent.hcl"
+    networks:
+      - consul-dc1
+  
+  db:
+    image: "hashicorpdemoapp/product-api-db:v4280cf7"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: 'products'
+      POSTGRES_USER: 'postgres'
+      POSTGRES_PASSWORD: 'password'
+    networks:
+      - consul-dc1
+
+  haproxy:
+    container_name: demo-haproxy
+    image: haproxy:2.3
+    depends_on:
+      - vault_s1
+      - vault_s2
+      - vault_s3
+    environment:
+      - BALANCE=roundrobin
+    volumes:
+      - ./haproxy/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    ports:
+      - 9200:80
+      - 1936:1936
+    networks:
+      - consul-dc1
+
+  vault_s1:
+    image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+      - "8200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a1
+    container_name: vault_s1
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  vault_s2:
+    image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+    - "18200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a2
+    container_name: vault_s2
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  vault_s3:
+    image: hashicorp/vault-enterprise:latest
+    #image: hashicorp/vault:latest
+    restart: always
+    volumes:
+      - ./vault/vault_s1:/vault/config:rw
+      - /vault/data
+      - /etc/vault/logs
+    ports:
+    - "28200:8200/tcp"
+    cap_add:
+      - IPC_LOCK
+    depends_on:
+      - consul_a3
+    container_name: vault_s3
+    entrypoint: "vault server -config=/vault/config"
+    networks:
+      - consul-dc1
+
+  

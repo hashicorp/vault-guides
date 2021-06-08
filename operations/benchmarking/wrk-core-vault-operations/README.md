@@ -4,7 +4,11 @@
 This repo is intended to provide guidance and will not be officially maintained by HashiCorp.
 
 ## Overview
-This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine. Most of the scripts were originallywritten by Roger Berlind in https://github.com/rberlind/vault-benchmarking who drew inspiration from Jacob Friedman's benchmark scripts for Vault's Transit secrets engine that he wrote in https://github.com/jdfriedma/Vault-Transit-Load-Testing. Kawsar Kamal added the authenticate.lua script for use with Vault batch tokens.
+This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine. Most of the scripts were originally written by Roger Berlind in https://github.com/rberlind/vault-benchmarking who drew inspiration from Jacob Friedman's benchmark scripts for Vault's Transit secrets engine that he wrote in https://github.com/jdfriedma/Vault-Transit-Load-Testing. More updates:
+- Kawsar Kamal added the [authenticate.lua](./authenticate.lua) script for use with Vault batch tokens.
+- Stenio added a Mediumblog post on [Vault benchmarking](https://medium.com/hashicorp-engineering/hashicorp-vault-performance-benchmark-13d0ea7b703f)
+- Kawsar Kamal added the [read-db-secrets.lua](./read-db-secrets.lua) script for testing Dynamic Database credentials.
+
 
 ## Scripts
 The following are the main test scripts:
@@ -14,14 +18,30 @@ The following are the main test scripts:
 1. [list-secrets.lua](./list-secrets.lua): This script repeatedly lists all secrets on the path secret/list-test. Use the write-list.lua script to populate that path with secrets. By default, that script writes 100 secrets to that path with each secret having one key with 10 bytes. If you want to print the secrets found in each list, add "-- true" after the URL.
 1. [authenticate-and-revoke.lua](.authenticate-and-revoke.lua): This script repeatedly authenticates a user ("loadtester") against Vault's [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method and then revokes the acquired lease. (See below for instructions to enable it.)
 1. [authenticate.lua](.authenticate.lua): This script repeatedly authenticates a user ("loadtester") against Vault's [userpass](https://www.vaultproject.io/docs/auth/userpass.html) authentication method. It does not issue any revocations. This can be useful for comparing authentications with batch and service token types. 
+2. [read-db-secrets.lua](./read-db-secrets.lua): This script reads Dynamic postgres credentails from the role: `/v1/database/creds/benchmarking`. This Role must be configured from before and some example commands are provided below. It can also print the dynamic secrets if you add "-- \<N\> true" after the URL. 
+```bash
+vault secrets enable database
 
+vault write database/config/postgres \
+  plugin_name=postgresql-database-plugin \
+  allowed_roles="*" connection_url="postgresql://{{username}}:{{password}}@db:5432/products" \
+  username="postgres" password="password"
+
+vault write database/roles/benchmarking \
+    db_name=postgres \
+    creation_statements="CREATE ROLE \"{{name}}\" WITH LOGIN PASSWORD '{{password}}' VALID UNTIL '{{expiration}}'; \
+        GRANT SELECT ON ALL TABLES IN SCHEMA public TO \"{{name}}\";" \
+    default_ttl="24h" max_ttl="48h"
+
+vault read database/creds/benchmarking
+```
 
 We also have the following utility scripts used to populate or delete secrets used by the test scripts:
 1. [write-secrets.lua](./write-secrets.lua): This script writes secrets meant to be read by the read-secrets.lua script. It writes a fixed number of secrets (default 1,000) and then stops. Each secret has one key with 10-20 bytes and a second key with 100 bytes.  The number of secrets written can be changed by adding "-- \<N\>" after the URL where \<N\> is the number of secrets you want to write. The number and size of the keys could also be changed, but you would need to edit the script.
    - Note: you may want to verify that all the secrets were successfully written by reading the last secret using Vault CLI. E.g. `vault read secret/read-test/secret-1000`. If all writes were not completed successfully, you will get errors when running `read-secrets.lua`.
 
-1. [write-list.lua](./write-list.lua): This script writes a list of secrets each having one key with 10 bytes to the path secret/list-test. These secrets are read by the list-secrets.lua script. By default it writes 100 secrets, but you can change this by adding "-- \<N\>" after the URL where \<N\> is the number of secrets you want to write.
-1. [delete-secrets.lua](./delete-secrets.lua): This deletes a sequence of secrets from under a specified path. Pass the path from which you want to delete secrets by adding something like "-- secret/read-test" after the Vault URL. Do not start your path with "/v1/" or add a final "/" at the end of it since the script does this for you. The default path is "secret/test".
+2. [write-list.lua](./write-list.lua): This script writes a list of secrets each having one key with 10 bytes to the path secret/list-test. These secrets are read by the list-secrets.lua script. By default it writes 100 secrets, but you can change this by adding "-- \<N\>" after the URL where \<N\> is the number of secrets you want to write.
+3. [delete-secrets.lua](./delete-secrets.lua): This deletes a sequence of secrets from under a specified path. Pass the path from which you want to delete secrets by adding something like "-- secret/read-test" after the Vault URL. Do not start your path with "/v1/" or add a final "/" at the end of it since the script does this for you. The default path is "secret/test".
    - Note: deleting secrets can also be performed by disabling and enabling the secrets engine: `vault secrets disable secret && vault secrets enable -path=secret/ -version=1 kv`.
 
 Finally, [json.lua](./json.lua) is used by some of the other scripts to decode the JSON responses from the Vault HTTP API.

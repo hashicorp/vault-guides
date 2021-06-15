@@ -25,8 +25,8 @@ path "vaultpass/*" {
 }
 EOF
 
-vault write auth/userpass/users/burtlo \
-  password=burtlo \
+vault write auth/userpass/users/browser \
+  password=browser \
   policies=vault_pass-policy
 
 

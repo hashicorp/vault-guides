@@ -56,26 +56,30 @@ function showSecrets(secrets) {
 }
 
 async function getSecretsAtUrl(secretsUrl, vaultToken, withSecrets) {
-  fetch(secretsUrl, {
-    method: 'GET',
-    headers: {
-      'X-Vault-Token': vaultToken,
-      'Content-Type': 'application/json'
-    },
-  }).then(response => {
-    // notify.info(`${secretsUrl} + ${response.status}`);
-    return response.json();
-  }).then(json => {
-    withSecrets(Object.entries(json.data.data));
-  }).catch(error => {
-    // Catches response errors
-    // Catches the error when the json does not have the data key
-    notify.error(
-      `Not able to read secrets at ${secretsUrl} <br/> ${error}`,
-      { removeOption: true }
-    );
-    return {};
-  });
+
+  // TODO: getSecretsAtUrl
+  //
+  // 1. Create the URL to get the secret
+  // 2. Perform a fetch of the secret URL
+  //      - method: 'GET'
+  //      - headers: 'Content-Type': 'application/json'
+  //      - headers: 'X-Vault-Token': vaultToken
+  //
+  // 3. With a successful response, read the body as JSON and send the secrets
+  //      to the `withSecrets` method.
+  // 4. With an error, notify an error
+
+  const stubSecrets = {
+    data: {
+      data:
+        {
+          username: 'stub_username',
+          password: 'stub_password'
+        }
+    }
+  }
+
+  withSecrets(Object.entries(stubSecrets.data.data));
 };
 
 document.addEventListener('DOMContentLoaded', mainLoaded, false);

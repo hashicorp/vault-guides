@@ -50,6 +50,9 @@ terraform apply --auto-approve
 
 Please run the command `docker restart vault-agent`, and you should now be able to see the nginx container display a dynamic Postgres database password on http://localhost:8080. Also try accessing http://localhost:8080/kv.html to see nginx display example values stored in the Key/Value secrets engine.
 
+The full terraform graph has been exported in the file [graph.svg](./webassets/graph.svg) - also shown below. To generate this type of graph yourself, please use the command: `terraform graph | dot -Tsvg > ~/Downloads/graph.svg`
+![Terraform graph](./webassets/graph.svg)
+
 ### Onboarding another application
 To onboard another application, simply add to the default values for `entities` in the file [variables.tf](./terraform/variables.tf). For example, below is a snippet showing `app200` appended to the entities variable list:
 ```bash

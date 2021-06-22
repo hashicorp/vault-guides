@@ -85,15 +85,13 @@ function populateOptionsFields() {
   });
 }
 
-// Authorize to Vault with the server location, credentials, and auth path.
 async function authToVault(vaultServer, username, password, authMount) {
 
-  const data = {
-    auth: {
-      client_token: 'STUB_TOKEN',
-      policies: [ 'default', 'vault-pass']
-    }
+  const authinfo = {
+    client_token: 'STUB_TOKEN',
+    policies: ['default', 'vault-pass'],
   }
+
 
   // TODO: authToVault
   //
@@ -106,9 +104,9 @@ async function authToVault(vaultServer, username, password, authMount) {
   // 3. With a successful response, read the body as JSON
   // 4. With an error, notify an error
 
-  await browser.storage.local.set({ 'vaultToken': data.auth.client_token });
-  await browser.storage.local.set({ 'vaultTokenPolicies': data.auth.policies });
-  showAsLoggedInWith(data.auth.client_token, data.auth.policies);
+  await browser.storage.local.set({ vaultToken: authinfo.client_token });
+  await browser.storage.local.set({ vaultTokenPolicies: authinfo.policies });
+  showAsLoggedInWith(authinfo.client_token, authinfo.policies);
 
 }
 

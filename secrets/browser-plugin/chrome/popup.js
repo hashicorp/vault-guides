@@ -59,15 +59,14 @@ async function getSecretsAtUrl(secretsUrl, vaultToken, withSecrets) {
 
   // TODO: getSecretsAtUrl
   //
-  // 1. Create the URL to get the secret
-  // 2. Perform a fetch of the secret URL
+  // 1. Perform a fetch of the secret URL
   //      - method: 'GET'
   //      - headers: 'Content-Type': 'application/json'
   //      - headers: 'X-Vault-Token': vaultToken
   //
-  // 3. With a successful response, read the body as JSON and send the secrets
+  // 2. With a successful response, read the body as JSON and send the secrets
   //      to the `withSecrets` method.
-  // 4. With an error, notify an error
+  // 3. With an error, notify an error
 
   const stubSecrets = {
     data: {
@@ -80,6 +79,6 @@ async function getSecretsAtUrl(secretsUrl, vaultToken, withSecrets) {
   }
 
   withSecrets(Object.entries(stubSecrets.data.data));
-};
+}
 
 document.addEventListener('DOMContentLoaded', mainLoaded, false);

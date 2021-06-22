@@ -1,5 +1,4 @@
-# Demonstrate the Kubernetes Auth method
+# Recommended Pattern for Vault ACL Policy Path Templates
 
-These assets are provided to perform the tasks described in the [Vault GitHub
-Action](https://learn.hashicorp.com/tutorials/vault/password-policy-templates)
+These assets are provided to perform the tasks described in the [Recommended Pattern for Vault ACL Policy Path Templates](https://learn.hashicorp.com/tutorials/vault/pattern-policy-templates)
 tutorial.

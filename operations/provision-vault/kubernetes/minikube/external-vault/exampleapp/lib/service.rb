@@ -8,59 +8,35 @@ $stdout.sync = true
 class ExampleApp < Sinatra::Base
 
   set :port, ENV['SERVICE_PORT'] || "8080"
+  set :vault_token, ENV["VAULT_TOKEN"] || "root"
 
   configure :development do
     logger = Logger.new(STDOUT)
     logger.level = Logger::DEBUG
     set :raise_errors, true
     set :logger, logger
-
-    set :jwt_path, nil
-    set :vault_url, ENV["VAULT_ADDR"] || "http://localhost:8200"
+    set :vault_url, ENV["VAULT_ADDR"] || "http://host.docker.internal:8200"
   end
 
   configure :production do
     logger = Logger.new(STDOUT)
     logger.level = Logger::INFO
-    set :jwt_path, ENV["JWT_PATH"]
     set :vault_url, ENV["VAULT_ADDR"] || "http://vault:8200"
   end
 
   # GET "/"
   get "/" do
-    logger.info "Received Request - Port forwarding is working."
+    logger.info "Received Request."
 
     # Set up an undefined state and set the vault server and secrets path
     secrets = { "username" => "undefined", "password" => "undefined" }
 
-    logger.info "Received Request - Port forwarding is working."
-
-    if settings.jwt_path
-      jwt = File.read settings.jwt_path
-
-      logger.info "Read JWT: [#{jwt}]"
-
-      auth_path = "auth/kubernetes/login"
-
-      login_response = Faraday.put "#{settings.vault_url}/v1/#{auth_path}" do |req|
-        req.headers['Content-Type'] = 'application/json'
-        req.body = { "role" => "webapp", "jwt" => jwt }.to_json
-      end
-
-      vault_token = JSON.parse(login_response.body)["auth"]["client_token"]
-      logger.info "Received Vault Token: [#{vault_token}]"
-    end
-
-    if vault_token.nil?
-      raise Exception.new "The vault token failed to be set during login"
-    end
-
-    secrets_path = "secret/data/webapp/config"
+    secrets_path = "secret/data/devwebapp/config"
 
     # Ask for the secret at the path
     vault_response = Faraday.get "#{settings.vault_url}/v1/#{secrets_path}" do |req|
       req.headers['Content-Type'] = 'application/json'
-      req.headers['X-Vault-Token'] = vault_token
+      req.headers['X-Vault-Token'] = settings.vault_token
     end
 
     if vault_response.status != 200
@@ -76,6 +52,7 @@ class ExampleApp < Sinatra::Base
     end
 
     # Return secret
-    "#{secrets.to_s}\n"
+    secrets.to_s
   end
+
 end

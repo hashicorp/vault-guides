@@ -10,6 +10,18 @@ variable "cluster_id" {
   default     = "learn-hcp-vault-cluster"
 }
 
+variable "peering_id" {
+  description = "The ID of the HCP peering connection."
+  type        = string
+  default     = "learn-peering"
+}
+
+variable "route_id" {
+  description = "The ID of the HCP HVN route."
+  type        = string
+  default     = "learn-hvn-route"
+}
+
 variable "region" {
   description = "The region of the HCP HVN and Vault cluster."
   type        = string

@@ -25,7 +25,7 @@ vault auth enable userpass
 vault secrets enable -path=vaultpass kv-v2
 vault policy write vault_pass-policy - <<EOF
 path "vaultpass/*" {
-  capabilities = [ "read", "create" ]
+  capabilities = [ "read" ]
 }
 EOF
 
@@ -33,5 +33,5 @@ vault write auth/userpass/users/browser \
   password=browser \
   policies=vault_pass-policy
 
-
+vault kv put vaultpass/extensions username=extension_user password=extension_password
 ```

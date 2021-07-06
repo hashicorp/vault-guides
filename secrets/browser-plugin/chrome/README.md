@@ -1,3 +1,7 @@
+These assets are provided to perform the tasks described in the [Vault Secrets in a Browser Plugin](https://learn.hashicorp.com/tutorials/vault/browser-plugin) tutorial.
+
+-------
+
 # vaultPass
 
 A Browser extension to leverage Hashicorp Vault as Credential Storage for teams

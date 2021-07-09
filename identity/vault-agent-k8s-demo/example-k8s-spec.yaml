@@ -23,7 +23,7 @@ spec:
     - -log-level=debug
     env:
     - name: VAULT_ADDR
-      value: http://192.168.64.1:8200
+      value: http://EXTERNAL_VAULT_ADDR:8200
     image: vault
     name: vault-agent
     volumeMounts:

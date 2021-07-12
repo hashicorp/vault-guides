@@ -1,16 +1,12 @@
-These assets are provided to perform the tasks described in the [Vault Secrets in a Browser Plugin](https://learn.hashicorp.com/tutorials/vault/browser-plugin) tutorial.
+# Brower Plugin
 
--------
+These assets are provided to perform the tasks described in the [Vault Secrets
+in a Browser Plugin](https://learn.hashicorp.com/tutorials/vault/browser-plugin)
+tutorial.
 
-# vaultPass
-
-A Browser extension to leverage Hashicorp Vault as Credential Storage for teams
-
-A project started on a Hackathon @ ironSource by [Dimitry1987](https://github.com/Dmitry1987) and continued by [Chris Blum](https://github.com/zeichenanonym)
-
-**Get it:**
-[Chrome Store](https://chrome.google.com/webstore/detail/vaultpass/kbndeonibamcpiibocdhlagccdlmefco)
-[Firefox AMO](https://addons.mozilla.org/en-GB/firefox/addon/vaultpass/)
+This is a fork of the work started by
+[Dimitry1987](https://github.com/Dmitry1987) and continued by [Chris
+Blum](https://github.com/zeichenanonym).
 
 
 ## Setup

@@ -48,7 +48,7 @@ vault write auth/oidc/config \
 vault write auth/oidc/role/gmail \
     user_claim="sub" \
     bound_audiences=[YOUR_GOOGLE_API_CLIENT_ID] \
-    allowed_redirect_uris=[http://YOUR_VAULT_ADDR//ui/vault/auth/oidc/oidc/callback] \
+    allowed_redirect_uris="http://YOUR_VAULT_ADDR//ui/vault/auth/oidc/oidc/callback" \
     policies=demo \
     ttl=1h
 ```

@@ -64,9 +64,12 @@ logger "User setup complete"
 
 
 
-CONSUL_VERSION="1.0.0"
+# CONSUL_VERSION="1.0.0"
+CONSUL_VERSION="1.9.4"
+OS="linux"
+ARCH="amd64"
 echo "Fetching Consul..."
-sudo curl https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_linux_amd64.zip -o /tmp/consul.zip
+sudo curl https://releases.hashicorp.com/consul/$${CONSUL_VERSION}/consul_$${CONSUL_VERSION}_$${OS}_$${ARCH}.zip -o /tmp/consul.zip
 cd /tmp
 sudo unzip consul.zip
 

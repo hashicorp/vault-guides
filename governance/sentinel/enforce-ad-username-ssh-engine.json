@@ -13,7 +13,7 @@ username_match = func() {
     }
 
     # Make sure the supplied username matches the user's name
-    if request.data.username != identity.entity.aliases[0].name {
+    if request.data.valid_principals != identity.entity.aliases[0].name {
         return false
     }
 

@@ -11,7 +11,7 @@ module "consul_auto_join_instance_role" {
 }
 
 resource "random_id" "consul_encrypt" {
-  byte_length = 16
+  byte_length = 32
 }
 
 module "root_tls_self_signed_ca" {

@@ -23,12 +23,11 @@ echo "Start PostgreSQL container."
 docker rm -f learn-postgres > /dev/null 2>&1
 
 docker run \
-    --rm \
     --name learn-postgres \
-    --detach \
-    --publish 5432:5432 \
     --network learn-vault \
     --ip 10.42.74.200 \
+    --detach \
+    --rm \
     -e "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" \
     -e "POSTGRES_USER=$POSTGRES_USER" \
     postgres
@@ -68,6 +67,4 @@ DBA_TOKEN=$(vault token create -policy=db-dba -period=1m -field=token)
 
 echo "Create PostgreSQL dynamic credential using DBA token."
 vault read database/creds/db-dba > /dev/null 2>&1
-
 echo Complete.
-

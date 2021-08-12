@@ -1,4 +1,4 @@
-# Brower Plugin
+# Browser Plugin
 
 These assets are provided to perform the tasks described in the [Vault Secrets
 in a Browser Plugin](https://learn.hashicorp.com/tutorials/vault/browser-plugin)

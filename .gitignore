@@ -24,3 +24,6 @@
 
 # Generated private key
 *.key
+
+# Ignore local lock files 
+**/.terraform.lock.hcl

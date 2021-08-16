@@ -48,10 +48,8 @@ func pathRole(b *hashiCupsBackend) []*framework.Path {
 			HelpDescription: pathRoleHelpDescription,
 		},
 		{
-			Pattern: "role/?$",
-
-			Operations: map[logical.Operation]framework.OperationHandler{},
-
+			Pattern:         "role/?$",
+			Operations:      map[logical.Operation]framework.OperationHandler{},
 			HelpSynopsis:    pathRoleListHelpSynopsis,
 			HelpDescription: pathRoleListHelpDescription,
 		},

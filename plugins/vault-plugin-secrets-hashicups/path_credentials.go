@@ -11,10 +11,9 @@ import (
 // required, and named.
 func pathCredentials(b *hashiCupsBackend) *framework.Path {
 	return &framework.Path{
-		Pattern:   "creds/" + framework.GenericNameRegex("name"),
-		Fields:    map[string]*framework.FieldSchema{},
-		Callbacks: map[logical.Operation]framework.OperationFunc{},
-
+		Pattern:         "creds/" + framework.GenericNameRegex("name"),
+		Fields:          map[string]*framework.FieldSchema{},
+		Callbacks:       map[logical.Operation]framework.OperationFunc{},
 		HelpSynopsis:    pathCredentialsHelpSyn,
 		HelpDescription: pathCredentialsHelpDesc,
 	}

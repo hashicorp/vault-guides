@@ -26,7 +26,8 @@ func TestUserRole(t *testing.T) {
 				roleName+strconv.Itoa(i),
 				map[string]interface{}{
 					"username": username,
-					"max_ttl":  "3600",
+					"ttl":      testTTL,
+					"max_ttl":  testMaxTTL,
 				})
 			require.NoError(t, err)
 		}
@@ -39,7 +40,8 @@ func TestUserRole(t *testing.T) {
 	t.Run("Create User Role - pass", func(t *testing.T) {
 		resp, err := testTokenRoleCreate(t, b, s, roleName, map[string]interface{}{
 			"username": username,
-			"max_ttl":  "3600",
+			"ttl":      testTTL,
+			"max_ttl":  testMaxTTL,
 		})
 
 		require.Nil(t, err)

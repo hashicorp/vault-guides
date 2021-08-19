@@ -59,7 +59,7 @@ To perform the tasks described in this guide, you need:
     $ kubectl get configmap example-vault-agent-config -o yaml
 
     # Finally, create vault-agent-example Pod
-    $ kubectl apply -f example-k8s-spec.yml --record
+    $ kubectl apply -f example-k8s-spec.yaml --record
     ```
 
     This takes a minute or so for the Pod to become fully up and running.

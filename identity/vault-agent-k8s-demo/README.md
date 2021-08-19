@@ -47,7 +47,7 @@ To perform the tasks described in this guide, you need:
 
     Enter `exit` to quit the SSH session.
 
-1. Open the `example-k8s-spec.yml` and be sure to set the correct `VAULT_ADDR` value for your environment.
+1. Open the `example-k8s-spec.yaml` and be sure to set the correct `VAULT_ADDR` value for your environment.
 
 1. Now, create a Pod using ConfigMap named, `example-vault-agent-config` pulling files from `configs-k8s` directory:
 

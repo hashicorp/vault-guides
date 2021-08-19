@@ -1,0 +1,78 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-api
+spec:
+  type: LoadBalancer
+  selector:
+    app: product-api
+  ports:
+    - name: http
+      protocol: TCP
+      port: 9090
+      targetPort: 9090
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: product-api
+automountServiceAccountToken: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: db-configmap
+data:
+  config: |
+    {
+      "db_connection": "host=postgres port=5432 user=postgres password=password dbname=products sslmode=disable",
+      "bind_address": ":9090",
+      "metrics_address": ":9103"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: product-api
+  labels:
+    app: product-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: product-api
+  template:
+    metadata:
+      labels:
+        app: product-api
+    spec:
+      serviceAccountName: product-api
+      volumes:
+      - name: config
+        configMap:
+          name: db-configmap
+          items:
+          - key: config
+            path: conf.json
+      containers:
+        - name: product-api
+          image: hashicorpdemoapp/product-api:v0.0.17
+          ports:
+            - containerPort: 9090
+            - containerPort: 9103
+          env:
+            - name: "CONFIG_FILE"
+              value: "/config/conf.json"
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 9090
+            initialDelaySeconds: 15
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 30
+          volumeMounts:
+            - name: config
+              mountPath: /config
+              readOnly: true

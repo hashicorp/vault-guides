@@ -1,5 +1,5 @@
 variable "vault_url" {
-  default = "https://releases.hashicorp.com/vault/1.6.0/vault_1.6.0_linux_amd64.zip"
+  default = "https://releases.hashicorp.com/vault/1.8.1/vault_1.8.1_linux_amd64.zip"
 }
 
 variable "gcloud-project" {

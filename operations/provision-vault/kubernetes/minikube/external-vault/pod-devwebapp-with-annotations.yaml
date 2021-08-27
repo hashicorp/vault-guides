@@ -13,8 +13,3 @@ spec:
   containers:
     - name: app
       image: burtlo/devwebapp-ruby:k8s
-      env:
-      - name: VAULT_ADDR
-        value: "http://external-vault:8200"
-      - name: VAULT_TOKEN
-        value: root

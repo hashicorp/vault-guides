@@ -35,9 +35,7 @@ func backend() *hashiCupsBackend {
 	b.Backend = &framework.Backend{
 		Help: strings.TrimSpace(backendHelp),
 		PathsSpecial: &logical.Paths{
-			LocalStorage: []string{
-				framework.WALPrefix,
-			},
+			LocalStorage: []string{},
 			SealWrapStorage: []string{
 				"config",
 				"role/*",
@@ -95,10 +93,8 @@ func (b *hashiCupsBackend) getClient(ctx context.Context, s logical.Storage) (*h
 		return nil, err
 	}
 
-	if b.client == nil {
-		if config == nil {
-			config = new(hashiCupsConfig)
-		}
+	if config == nil {
+		config = new(hashiCupsConfig)
 	}
 
 	b.client, err = newClient(config)

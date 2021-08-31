@@ -13,11 +13,10 @@ import (
 // for a Vault role to access and call the HashiCups
 // token endpoints
 type hashiCupsRoleEntry struct {
-	Name     string        `json:"name"`
-	Username string        `json:"username,omitempty"`
-	UserID   int           `json:"user_id,omitempty"`
-	Token    string        `json:"token,omitempty"`
-	TokenID  string        `json:"token_id,omitempty"`
+	Username string        `json:"username"`
+	UserID   int           `json:"user_id"`
+	Token    string        `json:"token"`
+	TokenID  string        `json:"token_id"`
 	TTL      time.Duration `json:"ttl"`
 	MaxTTL   time.Duration `json:"max_ttl"`
 }
@@ -25,12 +24,9 @@ type hashiCupsRoleEntry struct {
 // toResponseData returns response data for a role
 func (r *hashiCupsRoleEntry) toResponseData() map[string]interface{} {
 	respData := map[string]interface{}{
-		"name":    r.Name,
-		"ttl":     r.TTL.Seconds(),
-		"max_ttl": r.MaxTTL.Seconds(),
-	}
-	if r.Username != "" {
-		respData["username"] = r.Username
+		"ttl":      r.TTL.Seconds(),
+		"max_ttl":  r.MaxTTL.Seconds(),
+		"username": r.Username,
 	}
 	return respData
 }
@@ -122,12 +118,12 @@ func (b *hashiCupsBackend) pathRolesRead(ctx context.Context, req *logical.Reque
 
 // pathRolesWrite makes a request to Vault storage to update a role based on the attributes passed to the role configuration
 func (b *hashiCupsBackend) pathRolesWrite(ctx context.Context, req *logical.Request, d *framework.FieldData) (*logical.Response, error) {
-	name := d.Get("name").(string)
-	if name == "" {
+	name, ok := d.GetOk("name")
+	if !ok {
 		return logical.ErrorResponse("missing role name"), nil
 	}
 
-	roleEntry, err := b.getRole(ctx, req.Storage, name)
+	roleEntry, err := b.getRole(ctx, req.Storage, name.(string))
 	if err != nil {
 		return nil, err
 	}
@@ -138,22 +134,21 @@ func (b *hashiCupsBackend) pathRolesWrite(ctx context.Context, req *logical.Requ
 
 	createOperation := (req.Operation == logical.CreateOperation)
 
-	roleEntry.Name = name
 	if username, ok := d.GetOk("username"); ok {
 		roleEntry.Username = username.(string)
-	} else if createOperation {
-		roleEntry.Username = d.Get("username").(string)
+	} else if !ok && createOperation {
+		return nil, fmt.Errorf("missing username in role")
 	}
 
 	if ttlRaw, ok := d.GetOk("ttl"); ok {
 		roleEntry.TTL = time.Duration(ttlRaw.(int)) * time.Second
-	} else if req.Operation == logical.CreateOperation {
+	} else if createOperation {
 		roleEntry.TTL = time.Duration(d.Get("ttl").(int)) * time.Second
 	}
 
 	if maxTTLRaw, ok := d.GetOk("max_ttl"); ok {
 		roleEntry.MaxTTL = time.Duration(maxTTLRaw.(int)) * time.Second
-	} else if req.Operation == logical.CreateOperation {
+	} else if createOperation {
 		roleEntry.MaxTTL = time.Duration(d.Get("max_ttl").(int)) * time.Second
 	}
 
@@ -161,7 +156,7 @@ func (b *hashiCupsBackend) pathRolesWrite(ctx context.Context, req *logical.Requ
 		return logical.ErrorResponse("ttl cannot be greater than max_ttl"), nil
 	}
 
-	if err := setRole(ctx, req.Storage, name, roleEntry); err != nil {
+	if err := setRole(ctx, req.Storage, name.(string), roleEntry); err != nil {
 		return nil, err
 	}
 

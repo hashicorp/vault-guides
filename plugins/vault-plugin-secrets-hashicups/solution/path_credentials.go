@@ -46,20 +46,7 @@ func (b *hashiCupsBackend) pathCredentialsRead(ctx context.Context, req *logical
 		return nil, errors.New("error retrieving role: role is nil")
 	}
 
-	if roleEntry.Username != "" {
-		return b.createUserCreds(ctx, req, roleEntry)
-	}
-
-	resp := &logical.Response{
-		Data: map[string]interface{}{
-			"username": roleEntry.Username,
-			"user_id":  roleEntry.UserID,
-			"token":    roleEntry.Token,
-			"token_id": roleEntry.TokenID,
-			"role":     roleEntry.Name,
-		},
-	}
-	return resp, nil
+	return b.createUserCreds(ctx, req, roleEntry)
 }
 
 // createUserCreds creates a new HashiCups token to store into the Vault backend, generates
@@ -80,7 +67,6 @@ func (b *hashiCupsBackend) createUserCreds(ctx context.Context, req *logical.Req
 		"username": token.Username,
 	}, map[string]interface{}{
 		"token": token.Token,
-		"role":  role.Name,
 	})
 
 	if role.TTL > 0 {

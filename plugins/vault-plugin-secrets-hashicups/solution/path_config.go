@@ -111,22 +111,31 @@ func (b *hashiCupsBackend) pathConfigWrite(ctx context.Context, req *logical.Req
 		return nil, err
 	}
 
+	createOperation := (req.Operation == logical.CreateOperation)
+
 	if config == nil {
-		if req.Operation == logical.UpdateOperation {
+		if !createOperation {
 			return nil, errors.New("config not found during update operation")
 		}
 		config = new(hashiCupsConfig)
 	}
 
-	username := data.Get("username").(string)
-	url := data.Get("url").(string)
+	if username, ok := data.GetOk("username"); ok {
+		config.Username = username.(string)
+	} else if !ok && createOperation {
+		return nil, fmt.Errorf("missing username in configuration")
+	}
 
-	config.Username = username
-	config.URL = url
+	if url, ok := data.GetOk("url"); ok {
+		config.URL = url.(string)
+	} else if !ok && createOperation {
+		return nil, fmt.Errorf("missing url in configuration")
+	}
 
-	password, ok := data.GetOk("password")
-	if ok {
+	if password, ok := data.GetOk("password"); ok {
 		config.Password = password.(string)
+	} else if !ok && createOperation {
+		return nil, fmt.Errorf("missing password in configuration")
 	}
 
 	entry, err := logical.StorageEntryJSON(configStoragePath, config)

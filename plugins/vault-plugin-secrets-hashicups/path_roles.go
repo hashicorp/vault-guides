@@ -11,11 +11,10 @@ import (
 // for a Vault role to access and call the HashiCups
 // token endpoints
 type hashiCupsRoleEntry struct {
-	Name     string        `json:"name"`
-	Username string        `json:"username,omitempty"`
-	UserID   int           `json:"user_id,omitempty"`
-	Token    string        `json:"token,omitempty"`
-	TokenID  string        `json:"token_id,omitempty"`
+	Username string        `json:"username"`
+	UserID   int           `json:"user_id"`
+	Token    string        `json:"token"`
+	TokenID  string        `json:"token_id"`
 	TTL      time.Duration `json:"ttl"`
 	MaxTTL   time.Duration `json:"max_ttl"`
 }
@@ -23,12 +22,9 @@ type hashiCupsRoleEntry struct {
 // toResponseData returns response data for a role
 func (r *hashiCupsRoleEntry) toResponseData() map[string]interface{} {
 	respData := map[string]interface{}{
-		"name":    r.Name,
-		"ttl":     r.TTL.Seconds(),
-		"max_ttl": r.MaxTTL.Seconds(),
-	}
-	if r.Username != "" {
-		respData["username"] = r.Username
+		"ttl":      r.TTL.Seconds(),
+		"max_ttl":  r.MaxTTL.Seconds(),
+		"username": r.Username,
 	}
 	return respData
 }

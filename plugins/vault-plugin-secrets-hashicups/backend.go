@@ -37,9 +37,7 @@ func backend() *hashiCupsBackend {
 	b.Backend = &framework.Backend{
 		Help: strings.TrimSpace(backendHelp),
 		PathsSpecial: &logical.Paths{
-			LocalStorage: []string{
-				framework.WALPrefix,
-			},
+			LocalStorage: []string{},
 			SealWrapStorage: []string{
 				"config",
 				"role/*",

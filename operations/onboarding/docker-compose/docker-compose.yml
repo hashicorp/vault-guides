@@ -88,7 +88,7 @@ services:
       - consul-dc1
 
   vault-agent:
-    image: hashicorp/vault-enterprise:latest
+    image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault-agent:/vault-agent:rw
@@ -129,8 +129,8 @@ services:
       - consul-dc1
 
   vault_s1:
-    image: hashicorp/vault-enterprise:latest
-    #image: hashicorp/vault:latest
+    #image: hashicorp/vault-enterprise:latest
+    image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw
@@ -148,8 +148,8 @@ services:
       - consul-dc1
 
   vault_s2:
-    image: hashicorp/vault-enterprise:latest
-    #image: hashicorp/vault:latest
+    #image: hashicorp/vault-enterprise:latest
+    image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw
@@ -167,8 +167,8 @@ services:
       - consul-dc1
 
   vault_s3:
-    image: hashicorp/vault-enterprise:latest
-    #image: hashicorp/vault:latest
+    #image: hashicorp/vault-enterprise:latest
+    image: hashicorp/vault:latest
     restart: always
     volumes:
       - ./vault/vault_s1:/vault/config:rw

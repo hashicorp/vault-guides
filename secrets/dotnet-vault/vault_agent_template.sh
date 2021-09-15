@@ -9,7 +9,7 @@ vault write projects-api/database/roles/projects-api-role \
 				USE HashiCorp;\
 				CREATE USER [{{name}}] FOR LOGIN [{{name}}];\
         GRANT SELECT,UPDATE,INSERT,DELETE TO [{{name}}];" \
-    default_ttl="2m" \
-    max_ttl="5m"
+    default_ttl="30s" \
+    max_ttl="90s"
 
 docker-compose -f docker-compose-vault-agent-template.yml up -d

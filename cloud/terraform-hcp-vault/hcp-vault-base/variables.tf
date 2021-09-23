@@ -21,3 +21,9 @@ variable "cloud_provider" {
   type        = string
   default     = "aws"
 }
+
+variable "tier" {
+  description = "Tier of the HCP Vault cluster. Valid options for tiers."
+  type        = string
+  default     = "dev"
+}

@@ -17,3 +17,8 @@ path "transit/decrypt/payment" {
 path "transit/*" {
   capabilities = ["read", "list"]
 }
+
+# List enabled secrets engines
+path "secret/metadata/*" {
+   capabilities = ["list"]
+}

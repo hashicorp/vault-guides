@@ -3,11 +3,6 @@ path "kv-v2/data/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 }
 
-# Permits CRUD operation on kv-v2 ui for katacode env.
-path "kv-v2/*" {
-  capabilities = ["create", "read", "update", "delete", "list"]
-}
-
 # Encrypt data with 'payment' key
 path "transit/encrypt/payment" {
   capabilities = ["update"]

@@ -14,12 +14,12 @@ variable "download_certs"    { default = false }
 variable "vpc_cidr" { default = "10.139.0.0/16" }
 
 variable "vpc_cidrs_public" {
-  type    = "list"
+  type    = list
   default = ["10.139.1.0/24", "10.139.2.0/24", "10.139.3.0/24",]
 }
 
 variable "vpc_cidrs_private" {
-  type    = "list"
+  type    = list
   default = ["10.139.11.0/24", "10.139.12.0/24", "10.139.13.0/24",]
 }
 
@@ -34,7 +34,7 @@ variable "bastion_os_version"     { default = "7.3" }
 variable "bastion_image_id"       { default = "" }
 
 variable "network_tags" {
-  type    = "map"
+  type    = map
   default = { }
 }
 
@@ -58,12 +58,12 @@ variable "consul_server_config_override" { default = "" }
 variable "consul_client_config_override" { default = "" }
 
 variable "consul_tags" {
-  type    = "map"
+  type    = map
   default = { }
 }
 
 variable "consul_tags_list" {
-  type    = "list"
+  type    = list
   default = [ ]
 }
 
@@ -86,11 +86,11 @@ variable "vault_public" {
 variable "vault_server_config_override" { default = "" }
 
 variable "vault_tags" {
-  type    = "map"
+  type    = map
   default = { }
 }
 
 variable "vault_tags_list" {
-  type    = "list"
+  type    = list
   default = [ ]
 }

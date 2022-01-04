@@ -57,6 +57,7 @@ resource "aws_instance" "chef-node" {
     recreate_client         = true
     fetch_chef_certificates = true
     ssl_verify_mode         = ":verify_none"
+    version                 = "16.17.18"
   }
 }
 

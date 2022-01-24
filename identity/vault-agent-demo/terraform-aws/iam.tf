@@ -52,7 +52,7 @@ data "aws_iam_policy_document" "assume_role" {
 
 data "aws_iam_policy_document" "vault-server" {
   statement {
-    sid    = "ConsulAutoJoin"
+    sid    = "RaftSingle"
     effect = "Allow"
 
     actions = ["ec2:DescribeInstances"]
@@ -88,7 +88,7 @@ data "aws_iam_policy_document" "vault-server" {
 
 data "aws_iam_policy_document" "vault-client" {
   statement {
-    sid    = "ConsulAutoJoin"
+    sid    = "RaftSingle"
     effect = "Allow"
 
     actions = ["ec2:DescribeInstances"]

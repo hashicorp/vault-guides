@@ -12,7 +12,6 @@ resource "aws_instance" "vault-client" {
 
   tags = {
     Name     = "${var.environment_name}-vault-client"
-    ConsulDC = "consul-${var.aws_region}"
     TTL      = var.hashibot_reaper_ttl
   }
 
@@ -31,8 +30,6 @@ data "template_file" "vault-client" {
 
   vars = {
     tpl_vault_zip_file     = var.vault_zip_file
-    tpl_consul_zip_file    = var.consul_zip_file
-    tpl_consul_dc          = var.consul_dc
     tpl_vault_service_name = "vault-${var.environment_name}"
     tpl_vault_server_addr  = aws_instance.vault-server[0].private_ip
   }

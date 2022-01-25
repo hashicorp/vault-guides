@@ -39,6 +39,6 @@ data "template_file" "vault-server" {
     tpl_aws_region              = var.aws_region
     account_id                  = data.aws_caller_identity.current.account_id
     role_name                   = "${var.environment_name}-vault-client-role"
-    node_id                     = "${var.environment_name}-vault-server-${count.index}"
+    tpl_node_id                 = "${var.environment_name}-vault-server-role"
   }
 }

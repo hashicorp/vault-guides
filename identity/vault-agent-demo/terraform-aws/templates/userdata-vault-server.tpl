@@ -7,7 +7,7 @@ logger() {
   echo "$DT $0: $1"
 }
 
-logger "Running"
+logger "Running Vault Server"
 
 ##--------------------------------------------------------------------
 ## Variables
@@ -25,6 +25,9 @@ KMS_KEY="${tpl_kms_key}"
 # Detect package management system.
 YUM=$(which yum 2>/dev/null)
 APT_GET=$(which apt-get 2>/dev/null)
+
+# Raft node ID
+NODE_ID="${tpl_node_id}"
 
 ##--------------------------------------------------------------------
 ## Functions
@@ -154,13 +157,13 @@ logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 logger "Configuring Vault"
 sudo tee /etc/vault.d/vault.hcl <<EOF
 storage "raft" {
-    node_id = "${node_id}"
+    node_id = "$${NODE_ID}"
     path    = "/var/vault/data"
 }
 
 listener "tcp" {
-  address     = "$${PRIVATE_IP}:8200"
-  tls_disable = 1
+  address         = "$${PRIVATE_IP}:8200"
+  tls_disable     = 1
 }
 
 seal "awskms" {
@@ -168,16 +171,18 @@ seal "awskms" {
   kms_key_id = "$${KMS_KEY}"
 }
 
-ui=true
-disable_mlock=true
+api_addr      = "http://$${PRIVATE_IP}:8200"
+cluster_addr  = "http://$${PRIVATE_IP}:8201"
+ui            = true
+disable_mlock = true
 EOF
 
 sudo chown -R vault:vault /etc/vault.d /etc/ssl/vault /var/vault
 sudo chmod -R 0644 /etc/vault.d/*
 
 sudo tee -a /etc/environment <<EOF
-export VAULT_ADDR=http://$${PRIVATE_IP}:8200
-export VAULT_SKIP_VERIFY=true
+VAULT_ADDR=http://$${PRIVATE_IP}:8200
+VAULT_SKIP_VERIFY=true
 EOF
 
 source /etc/environment
@@ -190,7 +195,7 @@ sudo setcap cap_ipc_lock=+ep /usr/local/bin/vault
 
 read -d '' VAULT_SERVICE <<EOF
 [Unit]
-Description=Vault Agent
+Description=Vault Server
 Requires=network-online.target
 After=network-online.target
 
@@ -246,4 +251,4 @@ EOF
 
 sudo chmod +x /home/ubuntu/aws_auth.sh
 
-logger "Complete"
+logger "Vault Server Complete"

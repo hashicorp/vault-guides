@@ -7,7 +7,7 @@ logger() {
   echo "$DT $0: $1"
 }
 
-logger "Running"
+logger "Running Vault Client"
 
 ##--------------------------------------------------------------------
 ## Variables
@@ -150,8 +150,8 @@ sudo mkdir -pm 0755 /etc/ssl/vault
 logger "/usr/local/bin/vault --version: $(/usr/local/bin/vault --version)"
 
 sudo tee -a /etc/environment <<EOF
-export VAULT_ADDR="http://${tpl_vault_server_addr}:8200"
-export VAULT_SKIP_VERIFY=true
+VAULT_ADDR="http://${tpl_vault_server_addr}:8200"
+VAULT_SKIP_VERIFY=true
 EOF
 
 source /etc/environment
@@ -216,4 +216,4 @@ EOF
 sudo chmod 0775 /home/ubuntu/vault-agent-wrapped.hcl
 
 
-logger "Complete"
+logger "Vault Client Complete"

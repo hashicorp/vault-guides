@@ -13,7 +13,6 @@ resource "aws_instance" "vault-server" {
 
   tags = {
     Name     = "${var.environment_name}-vault-server-${count.index}"
-    ConsulDC = var.consul_dc
     TTL      = var.hashibot_reaper_ttl
   }
 
@@ -35,13 +34,11 @@ data "template_file" "vault-server" {
 
   vars = {
     tpl_vault_zip_file          = var.vault_zip_file
-    tpl_consul_zip_file         = var.consul_zip_file
-    tpl_consul_dc               = var.consul_dc
     tpl_vault_service_name      = "vault-${var.environment_name}"
     tpl_kms_key                 = aws_kms_key.vault.id
     tpl_aws_region              = var.aws_region
-    tpl_consul_bootstrap_expect = var.vault_server_count
     account_id                  = data.aws_caller_identity.current.account_id
     role_name                   = "${var.environment_name}-vault-client-role"
+    tpl_node_id                 = "${var.environment_name}-vault-server-role"
   }
 }

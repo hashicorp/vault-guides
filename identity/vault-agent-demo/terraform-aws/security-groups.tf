@@ -31,14 +31,6 @@ resource "aws_security_group" "testing" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
-  # Consul UI
-  ingress {
-    from_port   = 8500
-    to_port     = 8500
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   # Internal Traffic
   ingress {
     from_port = 0

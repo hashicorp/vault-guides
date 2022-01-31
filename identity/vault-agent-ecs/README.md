@@ -1,7 +1,6 @@
 # Vault Agent with Amazon ECS
 
-This directory contains example code for retrieving secrets for
-an Amazon ECS task from Vault using Vault agent.
+This directory contains example code for retrieving secrets for an Amazon ECS task from Vault using Vault Agent. Refer to the [Vault Agent with Amazon Elastic Container Service](https://learn.hashicorp.com/tutorials/vault/agent-aws-ecs) tutorial for step-by-step instruction.
 
 ## Prerequistes
 

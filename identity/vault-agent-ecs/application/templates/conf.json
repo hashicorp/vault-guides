@@ -1,0 +1,7 @@
+{
+  {{- with secret "${vault_database_creds_path}" }}
+  "db_connection": "host=${database_address} port=5432 user={{ .Data.username }} password={{ .Data.password }} dbname=products sslmode=disable",
+  {{- end }}
+  "bind_address": ":${products_api_port}",
+  "metrics_address": ":9102"
+}

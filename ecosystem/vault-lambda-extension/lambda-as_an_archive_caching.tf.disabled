@@ -1,9 +1,11 @@
 resource "aws_lambda_function" "function" {
   function_name = "${var.environment_name}-function"
-  description   = "Demo Vault AWS Lambda extension in container"
+  description   = "Demo Vault AWS Lambda extension"
   role          = aws_iam_role.lambda.arn
-  image_uri     = "${data.aws_caller_identity.current.account_id}.dkr.ecr.${var.aws_region}.amazonaws.com/demo-function:latest"
-  package_type  = "Image"
+  filename      = "./demo-function/demo-function.zip"
+  handler       = "main"
+  runtime       = "provided.al2"
+  layers        = ["arn:aws:lambda:${var.aws_region}:634166935893:layer:vault-lambda-extension:6"]
 
   environment {
     variables = {
@@ -12,6 +14,7 @@ resource "aws_lambda_function" "function" {
       VAULT_AUTH_PROVIDER  = "aws",
       VAULT_SECRET_PATH_DB = "database/creds/lambda-function",
       VAULT_SECRET_FILE_DB = "/tmp/vault_secret.json",
+      VAULT_DEFAULT_CACHE_ENABLE = true,
       DATABASE_URL         = aws_db_instance.main.address
     }
   }

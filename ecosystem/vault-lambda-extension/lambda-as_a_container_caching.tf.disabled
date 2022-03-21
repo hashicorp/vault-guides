@@ -12,6 +12,8 @@ resource "aws_lambda_function" "function" {
       VAULT_AUTH_PROVIDER  = "aws",
       VAULT_SECRET_PATH_DB = "database/creds/lambda-function",
       VAULT_SECRET_FILE_DB = "/tmp/vault_secret.json",
+      VAULT_DEFAULT_CACHE_ENABLE = true,
+      VAULT_DEFAULT_CACHE_TTL = "5m",
       DATABASE_URL         = aws_db_instance.main.address
     }
   }

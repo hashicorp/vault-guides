@@ -188,7 +188,7 @@ resource "azurerm_network_interface" "tf_nic" {
   ip_configuration {
     name                          = "nic-${random_id.keyvault.hex}"
     subnet_id                     = azurerm_subnet.tf_subnet.id
-    private_ip_address_allocation = "dynamic"
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.tf_publicip.id
   }
 

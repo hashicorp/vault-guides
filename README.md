@@ -1,7 +1,6 @@
 ----
 -	Website: https://www.vaultproject.io
 -	GitHub repository: https://github.com/hashicorp/vault
--	IRC: `#vault-tool` on Freenode
 -	Announcement list: [Google Groups](https://groups.google.com/group/hashicorp-announce)
 -	Discussion list: [Google Groups](https://groups.google.com/group/vault-tool)
 

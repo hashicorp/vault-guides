@@ -1,11 +1,11 @@
 # see https://github.com/hashicorp/terraform
 terraform {
-  required_version = ">= 0.12"
+  required_version = ">= 1.1.7"
   required_providers {
-    template = "~> 2.1.2"
-    random = "~> 2.3.0"
-    azurerm = "~> 2.20.0"
-    azuread = "~> 0.11.0"
+    template = "~> 2.2.0"
+    random = "~> 3.1.2"
+    azurerm = "~> 3.0.2"
+    azuread = "~> 2.19.1"
   }
 }
 
@@ -57,9 +57,9 @@ resource "azurerm_key_vault" "vault" {
     object_id = data.azuread_service_principal.vault.object_id
 
     key_permissions = [
-      "get",
-      "wrapKey",
-      "unwrapKey",
+      "Get",
+      "WrapKey",
+      "UnwrapKey",
     ]
   }
 
@@ -69,11 +69,11 @@ resource "azurerm_key_vault" "vault" {
     object_id = data.azurerm_client_config.current.object_id
 
     key_permissions = [
-      "get",
-      "list",
-      "create",
-      "delete",
-      "update",
+      "Get",
+      "List",
+      "Create",
+      "Delete",
+      "Update",
     ]
   }
 
@@ -188,7 +188,7 @@ resource "azurerm_network_interface" "tf_nic" {
   ip_configuration {
     name                          = "nic-${random_id.keyvault.hex}"
     subnet_id                     = azurerm_subnet.tf_subnet.id
-    private_ip_address_allocation = "dynamic"
+    private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.tf_publicip.id
   }
 

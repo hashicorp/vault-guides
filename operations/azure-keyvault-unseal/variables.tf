@@ -44,7 +44,7 @@ variable "vm_name" {
 
 variable "vault_version" {
   # NB execute `apt-cache madison vault` to known the available versions.
-  default = "1.5.5"
+  default = "1.9.4"
 }
 
 variable "resource_group_name" {

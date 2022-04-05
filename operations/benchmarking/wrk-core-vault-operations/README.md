@@ -4,7 +4,7 @@
 This repo is intended to provide guidance and will not be officially maintained by HashiCorp.
 
 ## Overview
-This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine. Most of the scripts were originally written by Roger Berlind in https://github.com/rberlind/vault-benchmarking who drew inspiration from Jacob Friedman's benchmark scripts for Vault's Transit secrets engine that he wrote in https://github.com/jdfriedma/Vault-Transit-Load-Testing. More updates:
+This repository contains some Lua scripts for running benchmarks against Vault with the [wrk](https://github.com/wg/wrk) tool. They are all designed to be used with Vault's KV (Key/Value) v1 secrets engine. Most of the scripts were originally written by Roger Berlind in https://github.com/rberlind/vault-benchmarking who drew inspiration from Julia Friedman's benchmark scripts for Vault's Transit secrets engine that she wrote in https://github.com/jdfriedma/Vault-Transit-Load-Testing. More updates:
 - Kawsar Kamal added the [authenticate.lua](./authenticate.lua) script for use with Vault batch tokens.
 - Stenio added a Mediumblog post on [Vault benchmarking](https://medium.com/hashicorp-engineering/hashicorp-vault-performance-benchmark-13d0ea7b703f)
 - Kawsar Kamal added the [read-db-secrets.lua](./read-db-secrets.lua) script for testing Dynamic Database credentials.

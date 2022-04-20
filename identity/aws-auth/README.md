@@ -29,7 +29,7 @@ Using AWS as a trusted entity means shifting the trust burden to AWS, where Vaul
 
 ## Prerequisites
 - AWS account with sufficient privileges
-- Terraform. Installation isntructions here: https://www.terraform.io/intro/getting-started/install.html
+- Terraform. Installation isntructions here: https://learn.hashicorp.com/tutorials/terraform/install-cli
 
 ## Steps
 The bellow steps should be executed in a terminal (or Terraform Enterprise UI) once this repository is cloned

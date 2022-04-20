@@ -243,7 +243,7 @@ sudo chef-server-ctl user-create $${CHEF_ADMIN} demo admin $${CHEF_ADMIN}@exampl
 sudo chef-server-ctl org-create $${CHEF_DEMO_ORG} 'Demo Organization' --association_user $${CHEF_ADMIN} --filename /tmp/$${CHEF_DEMO_PEM}
 
 # Copy user key to S3 for use by Terraform to bootstrap our Chef node
-# See https://www.terraform.io/docs/providers/aws/d/s3_bucket_object.html
+# See https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/s3_bucket_object
 # for info about content-type
 aws s3 cp /tmp/$${CHEF_ADMIN_PEM} s3://$${S3_BUCKET}/$${CHEF_ADMIN_PEM} --content-type 'text/*'
 

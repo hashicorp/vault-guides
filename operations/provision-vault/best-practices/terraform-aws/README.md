@@ -1,10 +1,10 @@
 # Provision a Best Practices Vault Cluster in AWS
 
-The goal of this guide is to allows users to easily provision a best practices Vault & Consul cluster in just a few commands.
+The goal of this guide is to allow users to easily provision a best practices Vault & Consul cluster in just a few commands.
 
 ## Reference Material
 
-- [Terraform Getting Started](https://www.terraform.io/intro/getting-started/install.html)
+- [Terraform Getting Started](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 - [Terraform Docs](https://www.terraform.io/docs/index.html)
 - [Consul Getting Started](https://www.consul.io/intro/getting-started/install.html)
 - [Consul Docs](https://www.consul.io/docs/index.html)
@@ -23,7 +23,7 @@ There are many different ways to provision and configure an easily accessible be
 
 Provision a best practices Vault & Consul cluster in a private network with a bastion host.
 
-The AWS Best Practices Vault guide provisions a 3 node Vault and 3 node Consul cluster with a similar architecture to the [Quick Start](../quick-start) guide. The difference is this guide will setup TLS/encryption across Vault & Consul and depends on pre-built images rather than runtime configuration. You can find the Packer templates to create the [Consul image](https://github.com/hashicorp/guides-configuration/blob/master/consul/consul-aws.json) and [Vault image](https://github.com/hashicorp/guides-configuration/blob/master/vault/vault-aws.json) in the [Guides Configuration Repo](https://github.com/hashicorp/guides-configuration/).
+The AWS Best Practices Vault guide provisions a 3 node Vault and 3 node Consul cluster with a similar architecture to the [Quick Start](../../quick-start) guide. The difference is this guide will setup TLS/encryption across Vault & Consul and depends on pre-built images rather than runtime configuration. You can find the Packer templates to create the [Consul image](https://github.com/hashicorp/guides-configuration/blob/master/consul/consul-aws.json) and [Vault image](https://github.com/hashicorp/guides-configuration/blob/master/vault/vault-aws.json) in the [Guides Configuration Repo](https://github.com/hashicorp/guides-configuration/).
 
 ## Prerequisites
 

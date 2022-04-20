@@ -1,10 +1,10 @@
 # Provision a Quick Start Vault Cluster in AWS
 
-The goal of this guide is to allows users to easily provision a quick start Vault & Consul cluster in just a few commands.
+The goal of this guide is to allow users to easily provision a quick start Vault & Consul cluster in just a few commands.
 
 ## Reference Material
 
-- [Terraform Getting Started](https://www.terraform.io/intro/getting-started/install.html)
+- [Terraform Getting Started](https://learn.hashicorp.com/tutorials/terraform/install-cli)
 - [Terraform Docs](https://www.terraform.io/docs/index.html)
 - [Consul Getting Started](https://www.consul.io/intro/getting-started/install.html)
 - [Consul Docs](https://www.consul.io/docs/index.html)

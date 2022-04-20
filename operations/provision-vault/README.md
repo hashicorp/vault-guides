@@ -1,6 +1,6 @@
 # Provision Vault
 
-The goal of this guide is to allows users to easily provision a Vault cluster in just a few short commands.
+The goal of this guide is to allow users to easily provision a Vault cluster in just a few short commands.
 
 ## Reference Material
 
@@ -40,7 +40,7 @@ The [Vault Dev Guides](./dev) are for **educational purposes only**. They're des
 
 ### Quick Start
 
-The [Vault Quick Start Guide](./quick-start) provisions a 3 node Vault cluster and 3 node Consul cluster with all agents running in server mode in the provider of your choice.
+The [Vault Quick Start Guide](./quick-start/terraform-aws) provisions a 3 node Vault cluster and 3 node Consul cluster with all agents running in server mode in the provider of your choice.
 
 The Quick Start guide leverages the scripts in the [Guides Configuration Repo](https://github.com/hashicorp/guides-configuration) to do runtime configuration of Vault. Although using `curl bash` at runtime is _not_ best practices, this makes it quick and easy to standup a Vault cluster with no external dependencies like pre-built images. This guide will also forgo setting up TLS/encryption on Vault for the sake of simplicity.
 

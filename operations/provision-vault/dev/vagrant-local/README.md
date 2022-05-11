@@ -1,6 +1,6 @@
 # Provision a Development Vault Cluster in Vagrant
 
-The goal of this guide is to allows users to easily provision a development Vault cluster in just a few commands.
+The goal of this guide is to allow users to easily provision a development Vault cluster in just a few commands.
 
 ## Reference Material
 

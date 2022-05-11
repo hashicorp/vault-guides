@@ -44,7 +44,7 @@ To sign in, use a web browser to open the page https://microsoft.com/devicelogin
 The `client_id` and `client_secret` are used by Vault for authenticating (as an application) against MSI. 
 
 The following instructions explain creating an application (service principal) for terraform executions but the same instructions apply for configuring our Vault azure auth backend:
-https://www.terraform.io/docs/providers/azurerm/authenticating_via_service_principal.html
+https://learn.hashicorp.com/tutorials/vault/azure-secrets#create-an-azure-service-principal-and-resource-group
 
 ### step 1: Terraform
 

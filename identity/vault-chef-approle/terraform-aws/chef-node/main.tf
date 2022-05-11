@@ -6,7 +6,7 @@ provider "aws" {
 }
 
 # These should typically be set via environment variables:
-# https://www.terraform.io/docs/providers/vault/index.html#provider-arguments
+# https://registry.terraform.io/providers/hashicorp/vault/latest/docs#provider-arguments
 provider "vault" {
   address = var.vault_address
 

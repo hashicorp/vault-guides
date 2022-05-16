@@ -518,12 +518,12 @@ EOF
 
 function setup_vault_1 {
   start_vault "vault_1"
-  sleep 5s
+  sleep 5
 
   printf "\n%s" \
     "[vault_1] initializing and capturing the unseal key and root token" \
     ""
-  sleep 2s # Added for human readability
+  sleep 2 # Added for human readability
 
   INIT_RESPONSE=$(vault_1 operator init -format=json -key-shares 1 -key-threshold 1)
 
@@ -541,7 +541,7 @@ function setup_vault_1 {
   printf "\n%s" \
     "[vault_1] unsealing and logging in" \
     ""
-  sleep 2s # Added for human readability
+  sleep 2 # Added for human readability
 
   vault_1 operator unseal "$UNSEAL_KEY"
   vault_1 login "$VAULT_TOKEN"
@@ -549,7 +549,7 @@ function setup_vault_1 {
   printf "\n%s" \
     "[vault_1] enabling the transit secret engine and creating a key to auto-unseal vault cluster" \
     ""
-  sleep 5s # Added for human readability
+  sleep 5 # Added for human readability
 
   vault_1 secrets enable transit
   vault_1 write -f transit/keys/unseal_key
@@ -557,12 +557,12 @@ function setup_vault_1 {
 
 function setup_vault_2 {
   start_vault "vault_2"
-  sleep 5s
+  sleep 5
 
   printf "\n%s" \
     "[vault_2] initializing and capturing the recovery key and root token" \
     ""
-  sleep 2s # Added for human readability
+  sleep 2 # Added for human readability
 
   # Initialize the second node and capture its recovery keys and root token
   INIT_RESPONSE2=$(vault_2 operator init -format=json -recovery-shares 1 -recovery-threshold 1)
@@ -582,21 +582,21 @@ function setup_vault_2 {
     "[vault_2] waiting to finish post-unseal setup (15 seconds)" \
     ""
 
-  sleep 15s
+  sleep 15
 
   printf "\n%s" \
     "[vault_2] logging in and enabling the KV secrets engine" \
     ""
-  sleep 2s # Added for human readability
+  sleep 2 # Added for human readability
 
   vault_2 login "$VAULT_TOKEN2"
   vault_2 secrets enable -path=kv kv-v2
-  sleep 2s
+  sleep 2
 
   printf "\n%s" \
     "[vault_2] storing secret 'kv/apikey' to demonstrate snapshot and recovery methods" \
     ""
-  sleep 2s # Added for human readability
+  sleep 2 # Added for human readability
 
   vault_2 kv put kv/apikey webapp=ABB39KKPTWOR832JGNLS02
   vault_2 kv get kv/apikey
@@ -604,27 +604,27 @@ function setup_vault_2 {
 
 function setup_vault_3 {
   start_vault "vault_3"
-  sleep 2s
+  sleep 2
 }
 
 function setup_vault_4 {
   start_vault "vault_4"
-  sleep 2s
+  sleep 2
 }
 
 function setup_vault_5 {
   start_vault "vault_5"
-  sleep 2s
+  sleep 2
 }
 
 function setup_vault_6 {
   start_vault "vault_6"
-  sleep 2s
+  sleep 2
 }
 
 function setup_vault_7 {
   start_vault "vault_7"
-  sleep 2s
+  sleep 2
 }
 
 function create {

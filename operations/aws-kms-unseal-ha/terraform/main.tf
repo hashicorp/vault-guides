@@ -11,7 +11,7 @@ resource "aws_vpc" "vpc" {
   cidr_block           = "${var.vpc_cidr}"
   enable_dns_hostnames = true
 
-  tags {
+  tags = {
     Name = "vault-kms-unseal-${random_pet.env.id}"
   }
 }
@@ -19,7 +19,7 @@ resource "aws_vpc" "vpc" {
 resource "aws_internet_gateway" "gw" {
   vpc_id = "${aws_vpc.vpc.id}"
 
-  tags {
+  tags = {
     Name = "vault-kms-unseal-${random_pet.env.id}"
   }
 }
@@ -30,7 +30,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = "${var.aws_zone}"
   map_public_ip_on_launch = true
 
-  tags {
+  tags = {
     Name = "vault-kms-unseal-${random_pet.env.id}"
   }
 }
@@ -43,7 +43,7 @@ resource "aws_route_table" "route" {
     gateway_id = "${aws_internet_gateway.gw.id}"
   }
 
-  tags {
+  tags = {
     Name = "vault-kms-unseal-${random_pet.env.id}"
   }
 }

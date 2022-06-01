@@ -7,7 +7,7 @@ variable aws_zone {
 }
 
 variable vpc_cidr {
-  type        = "string"
+  type        = string
   description = "CIDR of the VPC"
   default     = "192.168.100.0/24"
 }

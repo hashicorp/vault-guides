@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="MySqlConnector" Version="0.35.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="VaultSharp" Version="0.6.4" />
   </ItemGroup>
 

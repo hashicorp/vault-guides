@@ -59,7 +59,7 @@ resource "aws_ecs_task_definition" "product_db" {
   container_definitions = jsonencode([
     {
       name      = "product-db"
-      image     = "hashicorpdemoapp/product-api-db:v0.0.19"
+      image     = "hashicorpdemoapp/product-api-db:v0.0.22"
       essential = true
       portMappings = [
         {

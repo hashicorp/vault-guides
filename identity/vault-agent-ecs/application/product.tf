@@ -45,7 +45,7 @@ module "product_api" {
   log_configuration   = local.product_log_config
   container_definitions = [{
     name      = local.product_api_name
-    image     = "hashicorpdemoapp/product-api:v0.0.19"
+    image     = "hashicorpdemoapp/product-api:v0.0.22"
     essential = true
     portMappings = [
       {

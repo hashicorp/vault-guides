@@ -90,7 +90,7 @@ variable "efs_access_point_id" {
 variable "vault_ecs_image" {
   description = "Vault agent ECS Docker image."
   type        = string
-  default     = "joatmon08/vault-agent-ecs:1.9.2"
+  default     = "ghcr.io/joatmon08/vault-agent-ecs:v1.11.0"
 }
 
 variable "log_configuration" {

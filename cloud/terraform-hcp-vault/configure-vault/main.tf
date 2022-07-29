@@ -21,23 +21,20 @@
 #    │       └── boundary
 #    └── test
 #------------------------------------------------------------------------------
-
-provider "vault" {
-  alias = "admin"
-  namespace = "admin"
+terraform {
+  required_providers {
+    vault = "~> 3.8.0"
+  }
 }
+
+
+provider "vault" {}
 
 #--------------------------------------
 # Create 'admin/education' namespace
 #--------------------------------------
 resource "vault_namespace" "education" {
-  provider = vault.admin
   path = "education"
-}
-
-provider "vault" {
-  alias = "education"
-  namespace = "admin/education"
 }
 
 #---------------------------------------------------
@@ -45,13 +42,8 @@ provider "vault" {
 #---------------------------------------------------
 resource "vault_namespace" "training" {
   depends_on = [vault_namespace.education]
-  provider = vault.education
+  namespace = vault_namespace.education.path
   path = "training"
-}
-
-provider "vault" {
-  alias = "training"
-  namespace = "admin/education/training"
 }
 
 #-----------------------------------------------------------
@@ -59,24 +51,13 @@ provider "vault" {
 #-----------------------------------------------------------
 resource "vault_namespace" "boundary" {
   depends_on = [vault_namespace.training]
-  provider = vault.training
+  namespace = vault_namespace.training.path_fq
   path = "boundary"
 }
 
-provider "vault" {
-  alias = "boundary"
-  namespace = "admin/education/training/boundary"
-}
-
-#--------------------------------------
-# Create 'admin/test' namespace
-#--------------------------------------
+# #--------------------------------------
+# # Create 'admin/test' namespace
+# #--------------------------------------
 resource "vault_namespace" "test" {
-  provider = vault.admin
   path = "test"
-}
-
-provider "vault" {
-  alias = "test"
-  namespace = "admin/test"
 }

@@ -15,8 +15,6 @@ import (
 // backend wraps the backend framework and adds a map for storing key value pairs
 type backend struct {
 	*framework.Backend
-
-	store map[string][]byte
 }
 
 var _ logical.Factory = Factory
@@ -40,9 +38,7 @@ func Factory(ctx context.Context, conf *logical.BackendConfig) (logical.Backend,
 }
 
 func newBackend() (*backend, error) {
-	b := &backend{
-		store: make(map[string][]byte),
-	}
+	b := &backend{}
 
 	b.Backend = &framework.Backend{
 		Help:        strings.TrimSpace(mockHelp),
@@ -108,7 +104,11 @@ func (b *backend) handleRead(ctx context.Context, req *logical.Request, data *fr
 
 	// Decode the data
 	var rawData map[string]interface{}
-	fetchedData := b.store[req.ClientToken+"/"+path]
+	entry, err := req.Storage.Get(ctx, req.ClientToken+"/"+path)
+	if err != nil {
+		return nil, err
+	}
+	fetchedData := entry.Value
 	if fetchedData == nil {
 		resp := logical.ErrorResponse("No value at %v%v", req.MountPoint, path)
 		return resp, nil
@@ -145,7 +145,14 @@ func (b *backend) handleWrite(ctx context.Context, req *logical.Request, data *f
 	}
 
 	// Store kv pairs in map at specified path
-	b.store[req.ClientToken+"/"+path] = buf
+	entry := &logical.StorageEntry{
+		Key:      req.ClientToken + "/" + path,
+		Value:    buf,
+		SealWrap: false,
+	}
+	if err = req.Storage.Put(ctx, entry); err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }
@@ -158,7 +165,9 @@ func (b *backend) handleDelete(ctx context.Context, req *logical.Request, data *
 	path := data.Get("path").(string)
 
 	// Remove entry for specified path
-	delete(b.store, req.ClientToken+"/"+path)
+	if err := req.Storage.Delete(ctx, req.ClientToken+"/"+path); err != nil {
+		return nil, err
+	}
 
 	return nil, nil
 }

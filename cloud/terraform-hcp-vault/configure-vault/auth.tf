@@ -3,7 +3,7 @@
 #------------------------------------------------------------
 resource "vault_auth_backend" "userpass" {
   depends_on = [vault_namespace.test]
-  namespace = vault_namespace.test.path
+  provider = vault.test
   type = "userpass"
 }
 
@@ -12,8 +12,8 @@ resource "vault_auth_backend" "userpass" {
 #-----------------------------------------------------------
 resource "vault_generic_endpoint" "student" {
   depends_on           = [vault_auth_backend.userpass]
+  provider = vault.test
   path                 = "auth/userpass/users/student"
-  namespace = vault_namespace.test.path
   ignore_absent_fields = true
 
   data_json = <<EOT

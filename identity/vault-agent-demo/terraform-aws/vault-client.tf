@@ -11,11 +11,18 @@ resource "aws_instance" "vault-client" {
   iam_instance_profile        = aws_iam_instance_profile.vault-client.id
 
   tags = {
-    Name     = "${var.environment_name}-vault-client"
-    TTL      = var.hashibot_reaper_ttl
+    Name = "${var.environment_name}-vault-client"
+    TTL  = var.hashibot_reaper_ttl
   }
 
-  user_data = data.template_file.vault-client.rendered
+  user_data = templatefile(
+    "${path.module}/templates/userdata-vault-client.tpl",
+    {
+      tpl_vault_zip_file     = var.vault_zip_file
+      tpl_vault_service_name = "vault-${var.environment_name}"
+      tpl_vault_server_addr  = aws_instance.vault-server[0].private_ip
+    }
+  )
 
   lifecycle {
     ignore_changes = [
@@ -24,14 +31,3 @@ resource "aws_instance" "vault-client" {
     ]
   }
 }
-
-data "template_file" "vault-client" {
-  template = file("${path.module}/templates/userdata-vault-client.tpl")
-
-  vars = {
-    tpl_vault_zip_file     = var.vault_zip_file
-    tpl_vault_service_name = "vault-${var.environment_name}"
-    tpl_vault_server_addr  = aws_instance.vault-server[0].private_ip
-  }
-}
-

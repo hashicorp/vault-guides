@@ -4,8 +4,8 @@ terraform {
   required_providers {
     template = "~> 2.2.0"
     random = "~> 3.1.2"
-    azurerm = "~> 3.0.2"
-    azuread = "~> 2.19.1"
+    azurerm = "~> 3.24.0"
+    azuread = "~> 2.29.0"
   }
 }
 

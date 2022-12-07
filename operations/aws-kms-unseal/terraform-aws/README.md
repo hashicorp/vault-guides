@@ -1,55 +1,108 @@
 # Vault Auto-unseal using AWS KMS
 
-These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://learn.hashicorp.com/vault/operations/ops-autounseal-aws-kms) guide.
+These assets are provided to perform the tasks described in the [Vault Auto-unseal with AWS KMS](https://developer.hashicorp.com/vault/tutorials/auto-unseal/autounseal-aws-kms) guide.
 
 ---
 
-## Demo Steps
+## Hands on Lab Steps
 
 ### Setup
 
-1. Set this location as your working directory
-1. Set your AWS credentials as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`
-1. Set Vault Enterprise URL in a file named `terraform.tfvars` (see `terraform.tfvars.example`)
+1. Set this location as your working directory.
+
+1. Export your AWS credentials as environment variables: `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY`.
+
+1. Override default AWS region and zone in a `terraform.tfvars` file as needed (see `terraform.tfvars.example`).
 
 ### Commands Cheat Sheet
 
-```bash
-# Pull necessary plugins
-$ terraform init
+These are the commands which are shown in the tutorial content.
 
-$ terraform plan
+#### Terraform
 
-# Output provides the SSH instruction
-$ terraform apply
+Initialize Terraform.
 
-# SSH into the EC2 machine
-$ ssh ubuntu@<IP_ADDRESS> -i private.key
+```shell
+terraform init
+```
 
-#----------------------------------
-# Once inside the EC2 instance...
-$ export VAULT_ADDR=http://127.0.0.1:8200
+Plan resource changes.
 
-$ vault status
+```shell
+terraform plan -out learn-vault-aws-kms.plan
+```
 
-# Initialize Vault
-$ vault operator init -key-shares=1 -key-threshold=1
+Apply the plan.
 
-# Restart the Vault server
-$ sudo systemctl restart vault
+```shell
+terraform apply "learn-vault-aws-kms.plan"
+```
 
-# Check to verify that the Vault is auto-unsealed
-$ vault status
+#### Vault in EC2 instance
 
-$ vault login <INITIAL_ROOT_TOKEN>
+SSH into the EC2 machine; use the example command from the
+Terraform apply output, as it contains the correct IP address.
 
-# Explorer the Vault configuration file
-$ cat /etc/vault.d/vault.hcl
+```shell
+ssh ubuntu@<IP_ADDRESS> -i private.key
+```
 
-$ exit
-#----------------------------------
+Once in the EC2 instance, export a `VAULT_ADDR` environment variable.
 
-# Clean up...
-$ terraform destroy -force
-$ rm -rf .terraform terraform.tfstate* private.key
+```shell
+export VAULT_ADDR=http://127.0.0.1:8200
+```
+
+Get Vault server status.
+
+```shell
+vault status
+```
+
+
+Initialize Vault
+
+```shell
+vault operator init -key-shares=1 -key-threshold=1
+```
+
+Restart the Vault server process.
+
+```shell
+sudo systemctl restart vault
+```
+
+Check to verify that the Vault is auto-unsealed
+
+```shell
+vault status
+```
+
+Login with Initial Root Token value from the Vault
+initialization output.
+
+```shell
+vault login <INITIAL_ROOT_TOKEN_VALUE>
+```
+
+Explore the Vault server configuration file.
+
+```
+cat /etc/vault.d/vault.hcl
+```
+
+Log out.
+
+```
+exit
+```
+
+Clean up.
+
+```
+terraform destroy -auto-approve
+```
+
+```shell
+rm -rf .terraform terraform.tfstate* private.key
 ```

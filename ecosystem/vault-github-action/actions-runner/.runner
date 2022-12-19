@@ -1,0 +1,9 @@
+﻿{
+  "agentId": 2,
+  "agentName": "rowan-C02FW09HMD6R",
+  "poolId": 1,
+  "poolName": "Default",
+  "serverUrl": "https://pipelines.actions.githubusercontent.com/vyFIZnMSufPBxWjw5Mm1Mh1Jk2DfcCNyexOxsbkap2SYxDQKmM",
+  "gitHubUrl": "https://github.com/rowansmithhc/vault-action-exampleapp",
+  "workFolder": "_work"
+}

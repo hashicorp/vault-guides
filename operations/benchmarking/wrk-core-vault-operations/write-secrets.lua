@@ -11,19 +11,21 @@ function setup(thread)
 end
 
 function init(args)
+   requests = 0
+   writes = 0
+   responses = 0
+   body = ''
+   method = "POST"
+   path = "/v1/secret/read-test/secret-0"
+   local msg = "thread %d created"
+
    if args[1] == nil then
       num_secrets = 1000
    else
       num_secrets = tonumber(args[1])
    end
+
    print("Number of secrets is: " .. num_secrets)
-   requests  = 0
-   writes = 0
-   responses = 0
-   method = "POST"
-   path = "/v1/secret/read-test/secret-0"
-   body = ''
-   local msg = "thread %d created"
    print(msg:format(id))
 end
 
@@ -38,15 +40,24 @@ function request()
       -- body = '{"foo-' .. id .. '" : "bar-' .. writes ..'"}'
       -- add extra key with 100 bytes
       body = '{"thread-' .. id .. '" : "write-' .. writes ..'","extra" : "1xxxxxxxxx2xxxxxxxxx3xxxxxxxxx4xxxxxxxxx5xxxxxxxxx6xxxxxxxxx7xxxxxxxxx8xxxxxxxxx9xxxxxxxxx0xxxxxxxxx"}'
+     print("Request body:")
+     print(body)
    end
+
    requests = requests + 1
    return wrk.format(method, path, nil, body)
 end
 
 function response(status, headers, body)
    responses = responses + 1
+   print("Response")
+   print(status)
+   print(body)
+
    if responses == num_secrets then
-      os.exit()
+      -- os.exit()
+      print("Test complete, please CTRL-C to print results")
+      wrk.thread:stop()
    end
 end
 

@@ -16,7 +16,16 @@ resource "aws_instance" "vault-server" {
     TTL      = var.hashibot_reaper_ttl
   }
 
-  user_data = data.template_file.vault-server.rendered
+  user_data = templatefile("${path.module}/templates/userdata-vault-server.tpl",
+    {
+      tpl_vault_zip_file          = var.vault_zip_file
+      tpl_vault_service_name      = "vault-${var.environment_name}"
+      tpl_kms_key                 = aws_kms_key.vault.id
+      tpl_aws_region              = var.aws_region
+      account_id                  = data.aws_caller_identity.current.account_id
+      role_name                   = "${var.environment_name}-vault-client-role"
+      tpl_node_id                 = "${var.environment_name}-vault-server-role"
+    })
 
   lifecycle {
     ignore_changes = [
@@ -27,18 +36,4 @@ resource "aws_instance" "vault-server" {
 }
 
 data "aws_caller_identity" "current" {
-}
-
-data "template_file" "vault-server" {
-  template = file("${path.module}/templates/userdata-vault-server.tpl")
-
-  vars = {
-    tpl_vault_zip_file          = var.vault_zip_file
-    tpl_vault_service_name      = "vault-${var.environment_name}"
-    tpl_kms_key                 = aws_kms_key.vault.id
-    tpl_aws_region              = var.aws_region
-    account_id                  = data.aws_caller_identity.current.account_id
-    role_name                   = "${var.environment_name}-vault-client-role"
-    tpl_node_id                 = "${var.environment_name}-vault-server-role"
-  }
 }

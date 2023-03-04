@@ -9,8 +9,8 @@ using the below command.
 
   $ terraform taint -module=ssh_keypair_aws_override.tls_private_key \
       tls_private_key.key
-${var.download_certs ?
-"\n${module.root_tls_self_signed_ca.zREADME}
+%{if var.download_certs}
+${module.root_tls_self_signed_ca.zREADME}
 ${module.leaf_tls_self_signed_cert.zREADME}
 # ------------------------------------------------------------------------------
 # Local HTTP API Requests
@@ -34,7 +34,11 @@ requests to work.
   $ export CONSUL_ADDR=http://${module.consul_aws.consul_lb_dns}:8500 # HTTP
   $ export CONSUL_CACERT=./${module.leaf_tls_self_signed_cert.ca_cert_filename}
   $ export CONSUL_CLIENT_CERT=./${module.leaf_tls_self_signed_cert.leaf_cert_filename}
-  $ export CONSUL_CLIENT_KEY=./${module.leaf_tls_self_signed_cert.leaf_private_key_filename}\n" : ""}
+  $ export CONSUL_CLIENT_KEY=./${module.leaf_tls_self_signed_cert.leaf_private_key_filename}
+
+%{else}
+""
+%{endif}
 # ------------------------------------------------------------------------------
 # Vault Best Practices
 # ------------------------------------------------------------------------------

@@ -51,8 +51,8 @@ echo -e "\r\n===== Install the CA certificate into the Vault ====="
 vault write subca/intermediate/set-signed certificate=@subca.crt
 
 vault write subca/config/urls \
-	issuing_certificates="$PUBLIC_VAULT_ADDR/v1/venafi/ca" \
-	crl_distribution_points="$PUBLIC_VAULT_ADDR/v1/venafi/crl"
+	issuing_certificates="$PUBLIC_VAULT_ADDR/v1/subca/ca" \
+	crl_distribution_points="$PUBLIC_VAULT_ADDR/v1/subca/crl"
 
 vault write subca/venafi-policy/vaultissued \
     tpp_url="$TPP_ADDR" \

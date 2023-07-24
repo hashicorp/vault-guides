@@ -12,19 +12,24 @@ import (
 func main() {
 	apiClientMeta := &api.PluginAPIClientMeta{}
 	flags := apiClientMeta.FlagSet()
-	flags.Parse(os.Args[1:])
+
+	if err := flags.Parse(os.Args[1:]); err != nil {
+		fatal(err)
+	}
 
 	tlsConfig := apiClientMeta.GetTLSConfig()
 	tlsProviderFunc := api.VaultPluginTLSProvider(tlsConfig)
 
-	err := plugin.Serve(&plugin.ServeOpts{
+	if err := plugin.Serve(&plugin.ServeOpts{
 		BackendFactoryFunc: hashicups.Factory,
 		TLSProviderFunc:    tlsProviderFunc,
-	})
-	if err != nil {
-		logger := hclog.New(&hclog.LoggerOptions{})
-
-		logger.Error("plugin shutting down", "error", err)
-		os.Exit(1)
+	}); err != nil {
+		fatal(err)
 	}
+}
+
+func fatal(err error) {
+	logger := hclog.New(&hclog.LoggerOptions{})
+	logger.Error("plugin shutting down", "error", err)
+	os.Exit(1)
 }

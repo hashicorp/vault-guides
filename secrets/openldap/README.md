@@ -242,7 +242,7 @@ We will use a simple Vault development server container for the purpose of this 
       -p 8200:8200 \
       --detach \
       --rm \
-      vault:1.4.0-rc1
+      hashicorp/vault:1.14.1
     ```
 
     The flags to `docker run` define a container name, network hostname, name of Docker network to join, the IPC_LOCK capability for `mlock()` support, an environment variable to set the initial Vault root token, an environment variable to set the listen address, and the port mapping plus exposed port.
@@ -253,8 +253,8 @@ We will use a simple Vault development server container for the purpose of this 
 
     ```plaintext
     ...
-    Status: Downloaded newer image for vault:1.4.0-rc1
-    089b6beed68bafd942ae771f444008fd51694960973c15ce0af9700874f835b3
+    Status: Downloaded newer image for hashicorp/vault:1.14.1
+    5ed45b1f0d2d44fe1f8ae4fa99617cd3658b5f31eea0781b5ba327340e9f7039
     ```
 
     > **NOTE**: We have started the Vault server in [development mode](https://www.vaultproject.io/docs/commands/server/#inlinecode--dev-1); this means Vault initializes, unseals itself, and sets the initial root token to _c0ffee0ca7_ for us. Any 1.4.0+ version of the container can be used.

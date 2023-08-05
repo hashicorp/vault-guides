@@ -6,8 +6,8 @@ The goal of this guide is to allow users to easily provision a development Vault
 
 - [Vagrant Getting Started](https://www.vagrantup.com/intro/getting-started/index.html)
 - [Vagrant Docs](https://www.vagrantup.com/docs/index.html)
-- [Vault Getting Started](https://www.vaultproject.io/intro/getting-started/install.html)
-- [Vault Docs](https://www.vaultproject.io/docs/index.html)
+- [Vault Getting Started](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-install)
+- [Vault Docs](https://developer.hashicorp.com/vault/docs)
 
 ## Estimated Time to Complete
 

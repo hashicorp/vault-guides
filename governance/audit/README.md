@@ -14,7 +14,7 @@ The examples here utilize the Vault audit log written to a file. These same proc
 For these tests, please ensure you have 
 - [A Vault server](../operations/provision-vault)
 - [Dynamic DB credentials](../secrets/database-mysql)
-- [Username and password setup](https://www.vaultproject.io/api/auth/userpass/index.html)
+- [Username and password setup](https://developer.hashicorp.com/vault/api-docs/auth/userpass)
 
 ### <a name="host"></a>Host compromised
 An IDS alerts that a certain server host has been rooted by a malicious user. In this scenario a security administrator may want to revoke all leases associated with the given IP address. You can leverage the audit log to revoke all secret leases associated with that IP very quickly.

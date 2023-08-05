@@ -14,7 +14,7 @@ To perform the tasks described in this guide, you need:
 
 - [Minikube installed](https://kubernetes.io/docs/tasks/tools/install-minikube/)
 - A running Vault environment reachable from your Kubernetes environment
-- [Key/Value secrets engine version 1](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html) is mounted at `secret/`
+- [Key/Value secrets engine version 1](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v1) is mounted at `secret/`
 
 > If you want to test against Azure Kubernetes Service (AKS) cluster or Google Kubernetes Engine (GKE) cluster instead, you can use the Terraform files under the `terraform-azure` folder to create an AKS cluster or the `terraform-gcp` folder for a GKE cluster. Refer to the [guide](https://learn.hashicorp.com/vault/identity-access-management/vault-agent-k8s#azure-kubernetes-service-cluster) for more detail.
 

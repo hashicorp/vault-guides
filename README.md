@@ -22,15 +22,15 @@ This area will contain instructions to operationalize Vault.
 
 ## Secrets
 
-This directory contains example use cases involving [secrets management](https://www.vaultproject.io/docs/secrets/index.html).
+This directory contains example use cases involving [secrets management](https://developer.hashicorp.com/vault/docs/secrets).
 
 ## Identity
 
-This directory contains example use cases involving [identity](https://www.vaultproject.io/docs/auth/index.html).
+This directory contains example use cases involving [identity](https://developer.hashicorp.com/vault/docs/auth).
 
 ## Encryption
 
-This directory contains example use cases involving [encryption as a service](https://www.vaultproject.io/docs/secrets/transit/index.html).
+This directory contains example use cases involving [encryption as a service](https://developer.hashicorp.com/vault/docs/secrets/transit).
 
 ## Assets
 

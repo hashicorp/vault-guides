@@ -6,7 +6,7 @@ This guide will demonstrate Vault's GCP IAM authentication method:
 > 1. The client sends this signed JWT to Vault along with a role name.
 > 1. Vault extracts the kid header value, which contains the ID of the key-pair used to generate the JWT, and the sub ID/email to find the service account key. If the service account does not exist or the key is not linked to the service account, Vault denies authentication.
 > 1. Vault authorizes the confirmed service account against the given role. If that is successful, a Vault token with the proper policies is returned.
-> https://www.vaultproject.io/docs/auth/gcp.html#iam-login
+> https://developer.hashicorp.com/vault/docs/auth/gcp#iam-login
 
 <img src="https://raw.githubusercontent.com/hashicorp/vault-guides/master/assets/vault_gcp_iam_arch.png" alt="GCP IAM authentication" width="400">
 
@@ -30,8 +30,8 @@ We will then create the following Vault install and configuration using the vaul
 * An auth policy tied to that reader policy that uses GCP IAM tied to the alice service account eg. `alice-account@vaultguides-gcpiam-ee.iam.gserviceaccount.com`
 
 ## Reference Material
-https://www.vaultproject.io/docs/auth/gcp.html
-https://www.vaultproject.io/api/auth/gcp/index.html
+https://developer.hashicorp.com/vault/docs/auth/gcp
+https://developer.hashicorp.com/vault/api-docs/auth/gcp
 
 ## Note
 The code in this repository is for reference only. It is meant to illustrate a few of the requirements for using the GCP IAM authentication method.

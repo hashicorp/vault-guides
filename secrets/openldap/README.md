@@ -8,11 +8,11 @@ The infrastructure in this demonstration consists of the following:
 - 1 OpenLDAP container
 - 1 Secure Shell Daemon (sshd) container
 
-Once you have established the initial SSH authentication through OpenLDAP, we can demonstrate use of Vault to manage our LDAP user credential with the [OpenLDAP Secrets Engine](https://www.vaultproject.io/docs/secrets/openldap/) introduced in **Vault version 1.4.0**).
+Once you have established the initial SSH authentication through OpenLDAP, we can demonstrate use of Vault to manage our LDAP user credential with the [LDAP Secrets Engine](https://developer.hashicorp.com/vault/docs/secrets/ldap) introduced in **Vault version 1.4.0**).
 
 > **NOTE:** As this is purely an informative feature demonstration, the environment is not configured to use TLS for Vault and OpenLDAP.
 
-Refer to the [OpenLDAP Secrets Engine](https://learn.hashicorp.com/vault/secrets-management/sm-openldap) guide for additional information using the OpenLDAP secrets engine.
+Refer to the [LDAP Secrets Engine](https://developer.hashicorp.com/vault/docs/secrets/ldap) guide for additional information using the OpenLDAP secrets engine.
 
 ## Prerequisites
 
@@ -257,7 +257,7 @@ We will use a simple Vault development server container for the purpose of this 
     089b6beed68bafd942ae771f444008fd51694960973c15ce0af9700874f835b3
     ```
 
-    > **NOTE**: We have started the Vault server in [development mode](https://www.vaultproject.io/docs/commands/server/#inlinecode--dev-1); this means Vault initializes, unseals itself, and sets the initial root token to _c0ffee0ca7_ for us. Any 1.4.0+ version of the container can be used.
+    > **NOTE**: We have started the Vault server in [development mode](https://developer.hashicorp.com/vault/docs/commands/server#dev); this means Vault initializes, unseals itself, and sets the initial root token to _c0ffee0ca7_ for us. Any 1.4.0+ version of the container can be used.
 
     Beware that in dev mode all Vault data are persisted only to memory, so if the container is stopped you will lose any progress from this point onward.
 
@@ -495,9 +495,9 @@ learn-vault
 1. [vault-guides repository](https://github.com/hashicorp/vault-guides)
 1. [hashicorp/vault](https://hub.docker.com/_/vault)
 1. [hashicorp/vault GitHub repository](https://github.com/hashicorp/docker-vault)
-1. [Vault server development mode](https://www.vaultproject.io/docs/commands/server/#inlinecode--dev-1)
-1. [OpenLDAP Secrets Engine](https://www.vaultproject.io/docs/secrets/openldap/)
-1. [OpenLDAP Secrets Engine API](https://www.vaultproject.io/api-docs/secret/openldap/)
+1. [Vault server development mode](https://developer.hashicorp.com/vault/docs/commands/server#dev)
+1. [LDAP Secrets Engine](https://developer.hashicorp.com/vault/docs/secrets/ldap)
+1. [LDAP Secrets Engine API](https://developer.hashicorp.com/vault/api-docs/secret/ldap)
 1. [OpenLDAP](https://www.openldap.org/)
 1. [osixia/openldap](https://hub.docker.com/r/osixia/openldap)
 1. [osixia/openldap  GitHub repository](https://github.com/osixia/docker-openldap)

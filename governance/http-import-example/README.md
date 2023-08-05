@@ -6,10 +6,10 @@ This is a good example of how the `http` import makes Sentinel in Vault much mor
 
 Note that the policies in this guide require Vault Enterprise 1.5 or higher since the `http` import was not included in earlier versions of Vault Enterprise.
 
-Before starting this guide, you might want to read about Vault's [Identity Secrets Engine](https://www.vaultproject.io/docs/secrets/identity) and [Namespaces](https://www.vaultproject.io/docs/enterprise/namespaces). We also recommend reading about [Sentinel](https://docs.hashicorp.com/sentinel/) and how it is used in Vault in this [document](https://www.vaultproject.io/docs/enterprise/sentinel).
+Before starting this guide, you might want to read about Vault's [Identity Secrets Engine](https://developer.hashicorp.com/vault/docs/secrets/identity) and [Namespaces](https://developer.hashicorp.com/vault/docs/enterprise/namespaces). We also recommend reading about [Sentinel](https://docs.hashicorp.com/sentinel) and how it is used in Vault in this [document](https://developer.hashicorp.com/vault/docs/enterprise/sentinel).
 
 ## Policies
-There are two Sentinel [Endpoint Governing Policies](https://www.vaultproject.io/docs/enterprise/sentinel#endpoint-governing-policies-egps) (EGPs) in this directory:
+There are two Sentinel [Endpoint Governing Policies](https://developer.hashicorp.com/vault/docs/enterprise/sentinel#endpoint-governing-policies-egps) (EGPs) in this directory:
 1. [get-namespace-map.sentinel](./get-namespace-map.sentinel)
 2. [restrict-namespaces-of-group-members.sentinel](./restrict-namespaces-of-group-members.sentinel)
 
@@ -18,7 +18,7 @@ Both of these policies should be created in the root namespace of your Vault clu
 ## The get-namespace-map Policy
 The first policy, `get-namespace-map.sentinel`, builds a complete map of all namespaces in a Vault cluster. It returns a JSON map with the names of all Vault namespaces as keys and lists of descendant namespaces of the keys' namespaces as values. This policy can be invoked periodically to retrieve the current namespace map.
 
-The first policy uses Sentinel's [http](https://docs.hashicorp.com/sentinel/imports/http/) import make calls againt the [/sys/namespaces](https://www.vaultproject.io/api-docs/system/namespaces#list-namespaces) endpoint of Vault's HTTP API. This is done in the `get_namespace_map` function which is initially called against the root namespace ("") but calls itself recursively against each discovered child namespace until it has explored all namespaces.
+The first policy uses Sentinel's [http](https://docs.hashicorp.com/sentinel/imports/http/) import make calls againt the [/sys/namespaces](https://developer.hashicorp.com/vault/api-docs/system/namespaces#list-namespaces) endpoint of Vault's HTTP API. This is done in the `get_namespace_map` function which is initially called against the root namespace ("") but calls itself recursively against each discovered child namespace until it has explored all namespaces.
 
 The first policy should be applied against the path, `secret/get-namespace-map` in the root namespace of your Vault cluster. Since the policy always returns `false`, you can invoke it and obtain the current namespace map by running `vault read secret/get-namespace-map`.
 

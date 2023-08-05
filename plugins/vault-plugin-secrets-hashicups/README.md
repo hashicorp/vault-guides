@@ -74,5 +74,5 @@ logins in the [products API](https://github.com/hashicorp-demoapp/product-api-go
 
 ## Additional references:
 
-- [Upgrading Plugins](https://www.vaultproject.io/docs/upgrading/plugins)
-- [List of Vault Plugins](https://www.vaultproject.io/docs/plugin-portal)
+- [Upgrading Plugins](https://developer.hashicorp.com/vault/docs/upgrading/plugins)
+- [List of Vault Integrations](https://developer.hashicorp.com/vault/integrations)

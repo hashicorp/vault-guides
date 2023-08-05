@@ -83,12 +83,12 @@ sudo systemctl restart consul
 
 echo "Configure Vault server"
 cat <<CONFIG | sudo tee $VAULT_CONFIG_DIR/default.hcl
-# https://www.vaultproject.io/docs/configuration/index.html
+# https://developer.hashicorp.com/vault/docs/configuration
 cluster_name = "${name}"
 ui           = true
 
-# https://www.vaultproject.io/docs/configuration/storage/consul.html
-backend "consul" {
+# https://developer.hashicorp.com/vault/docs/configuration/storage/consul
+storage "consul" {
   scheme  = "https"
   address = "127.0.0.1:8080"
   path    = "vault/"
@@ -99,7 +99,7 @@ backend "consul" {
   tls_key_file  = "$VAULT_TLS_DIR/consul.key"
 }
 
-# https://www.vaultproject.io/docs/configuration/listener/tcp.html
+# https://developer.hashicorp.com/vault/docs/configuration/listener/tcp
 listener "tcp" {
   address = "0.0.0.0:8200"
 

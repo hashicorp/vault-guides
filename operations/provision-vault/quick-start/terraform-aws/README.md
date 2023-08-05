@@ -8,8 +8,8 @@ The goal of this guide is to allow users to easily provision a quick start Vault
 - [Terraform Docs](https://www.terraform.io/docs/index.html)
 - [Consul Getting Started](https://www.consul.io/intro/getting-started/install.html)
 - [Consul Docs](https://www.consul.io/docs/index.html)
-- [Vault Getting Started](https://www.vaultproject.io/intro/getting-started/install.html)
-- [Vault Docs](https://www.vaultproject.io/docs/index.html)
+- [Vault Getting Started](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-install)
+- [Vault Docs](https://developer.hashicorp.com/vault/docs)
 
 ## Estimated Time to Complete
 

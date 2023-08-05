@@ -1,8 +1,8 @@
 # Sentinel Validation Policies
-This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys of secrets adhere to certain formats.  It includes policies that validate zip codes, state codes, AWS keys, and Azure credentials. It also includes a policy that requires the `delete_version_after` metadata property of KV v2 secrets to be less than 30 days (720 hours). This restricts the duration of versions of secrets; after this amount of time, each version is deleted. In addition to providing 5 Sentinel policies along with corresponding test cases for use with the [Sentinel Simulator](https://docs.hashicorp.com/sentinel/intro/getting-started/install), the guide shows the reader how to deploy them to a Vault server and how to test them with the Vault CLI. The policies support both versions 1 and 2 of the [KV secrets engine](https://www.vaultproject.io/docs/secrets/kv/index.html).
+This guide illustrates how Sentinel can be used in Vault Enterprise to validate that specific keys of secrets adhere to certain formats.  It includes policies that validate zip codes, state codes, AWS keys, and Azure credentials. It also includes a policy that requires the `delete_version_after` metadata property of KV v2 secrets to be less than 30 days (720 hours). This restricts the duration of versions of secrets; after this amount of time, each version is deleted. In addition to providing 5 Sentinel policies along with corresponding test cases for use with the [Sentinel Simulator](https://docs.hashicorp.com/sentinel/intro/getting-started/install), the guide shows the reader how to deploy them to a Vault server and how to test them with the Vault CLI. The policies support both versions 1 and 2 of the [KV secrets engine](https://developer.hashicorp.com/vault/docs/secrets/kv).
 
 ## Reference Material
-Documentation on how Sentinel can be used in Vault Enterprise can be found [here](https://www.vaultproject.io/docs/enterprise/sentinel/index.html).
+Documentation on how Sentinel can be used in Vault Enterprise can be found [here](https://developer.hashicorp.com/vault/docs/enterprise/sentinel).
 
 ## Estimated Time to Complete
 This guide should take 10-15 minutes.
@@ -22,7 +22,7 @@ You will need to have a Vault Enterprise server or cluster deployed and have a v
 We used Vault Enterprise 1.2.2 when writing this guide.
 
 ## Steps
-The steps below show you how to deploy the policies in this directory of this repository. You will use the Vault UI to create your Sentinel policies and the Vault CLI to test them.  We assume that you are using the default Vault Enterprise [namespace](https://www.vaultproject.io/docs/enterprise/namespaces/index.html).
+The steps below show you how to deploy the policies in this directory of this repository. You will use the Vault UI to create your Sentinel policies and the Vault CLI to test them.  We assume that you are using the default Vault Enterprise [namespace](https://developer.hashicorp.com/vault/docs/enterprise/namespaces).
 
 ### Step 1: Login to the UI of Your Vault Server
 Login to the UI of your Vault server with a root token or with some other token or user ID that is allowed to create Sentinel policies
@@ -31,7 +31,7 @@ Login to the UI of your Vault server with a root token or with some other token 
 In this step, you will configure a terminal session to talk to your Vault server and create an instance of the KV secrets engine so that you can use the Vault CLI to test your policies. You can use version 1 or 2 of the KV secrets engine. You could also use an existing instance of the KV secrets engine. (We show examples for version 1.)
 1. Open a terminal session on your laptop.
 1. Run `export VAULT_ADDR=<vault_address>` where "\<vault_address\>" is the address of your Vault server including "http" or "https" and the port (usually 8200).  If running locally without TLS enabled, this would be "http://127.0.0.1:8200".
-1. Run `export VAULT_TOKEN=<token>` where "\<token\>" is a root token or one that is allowed to create an instance of the Vault [KV secrets engine](https://www.vaultproject.io/docs/secrets/kv/kv-v1.html).
+1. Run `export VAULT_TOKEN=<token>` where "\<token\>" is a root token or one that is allowed to create an instance of the Vault [KV secrets engine](https://developer.hashicorp.com/vault/docs/secrets/kv/kv-v1).
 1. Run `vault secrets enable -version=1 kv` to create a new instance of the KV secrets engine at the path "kv".
 1. Validate that you can write a secret from your terminal session with a command like `vault kv put kv/test number=1`.
 1. Validate that you can read back the secret you wrote with a command like `vault kv get kv/test`.

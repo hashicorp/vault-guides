@@ -1,4 +1,4 @@
-# Vault Mock Secrets Plugin
+# Vault Mock Auth Plugin
 
 Mock is an example secrets engine plugin for [HashiCorp Vault](https://www.vaultproject.io/). It is meant for demonstration purposes only and should never be used in production.
 

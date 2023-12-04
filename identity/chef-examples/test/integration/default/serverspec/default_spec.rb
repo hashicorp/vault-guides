@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 require 'spec_helper'
 
 describe 'hashicorp_vault_examples::default' do

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "hcp_hvn" "learn_hcp_vault_hvn" {
   hvn_id         = var.hvn_id
   cloud_provider = var.cloud_provider

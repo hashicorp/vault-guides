@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Wait seconds before automatically running the next command
 DEMO_WAIT=1
 

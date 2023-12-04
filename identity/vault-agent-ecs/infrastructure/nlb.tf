@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group_rule" "nlb_to_ecs" {
   type              = "ingress"
   description       = "Allow access from product-db NLB to database"

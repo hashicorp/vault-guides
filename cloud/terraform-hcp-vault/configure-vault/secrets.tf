@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Enable kv-v2 secrets engine in the education namespace
 resource "vault_mount" "kv-v2" {
   depends_on = [vault_namespace.education]

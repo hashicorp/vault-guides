@@ -1,4 +1,7 @@
 #!/usr/bin/env bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # Create ssh key pair
 ssh-keygen -f /home/vagrant/.ssh/id_rsa -t rsa -N ''

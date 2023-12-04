@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # This file is a configuration file for a Rackup application.
 
 # Load the service file found in the lib directory.

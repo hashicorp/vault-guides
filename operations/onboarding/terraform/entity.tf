@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Create the vault entities
 resource "vault_identity_entity" "entity" {
   for_each = toset(var.entities)

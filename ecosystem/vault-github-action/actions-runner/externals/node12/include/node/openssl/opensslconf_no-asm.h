@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 #if defined(OPENSSL_LINUX) && defined(__i386__)
 # include "./archs/linux-elf/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__ILP32__)

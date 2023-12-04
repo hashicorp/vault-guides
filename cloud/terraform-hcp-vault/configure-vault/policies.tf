@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Create an admins policy in the admin namespace
 resource "vault_policy" "admin_policy" {
   namespace = vault_namespace.test.path

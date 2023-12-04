@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_efs_file_system" "mount" {
   creation_token = var.name
   encrypted      = true

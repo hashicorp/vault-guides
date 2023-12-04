@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Download the current vault-pki-monitor-venafi release zip package for your operating system (https://github.com/Venafi/vault-pki-monitor-venafi/releases/) along with its checksum for the binary. There are two versions of binaries, optional and strict. The "optional" version allows certificates to be issued by the Vault CA when there is no Venafi policy applied whereas the "strict" will return an error when there is no Venafi policy applied, "policy data is nil". 
 curl -fOSL https://github.com/Venafi/vault-pki-monitor-venafi/releases/download/0.4.0%2B181/vault-pki-monitor-venafi_0.4.0+181_linux_strict.zip
 curl -fOSL https://github.com/Venafi/vault-pki-monitor-venafi/releases/download/0.4.0%2B181/vault-pki-monitor-venafi_0.4.0+181_linux_strict.SHA256SUM

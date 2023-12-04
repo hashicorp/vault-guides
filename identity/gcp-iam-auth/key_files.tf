@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_service_account_key" "vaultadmin_credentials" {
   service_account_id = "${google_service_account.vaultadmin.name}"
   public_key_type    = "TYPE_X509_PEM_FILE"

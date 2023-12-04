@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 /* global browser Notify */
 
 const notify = new Notify(document.querySelector('#notify'));

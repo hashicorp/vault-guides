@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 path "transit/keys/my_app_key" {
   capabilities = ["read"]
 }

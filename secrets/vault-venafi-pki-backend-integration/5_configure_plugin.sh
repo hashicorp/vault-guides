@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 export TPP_ADDR=https://example.venafi.com/vedsdk
 export TPP_USER=serviceaccountuser
 export TPP_PASS=serviceaccountpassword

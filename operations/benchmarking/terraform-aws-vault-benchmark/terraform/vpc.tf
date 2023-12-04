@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "vpc" {
   source             = "terraform-aws-modules/vpc/aws"
   name               = random_id.environment_name.hex

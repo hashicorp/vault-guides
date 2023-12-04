@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # This scripts detects the IP address for vault servers, writes it to a config file, then restarts Vault
 for server in vault_s1 vault_s2 vault_s3

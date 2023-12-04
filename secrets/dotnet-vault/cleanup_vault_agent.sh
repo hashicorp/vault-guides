@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 docker-compose -f docker-compose-vault-agent-template.yml down
 docker-compose -f docker-compose-vault-agent-template.yml rm

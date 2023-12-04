@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 data "template_file" "vault_aws_auth_policy_template" {
   template = "${file("${path.module}/vault_iam_policy.json.tpl")}"
 

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 #Grafana
 resource "aws_lb" "telemetry" {
   name               = "${var.env}-grafana"

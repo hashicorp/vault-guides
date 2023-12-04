@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "hvn_id" {
   description = "The ID of the HCP HVN."
   type        = string

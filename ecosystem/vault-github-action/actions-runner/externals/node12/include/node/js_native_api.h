@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 #ifndef SRC_JS_NATIVE_API_H_
 #define SRC_JS_NATIVE_API_H_
 

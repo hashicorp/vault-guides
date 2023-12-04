@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "ecs" {
   name        = "ecs-container-instances"
   description = "ECS security group"

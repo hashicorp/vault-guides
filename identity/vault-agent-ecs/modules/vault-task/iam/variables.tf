@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 variable "name" {
   type        = string
   description = "Name for task that runs with Vault agent"

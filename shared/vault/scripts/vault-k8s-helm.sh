@@ -1,4 +1,7 @@
 #!/bin/bash -x
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # jboero@hashicorp.com - 9-APR-2019
 # A Q&D script to stand up K8s cluster + helm + consul + vault locally on single-node K8s
 # Prereqs - Requires kubectl, helm, kubeadm to be installed.

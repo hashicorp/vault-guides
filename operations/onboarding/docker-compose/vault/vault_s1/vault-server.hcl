@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 storage "consul" {
   address = "consul_a1:8500"
   path    = "vault" 

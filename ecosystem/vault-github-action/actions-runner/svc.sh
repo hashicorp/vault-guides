@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 SVC_NAME="actions.runner.rowansmithhc-vault-action-exampleapp.rowan-C02FW09HMD6R"
 SVC_NAME=${SVC_NAME// /_}

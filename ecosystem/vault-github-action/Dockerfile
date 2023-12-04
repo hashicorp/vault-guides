@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 FROM ruby:2.6.2
 MAINTAINER HashiCorp Vault Education <team-vault-education@hashicorp.com>
 

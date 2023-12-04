@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "chef-node-public-ip" {
   value = aws_instance.chef-node.public_ip
 }

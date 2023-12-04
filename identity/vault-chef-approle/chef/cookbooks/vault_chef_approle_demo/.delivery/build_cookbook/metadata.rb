@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 name 'build_cookbook'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'

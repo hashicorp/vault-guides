@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "product_db_vault_path" {
   value       = local.products_creds_path
   description = "Database credentials path stored in HCP Vault"

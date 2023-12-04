@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "hcp_vault_public_endpoint" {
   value       = module.hcp.hcp_vault_public_endpoint
   description = "Public endpoint of HCP Vault"

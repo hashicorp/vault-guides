@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "task_role" {
   source                        = "../modules/vault-task/iam"
   name                          = "${var.name}-product-api"

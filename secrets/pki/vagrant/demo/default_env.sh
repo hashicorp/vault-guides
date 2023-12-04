@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # These are all the defaults for any environment variables below.  Setting environment variables before accessing this set of defaults will override anything set here.
 DEFAULT_ROOT_DOMAIN=hashidemos.com
 

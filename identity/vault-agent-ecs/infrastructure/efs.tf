@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 module "efs" {
   source             = "../modules/vault-mount"
   name               = var.name

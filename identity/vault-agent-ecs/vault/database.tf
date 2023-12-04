@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "vault_mount" "postgres" {
   path = "${var.name}/database"
   type = "database"

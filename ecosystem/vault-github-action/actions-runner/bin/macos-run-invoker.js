@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 const { spawn } = require('child_process');
 // argv[0] = node
 // argv[1] = macos-run-invoker.js

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # see https://github.com/hashicorp/terraform
 terraform {
   required_version = ">= 1.1.7"

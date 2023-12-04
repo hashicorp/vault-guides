@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 VAULT_TOKEN=$(cat app-token.txt) VAULT_ADDR=$VAULT_ADDR VAULT_TRANSIT_KEY=my_app_key SHOULD_SEED_USERS=true dotnet run
 

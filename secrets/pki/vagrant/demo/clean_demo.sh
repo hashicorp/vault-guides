@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 . demo-magic.sh
 
 echo $(green "Removing certificates")

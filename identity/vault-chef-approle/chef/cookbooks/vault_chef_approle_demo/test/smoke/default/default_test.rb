@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # # encoding: utf-8
 
 # Inspec test for recipe vault_chef_approle_demo::default

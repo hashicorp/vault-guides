@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 FROM openjdk:8-jdk-alpine
 VOLUME /tmp
 ARG JAR_FILE

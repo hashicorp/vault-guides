@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "testing" {
   name        = "${var.environment_name}-testing-sg"
   description = "SSH and Internal Traffic"

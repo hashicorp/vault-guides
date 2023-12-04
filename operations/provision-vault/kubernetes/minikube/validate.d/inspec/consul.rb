@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 die('Failed to compute value for CONSUL_HTTP_ADDR!') unless \
   CONSUL_HTTP_ADDR = %x(minikube service --url consul-ui).chomp
 

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 #undef OPENSSL_LINUX
 #if defined(__linux) && !defined(__ANDROID__)
 # define OPENSSL_LINUX 1

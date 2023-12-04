@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 [[ -z $1 ]] && echo "usage export-approle.sh app_name" && exit 0
 

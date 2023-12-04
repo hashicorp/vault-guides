@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 const https = require('https')
 const http = require('http')
 const hostname = process.env['HOSTNAME'] || ''

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # This policy is based on the Admin policy from the Learn guide: https://learn.hashicorp.com/tutorials/vault/policies#write-a-policy
 # Lookup self 
 

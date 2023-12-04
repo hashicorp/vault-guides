@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) HashiCorp, Inc.
+ * SPDX-License-Identifier: MPL-2.0
+ */
+
 package com.hashicorp.vault.spring.demo;
 
 import org.springframework.http.HttpStatus;

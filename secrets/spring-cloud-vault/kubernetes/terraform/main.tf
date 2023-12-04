@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 provider "kubernetes" {
     host = "${var.k8s_endpoint}"
     client_certificate = "${base64decode(var.k8s_master_auth_client_certificate)}"

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # Permits CRUD operation on kv-v2
 path "kv-v2/data/*" {
   capabilities = ["create", "read", "update", "delete", "list"]

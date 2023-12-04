@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 # The following are required but for security should be set as environment vars:
 # AWS_ACCESS_KEY_ID
 # AWS_DEFAULT_REGION

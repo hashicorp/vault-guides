@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "vault_mount" "kvv2" {
   path        = var.kv_mount_path
   type        = var.kv_version

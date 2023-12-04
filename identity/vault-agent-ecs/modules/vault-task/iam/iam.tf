@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_iam_policy" "vault_agent" {
   name        = "${var.name}-vault-agent"
   path        = "/ecs/"

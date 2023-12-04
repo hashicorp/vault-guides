@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # Download the current vault-pki-backend-venafi release package for your operating system and unzip the plugin to the /etc/vault/plugins directory (or a custom directory of our choosing):
 wget https://github.com/Venafi/vault-pki-backend-venafi/releases/download/0.5.2/venafi-pki-backend_0.5.2+586_linux.zip

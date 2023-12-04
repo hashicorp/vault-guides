@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 server = true
 data_dir = "/etc/consul/data"
 encrypt = "YZqGRaEajsh8M1w4e1z/Jg=="

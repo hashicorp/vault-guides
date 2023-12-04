@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "aws_security_group" "database" {
   name        = "${var.name}-database"
   description = "Allow inbound traffic to database"

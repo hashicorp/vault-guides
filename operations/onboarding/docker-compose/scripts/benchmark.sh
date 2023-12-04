@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 # This script configures a Postgres Dynamic Database credential database for benchmarking
 vault secrets enable database

@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 output "file_system_id" {
   value       = aws_efs_file_system.mount.id
   description = "ID of EFS file system for ECS tasks with Vault agents"

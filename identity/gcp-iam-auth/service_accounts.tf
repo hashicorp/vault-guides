@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 resource "google_service_account" "vaultadmin" {
   project      = google_project.vault_gcp_iam_demo.project_id
   account_id   = "vaultadmin"

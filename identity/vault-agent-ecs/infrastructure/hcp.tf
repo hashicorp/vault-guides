@@ -1,3 +1,6 @@
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 locals {
   route_table_ids = concat(module.vpc.private_route_table_ids, module.vpc.public_route_table_ids)
 }

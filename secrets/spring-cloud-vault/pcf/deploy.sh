@@ -1,4 +1,7 @@
 #!/bin/bash
+# Copyright (c) HashiCorp, Inc.
+# SPDX-License-Identifier: MPL-2.0
+
 
 PCF_ORG=
 : ${PCF_ORG:?"Need to set PCF_ORG non-empty"}

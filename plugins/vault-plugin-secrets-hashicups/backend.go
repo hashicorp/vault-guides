@@ -82,6 +82,13 @@ func (b *hashiCupsBackend) getClient(ctx context.Context, s logical.Storage) (*h
 	b.lock.Lock()
 	unlockFunc = b.lock.Unlock
 
+	// Check if another goroutine created clients between RUnlock() and Lock() above
+	if b.client != nil {
+		return b.client, nil
+	}
+
+	// create b.client and return
+	
 	return nil, fmt.Errorf("need to return client")
 }
 

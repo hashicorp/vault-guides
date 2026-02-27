@@ -14,7 +14,7 @@ In an enterprise setting, the Vault administrator or other members of the securi
 Traditionally, when people write secrets to Vault, there is no way to validate that the values of specific keys have desired formats.
 
 ## Solution
-Sentinel allows Vault Enterprise customers to remedy that by checking that keys with specified names adhere to the desired formats.  Additoinally, the policies can be restricted to only apply when a secret includes multiple related keys or occurs on specific Vault paths.
+Sentinel allows Vault Enterprise customers to remedy that by checking that keys with specified names adhere to the desired formats.  Additionally, the policies can be restricted to only apply when a secret includes multiple related keys or occurs on specific Vault paths.
 
 ## Prerequisites
 You will need to have a Vault Enterprise server or cluster deployed and have a valid license for it. See [Vault Enterprise Trial](https://www.hashicorp.com/products/vault/trial).  You will also need a root token for your Vault server or a token or user ID that allows you to add Sentinel policies and a non-root token or user ID that you can use to write secrets that test the policies.  (Sentinel policies are not applied to root tokens.)

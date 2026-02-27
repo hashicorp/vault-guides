@@ -159,8 +159,8 @@ Tips:
 
     # enable the telemetry endpoint.
     # access it at http://<VAULT-IP-ADDRESS>:8200/v1/sys/metrics?format=prometheus
-    # see https://www.vaultproject.io/docs/configuration/telemetry
-    # see https://www.vaultproject.io/docs/configuration/listener/tcp#telemetry-parameters
+    # see https://developer.hashicorp.com/vault/docs/configuration/telemetry
+    # see https://developer.hashicorp.com/vault/docs/configuration/listener/tcp#telemetry-parameters
     telemetry {
       disable_hostname = true
       prometheus_retention_time = "24h"

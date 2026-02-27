@@ -9,7 +9,7 @@ The goal of this guide is to allow users to easily provision a best practices Va
 - [Consul Getting Started](https://www.consul.io/intro/getting-started/install.html)
 - [Consul Docs](https://www.consul.io/docs/index.html)
 - [Vault Getting Started](https://learn.hashicorp.com/vault/getting-started/install)
-- [Vault Docs](https://www.vaultproject.io/docs/index.html)
+- [Vault Docs](https://developer.hashicorp.com/vault/docs)
 
 ## Estimated Time to Complete
 

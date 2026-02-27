@@ -36,8 +36,8 @@ listener "tcp" {
 
 # enable the telemetry endpoint.
 # access it at http://<VAULT-IP-ADDRESS>:8200/v1/sys/metrics?format=prometheus
-# see https://www.vaultproject.io/docs/configuration/telemetry
-# see https://www.vaultproject.io/docs/configuration/listener/tcp#telemetry-parameters
+# see https://developer.hashicorp.com/vault/docs/configuration/telemetry
+# see https://developer.hashicorp.com/vault/docs/configuration/listener/tcp#telemetry-parameters
 telemetry {
    disable_hostname = true
    prometheus_retention_time = "24h"
@@ -66,8 +66,8 @@ cat >/tmp/azure_auth.sh <<'EOF'
 set -euxo pipefail
 
 # for more information see:
-#   * https://www.vaultproject.io/docs/auth/azure
-#   * https://www.vaultproject.io/api/auth/azure
+#   * https://developer.hashicorp.com/vault/docs/auth/azure
+#   * https://developer.hashicorp.com/vault/api-docs/auth/azure
 
 vault auth enable azure
 

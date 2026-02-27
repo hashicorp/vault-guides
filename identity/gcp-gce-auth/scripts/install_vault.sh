@@ -30,7 +30,7 @@ EOF
 cat <<EOF | sudo tee /etc/systemd/system/vault.service
 [Unit]
 Description="HashiCorp Vault - A tool for managing secrets"
-Documentation=https://www.vaultproject.io/docs/
+Documentation=https://developer.hashicorp.com/vault/docs
 Requires=network-online.target
 After=network-online.target
 ConditionFileNotEmpty=/etc/vault/config.hcl

@@ -174,7 +174,7 @@ $ docker build --rm -t exampleorg/vault-enterprise -f Dockerfile .
 Note that the resulting image inherits its ENTRYPOINT script from the
 upstream Vault OSS Docker image but overrides the default CMD to disable
 Vault [dev
-mode](https://www.vaultproject.io/docs/concepts/dev-server.html).
+mode](https://developer.hashicorp.com/vault/docs/concepts/dev-server).
 
 The Dockerfile for the Vault OSS image is available
 [here](https://github.com/hashicorp/docker-vault/tree/master/0.X/Dockerfile).
@@ -195,7 +195,7 @@ Consul will be deployed as a
 with access to
 [PersistentVolumeClaims](https://kubernetes.io/docs/concepts/storage/persistent-volumes/)
 and the intent is that it be used solely as the Vault [storage
-backends](https://www.vaultproject.io/docs/configuration/storage/index.html)
+backends](https://developer.hashicorp.com/vault/docs/configuration/storage)
 per HashiCorp's documented best practices for Vault Enterprise
 deployments. The Consul cluster is composed of 5 servers with all
 servers participating in leader elections and quorum consensus. Because
@@ -465,9 +465,9 @@ vault.default.svc.cluster.local has address 172.17.0.9
 Its important to note that the resulting Vault instances ****will
 not**** be fully operational simply from running kubectl using the
 provided YAML specification. The Vault secure storage will need to be
-[initialized](https://www.vaultproject.io/intro/getting-started/deploy.html#initializing-the-vault)
+[initialized](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-deploy#initializing-the-vault)
 and the Operator will need to perform an
-[unseal](https://www.vaultproject.io/docs/concepts/seal.html#unsealing)
+[unseal](https://developer.hashicorp.com/vault/docs/concepts/seal#unsealing)
 on each Vault instance. For now, the init and unseal will be performed
 manually and later in this doc we'll talk about if and how those steps
 should and can be automated.
@@ -662,18 +662,18 @@ $ xdg-open $(minikube service --url vault-ui)
 
 Vault supports the the ability to use a Hardware Security Module(HSM)
 for automated
-Unsealing\<sup\>[1](https://www.vaultproject.io/docs/enterprise/auto-unseal/index.html),[2](https://www.vaultproject.io/docs/enterprise/hsm/index.html)\</sup\>
+Unsealing\<sup\>[1](https://developer.hashicorp.com/vault/docs/concepts/seal#auto-unseal),[2](https://developer.hashicorp.com/vault/docs/enterprise/hsm)\</sup\>
 of the cryptographic barrier of the back-end storage however, for the
 purpose of this documentation, we will rely on the manual method using
 Shamir's Secret
-Sharing\<sup\>[1](https://www.vaultproject.io/docs/internals/security.html),[2](https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing)\</sup\>.
+Sharing\<sup\>[1](https://developer.hashicorp.com/vault/docs/internals/security),[2](https://en.wikipedia.org/wiki/Shamir's_Secret_Sharing)\</sup\>.
 
 First let's init the Vault secure storage…
 
 ****NOTE: the example below performs and init which requires only single
 unseal key. This is not even close to a production-grade workflow and is
 done here only for demo purposes. Please refer to [section of the Vault
-docs](https://www.vaultproject.io/docs/concepts/seal.html) for more
+docs](https://developer.hashicorp.com/vault/docs/concepts/seal) for more
 info.****
 
 ``` example

@@ -2,9 +2,9 @@
 Demo Azure auth method capabilities using Azure VM.
 
 ## Documentation
-[Vault](https://www.vaultproject.io/docs/auth/azure.html)
-[Vault API](https://www.vaultproject.io/api/auth/azure/index.html)
-[MSFT Blog](https://open.microsoft.com/2018/04/10/scaling-tips-hashicorp-vault-azure-active-directory/)
+[Vault](https://developer.hashicorp.com/vault/docs/auth/azure)
+[Vault API](https://developer.hashicorp.com/vault/api-docs/auth/azure)
+[MSFT Blog](https://cloudblogs.microsoft.com/opensource/2018/04/10/scaling-tips-hashicorp-vault-azure-active-directory/)
 
 
 ## Instructions

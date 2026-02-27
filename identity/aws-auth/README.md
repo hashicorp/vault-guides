@@ -8,7 +8,7 @@ The authentication will be done using the instance ami and the corresponding pkc
 
 ## Reference Material
 Complete documentation of the Vault AWS authentication method, including alternative approaches such as using IAM roles and an extensive discussion on nonce strategies can be found here:
-https://www.vaultproject.io/docs/auth/aws.html
+https://developer.hashicorp.com/vault/docs/auth/aws
 
 ## Note
 The code in this repository is for reference only. It is meant to illustrate a few of the requirements for using the AWS authentication method, however it makes certain decisions such as running Vault in dev mode which are not meant for production use.

@@ -43,7 +43,7 @@ vault write auth/oidc/config \
     default_role="gmail"
 
 ```
-2. Create a role to use for authentication. You can be as restrictive as desired by using the different "bound" fields. These allow you to specify values that need to be present from Google in order to allow authentication. [Here](https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo) documentation on claims and values sent by Google, [here](https://www.vaultproject.io/api/auth/jwt/index.html#create-role) information on the bound fields.
+2. Create a role to use for authentication. You can be as restrictive as desired by using the different "bound" fields. These allow you to specify values that need to be present from Google in order to allow authentication. [Here](https://developers.google.com/identity/protocols/OpenIDConnect#obtainuserinfo) documentation on claims and values sent by Google, [here](https://developer.hashicorp.com/vault/api-docs/auth/jwt#create-update-role) information on the bound fields.
 ```
 vault write auth/oidc/role/gmail \
     user_claim="sub" \

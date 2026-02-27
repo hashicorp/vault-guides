@@ -191,7 +191,7 @@ curl \
 
 Testing the "businesshours" policy is left as an exercise to the reader.
 
-[sentinel-docs]: https://www.vaultproject.io/docs/enterprise/sentinel/index.html
-[sentinel-properties]: https://www.vaultproject.io/docs/enterprise/sentinel/properties.html
+[sentinel-docs]: https://developer.hashicorp.com/vault/docs/enterprise/sentinel
+[sentinel-properties]: https://developer.hashicorp.com/vault/docs/enterprise/sentinel/properties
 [jq]: https://stedolan.github.io/jq/download/
-[sentinel-binary]: https://docs.hashicorp.com/sentinel/downloads.html
+[sentinel-binary]: https://docs.hashicorp.com/sentinel/downloads

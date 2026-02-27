@@ -1,12 +1,12 @@
 # Local replication
 Vault is a lightweight binary that runs as a single process. This allows multiple Vault processes to easily run on a single machine, which is useful for testing/validation of Vault capabilities, as well as for development purposes. In this example, we will run three Vault processes to validate Vault replication capabilities and operations.
 
-The first Vault will be the primary, both for performance and for DR replications. The second Vault will be the secondary for performance, while the third will be the secondary for DR. 
+The first Vault will be the primary, both for performance and for DR replications. The second Vault will be the secondary for performance, while the third will be the secondary for DR.
 
-More information on performance and DR replication can be found at the following links:  
-https://www.vaultproject.io/docs/enterprise/replication/index.html   
-https://learn.hashicorp.com/vault/operations/ops-disaster-recovery  
-https://learn.hashicorp.com/vault/operations/ops-replication  
+More information on performance and DR replication can be found at the following links:
+https://developer.hashicorp.com/vault/docs/enterprise/replication
+https://developer.hashicorp.com/vault/tutorials/enterprise/disaster-recovery
+https://developer.hashicorp.com/vault/tutorials/enterprise/performance-replication
 
 Note: Requires Vault Enterprise binary in your local OS flavor. Instructions assume bash and common shell operations.
 

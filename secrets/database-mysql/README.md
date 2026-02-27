@@ -4,7 +4,7 @@ This guide describes the commands to configure Vault to generate dynamic databas
 
 ## Reference Material
 Complete documentation of the Vaulta database secret engine can be found here:
-https://www.vaultproject.io/docs/secrets/databases/index.html
+https://developer.hashicorp.com/vault/docs/secrets/databases
 
 ## Estimated Time to Complete
 10 minutes

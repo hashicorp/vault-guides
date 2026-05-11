@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright IBM Corp. 2017, 2026
+
 set -x
 
 export VAULT_ADDR=http://127.0.0.1:8200

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 #Grafana
 resource "aws_lb" "telemetry" {
   name               = "${var.env}-grafana"

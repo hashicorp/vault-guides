@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 var express = require('express');
 var app = express();
 var config = require('./config')

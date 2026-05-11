@@ -1,3 +1,5 @@
+// Copyright IBM Corp. 2017, 2026
+
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;

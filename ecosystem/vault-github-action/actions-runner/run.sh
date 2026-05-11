@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # Validate not sudo
 user_id=`id -u`

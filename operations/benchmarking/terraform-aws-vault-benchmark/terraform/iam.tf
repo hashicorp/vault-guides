@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "aws_iam_policy_document" "assume_role" {
   statement {
     effect  = "Allow"

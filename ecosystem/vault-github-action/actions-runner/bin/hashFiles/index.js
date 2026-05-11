@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 module.exports =
 /******/ (function(modules, runtime) { // webpackBootstrap
 /******/ 	"use strict";

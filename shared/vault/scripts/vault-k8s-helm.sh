@@ -1,4 +1,6 @@
 #!/bin/bash -x
+# Copyright IBM Corp. 2017, 2026
+
 # jboero@hashicorp.com - 9-APR-2019
 # A Q&D script to stand up K8s cluster + helm + consul + vault locally on single-node K8s
 # Prereqs - Requires kubectl, helm, kubeadm to be installed.

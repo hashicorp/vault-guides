@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "aws_ami" "spring-ec2" {
   most_recent = true
 

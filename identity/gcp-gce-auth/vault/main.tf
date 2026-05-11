@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 provider "vault" {
   version = ">= 1.3.1"
 }

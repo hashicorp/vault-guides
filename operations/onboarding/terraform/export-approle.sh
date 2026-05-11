@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 [[ -z $1 ]] && echo "usage export-approle.sh app_name" && exit 0
 

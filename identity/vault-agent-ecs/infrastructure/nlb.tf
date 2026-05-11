@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_security_group_rule" "nlb_to_ecs" {
   type              = "ingress"
   description       = "Allow access from product-db NLB to database"

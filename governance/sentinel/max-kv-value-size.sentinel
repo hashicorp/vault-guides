@@ -1,6 +1,8 @@
 # EGP policy meant for path secret/(data/)?.*
 # Restrict KV values to a certain size
 
+# Copyright IBM Corp. 2017, 2026
+
 check_size = func(key, value) {
   # Set your size here
   max_value_size = 10

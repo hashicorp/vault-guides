@@ -1,6 +1,8 @@
 # Policy that validates AWS keys provided to AWS secrets engine and auth method
 # For use with Vault KV v1 and v2 secrets engines
 
+# Copyright IBM Corp. 2017, 2026
+
 # This is intended to be used against paths of form <path>/config/root or
 # auth/<path>/config/client where <path> is the path selected for the AWS
 # secrets engine or auth method respectively.

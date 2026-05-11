@@ -2,6 +2,8 @@
 # This assumes that an extra non-standard parameter, `customer`
 # is added to the request sent to transit/encrypt or transit/decrypt endpoints.
 
+# Copyright IBM Corp. 2017, 2026
+
 # This was created for a customer who had an application service which must
 # encrypt data with a unique set of keys per customer.  Using the transit secrets
 # engine, the service would use a single app role per environment (dev/qa/prod)

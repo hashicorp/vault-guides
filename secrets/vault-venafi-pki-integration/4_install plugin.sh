@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 export VAULT_ADDR=http://127.0.0.1:8200
 # Get the SHA-256 checksum of vault-pki-monitor-venafi plugin binary from checksum file:
 SHA256=$(cut -d' ' -f1 vault-pki-monitor-venafi_0.4.0+181_linux_strict.SHA256SUM)

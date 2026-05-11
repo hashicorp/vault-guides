@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # These are all the defaults for any environment variables below.  Setting environment variables before accessing this set of defaults will override anything set here.
 DEFAULT_ROOT_DOMAIN=hashidemos.com
 

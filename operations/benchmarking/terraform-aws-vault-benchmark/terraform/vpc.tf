@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 module "vpc" {
   source             = "terraform-aws-modules/vpc/aws"
   name               = random_id.environment_name.hex

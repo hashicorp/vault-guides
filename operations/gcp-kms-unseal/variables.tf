@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "vault_url" {
   default = "https://releases.hashicorp.com/vault/1.8.1/vault_1.8.1_linux_amd64.zip"
 }

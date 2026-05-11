@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright IBM Corp. 2017, 2026
+
 
 ## mariadb setup
 sudo yum install -y mariadb-server

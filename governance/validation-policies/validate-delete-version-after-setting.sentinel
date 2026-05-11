@@ -1,5 +1,7 @@
 # Policy that validates that delete_version_after less than 30 days (720 hours)
 
+# Copyright IBM Corp. 2017, 2026
+
 # This is intended to be used against paths of form <path>/metadata/<secret>
 # for the KV v2 secrets engine
 

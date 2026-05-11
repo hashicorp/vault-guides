@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # This scripts detects the IP address for vault servers, writes it to a config file, then restarts Vault
 for server in vault_s1 vault_s2 vault_s3

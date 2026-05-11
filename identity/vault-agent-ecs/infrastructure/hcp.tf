@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 locals {
   route_table_ids = concat(module.vpc.private_route_table_ids, module.vpc.public_route_table_ids)
 }

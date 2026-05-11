@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 output "hcp_vault_public_endpoint" {
   value       = module.hcp.hcp_vault_public_endpoint
   description = "Public endpoint of HCP Vault"

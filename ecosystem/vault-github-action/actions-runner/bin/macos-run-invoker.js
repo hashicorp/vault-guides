@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 const { spawn } = require('child_process');
 // argv[0] = node
 // argv[1] = macos-run-invoker.js

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_security_group" "testing" {
   name        = "${var.environment_name}-testing-sg"
   description = "SSH and Internal Traffic"

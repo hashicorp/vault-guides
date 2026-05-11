@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 require "sinatra"
 require "faraday"
 require "json"

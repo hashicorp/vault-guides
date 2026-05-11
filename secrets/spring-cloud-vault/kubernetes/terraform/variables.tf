@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "k8s_endpoint" {
   description = "k8s_endpoint"
 }

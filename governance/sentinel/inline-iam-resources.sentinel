@@ -1,6 +1,8 @@
 # EGP policy meant for path aws/roles/*
 # Restrict inline IAM policy from using a wildcard AWS account in Resources
 
+# Copyright IBM Corp. 2017, 2026
+
 import "strings"
 import "json"
 

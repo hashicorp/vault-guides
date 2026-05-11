@@ -1,3 +1,7 @@
+/*
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 #undef OPENSSL_LINUX
 #if defined(__linux) && !defined(__ANDROID__)
 # define OPENSSL_LINUX 1

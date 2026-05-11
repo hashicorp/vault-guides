@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "vault_auth_backend" "aws-ec2" {
   type = "aws"
   path = "aws-ec2"

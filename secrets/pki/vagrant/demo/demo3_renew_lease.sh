@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Wait seconds before automatically running the next command
 DEMO_WAIT=1
 

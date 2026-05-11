@@ -2,6 +2,8 @@
 # to be a valid U.S. state code
 # For use with Vault KV v1 and v2 secrets engines
 
+# Copyright IBM Corp. 2017, 2026
+
 # Function that validates states
 validate_state_codes = func() {
 

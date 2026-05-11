@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 module "efs" {
   source             = "../modules/vault-mount"
   name               = var.name

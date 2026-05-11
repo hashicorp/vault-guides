@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 const https = require('https')
 const fs = require('fs')
 const http = require('http')

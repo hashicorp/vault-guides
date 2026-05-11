@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "vault_mount" "postgres" {
   path = "postgres"
   type = "database"

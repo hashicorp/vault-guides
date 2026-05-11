@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_kms_key" "vault" {
   description             = "Vault unseal key"
   deletion_window_in_days = 10

@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # This script configures a Postgres Dynamic Database credential database for benchmarking
 vault secrets enable database

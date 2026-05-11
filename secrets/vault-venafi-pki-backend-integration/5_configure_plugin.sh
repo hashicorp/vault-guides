@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 export TPP_ADDR=https://example.venafi.com/vedsdk
 export TPP_USER=serviceaccountuser
 export TPP_PASS=serviceaccountpassword

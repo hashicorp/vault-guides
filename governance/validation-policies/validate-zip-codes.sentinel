@@ -2,6 +2,8 @@
 # "zip_code" to be a valid 5-digit U.S. zipcode
 # For use with Vault KV v1 and v2 secrets engines
 
+# Copyright IBM Corp. 2017, 2026
+
 # Function that validates zip codes
 validate_zip_codes = func() {
 

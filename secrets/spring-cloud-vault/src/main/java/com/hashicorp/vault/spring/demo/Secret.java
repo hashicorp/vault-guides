@@ -1,3 +1,7 @@
+/*
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 package com.hashicorp.vault.spring.demo;
 
 public class Secret {

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 output "file_system_id" {
   value       = aws_efs_file_system.mount.id
   description = "ID of EFS file system for ECS tasks with Vault agents"

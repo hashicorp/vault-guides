@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # This script will clean up locally provisioned resources
 cd ../ && docker compose down

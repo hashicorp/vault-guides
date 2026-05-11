@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 require 'serverspec'
 
 if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM).nil?

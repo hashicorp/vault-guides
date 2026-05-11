@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 FROM mcr.microsoft.com/mssql/server:2019-latest
 
 USER root

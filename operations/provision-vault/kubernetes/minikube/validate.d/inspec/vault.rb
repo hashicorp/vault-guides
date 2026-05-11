@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 die('Failed to compute value for VAULT_ADDR!') unless \
   VAULT_ADDR = %x(minikube service --url vault-ui).chomp
 

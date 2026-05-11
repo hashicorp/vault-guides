@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "hvn_id" {
   description = "The ID of the HCP HVN."
   type        = string

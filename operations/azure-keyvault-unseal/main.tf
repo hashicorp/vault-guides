@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # see https://github.com/hashicorp/terraform
 terraform {
   required_version = ">= 1.1.7"

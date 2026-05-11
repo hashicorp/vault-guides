@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Vault Policy file for qa role
 
 # Access to secret/qa

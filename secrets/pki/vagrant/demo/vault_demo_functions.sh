@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 if [[ -z ${DEMO_WAIT} ]];then
   DEMO_WAIT=0
 fi

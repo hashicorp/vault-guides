@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "aws_account_id" {}
 
 variable "aws_auth_iam_role" {

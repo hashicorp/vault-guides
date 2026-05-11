@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 name 'vault_chef_approle_demo'
 maintainer 'The Authors'
 maintainer_email 'you@example.com'

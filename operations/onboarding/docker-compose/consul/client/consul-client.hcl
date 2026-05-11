@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 server = false
 data_dir = "/consul/data"
 encrypt = "YZqGRaEajsh8M1w4e1z/Jg=="

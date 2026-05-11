@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Create the vault entities
 resource "vault_identity_entity" "entity" {
   for_each = toset(var.entities)

@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # Create ssh key pair
 ssh-keygen -f /home/vagrant/.ssh/id_rsa -t rsa -N ''

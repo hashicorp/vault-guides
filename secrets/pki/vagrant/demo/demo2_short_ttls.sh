@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Source in default environment variables
 . /demo/default_env.sh
 

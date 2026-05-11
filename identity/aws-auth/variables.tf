@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # The following are required but for security should be set as environment vars:
 # AWS_ACCESS_KEY_ID
 # AWS_DEFAULT_REGION

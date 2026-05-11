@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 PCF_ORG=
 : ${PCF_ORG:?"Need to set PCF_ORG non-empty"}

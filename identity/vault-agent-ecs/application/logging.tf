@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_cloudwatch_log_group" "log_group" {
   name = "${var.name}-services"
 }

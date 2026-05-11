@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "template_file" "vault_aws_auth_policy_template" {
   template = "${file("${path.module}/vault_iam_policy.json.tpl")}"
 

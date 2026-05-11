@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 import "time"
 
 # We expect requests to only happen during work days (0 for Sunday, 6 for Saturday)

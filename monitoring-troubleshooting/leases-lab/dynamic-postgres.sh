@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # This script demonstrates Vault with the PostgreSQL secrets engine.
 # It simulates a condition where leases cannot be revoked by Vault

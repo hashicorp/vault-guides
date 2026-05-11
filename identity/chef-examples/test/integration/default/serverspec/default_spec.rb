@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 require 'spec_helper'
 
 describe 'hashicorp_vault_examples::default' do

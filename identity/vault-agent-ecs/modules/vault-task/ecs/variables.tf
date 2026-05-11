@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "family" {
   description = "Task definition [family](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task_definition_parameters.html#family). This is used by default as the Consul service name if `consul_service_name` is not provided."
   type        = string

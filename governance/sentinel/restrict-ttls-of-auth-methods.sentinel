@@ -5,6 +5,8 @@
 # without the hours if less than 3600 seconds and without the minutes
 # if less than 60 seconds.
 
+# Copyright IBM Corp. 2017, 2026
+
 import "strings"
 
 # Parameter giving maximum number of seconds for max_lease_ttl

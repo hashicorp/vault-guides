@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Permits CRUD operation on kv-v2
 path "kv-v2/data/*" {
   capabilities = ["create", "read", "update", "delete", "list"]

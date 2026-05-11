@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 service {
   name = "haproxy",
   port = 80,

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # # encoding: utf-8
 
 # Inspec test for recipe vault_chef_approle_demo::default

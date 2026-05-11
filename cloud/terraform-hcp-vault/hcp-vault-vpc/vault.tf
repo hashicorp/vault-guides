@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "hcp_hvn" "learn_hcp_vault_hvn" {
   hvn_id         = var.hvn_id
   cloud_provider = var.cloud_provider

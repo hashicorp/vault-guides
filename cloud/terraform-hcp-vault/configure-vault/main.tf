@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 #------------------------------------------------------------------------------
 # The best practice is to use remote state file and encrypt it since your
 # state files may contains sensitive data (secrets).

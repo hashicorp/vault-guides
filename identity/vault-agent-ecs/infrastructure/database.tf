@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_security_group" "database" {
   name        = "${var.name}-database"
   description = "Allow inbound traffic to database"

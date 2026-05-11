@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 name: ImageBuilder
 # Run this workflow every time a new commit pushed to your repository
 on: push

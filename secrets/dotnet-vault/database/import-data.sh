@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # wait for the SQL Server to come up
 sleep 15s
 

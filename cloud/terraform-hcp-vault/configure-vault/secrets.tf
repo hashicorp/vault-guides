@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Enable kv-v2 secrets engine in the education namespace
 resource "vault_mount" "kv-v2" {
   depends_on = [vault_namespace.education]

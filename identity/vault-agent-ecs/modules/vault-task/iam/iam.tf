@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_iam_policy" "vault_agent" {
   name        = "${var.name}-vault-agent"
   path        = "/ecs/"

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 storage "consul" {
   address = "consul_a3:8500"
   path    = "vault" 

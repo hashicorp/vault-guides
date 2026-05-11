@@ -2,6 +2,8 @@
 # Prohibit use of AWS creds to enforce IAM profile usage only
 # Can be used for AWS auth or secrets
 
+# Copyright IBM Corp. 2017, 2026
+
 config_check = func() {
   # Make sure there is request data
   if length(request.data else 0) is 0 {

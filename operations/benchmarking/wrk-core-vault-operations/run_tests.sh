@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Copyright IBM Corp. 2017, 2026
+
 
 # Run read test in background
 # Make sure that the secrets already exist in Vault before running this test

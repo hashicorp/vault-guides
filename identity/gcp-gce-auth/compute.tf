@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "http" "current_ip" {
   url = "http://ipv4.icanhazip.com/"
 }

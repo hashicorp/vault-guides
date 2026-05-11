@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "google_container_cluster" "primary" {
   name               = var.name
   location           = var.zone

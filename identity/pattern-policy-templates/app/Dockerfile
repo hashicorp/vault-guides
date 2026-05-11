@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 FROM alpine:3.7
 
 # Install jq and curl

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "google_service_account" "vaultadmin" {
   project      = google_project.vault_gcp_iam_demo.project_id
   account_id   = "vaultadmin"

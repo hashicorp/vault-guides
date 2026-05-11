@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 FROM ruby:2.6.2
 
 RUN apt-get update && \

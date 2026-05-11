@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 name 'hashicorp_vault_examples'
 maintainer 'The Authors'
 maintainer_email ''

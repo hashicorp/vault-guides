@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "vault_auth_backend" "approle" {
   type = "approle"
   path = var.approle_mount_path

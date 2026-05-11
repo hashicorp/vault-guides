@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 class Notify {
   constructor(node) {
     this.node = node;

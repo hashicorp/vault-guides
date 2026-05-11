@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_iam_user" "vault" {
   name = "${var.env}"
 }

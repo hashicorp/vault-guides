@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 ec2_ami_id="ami-00000000000000000"
 iam_ami_id="ami-00000000000000000"
 ami_owner="000000000000"

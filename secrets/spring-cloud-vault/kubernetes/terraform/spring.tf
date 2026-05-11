@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "kubernetes_replication_controller" "spring-frontend" {
   metadata {
     name = "spring-frontend"

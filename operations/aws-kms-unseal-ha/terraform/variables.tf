@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable aws_region {
   default = "us-east-1"
 }

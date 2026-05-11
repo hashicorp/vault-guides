@@ -1,3 +1,5 @@
+-- Copyright IBM Corp. 2017, 2026
+
 CREATE TABLE orders (
     id bigserial primary key,
     customer_name varchar(60) NOT NULL,

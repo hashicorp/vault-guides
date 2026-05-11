@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 docker-compose -f docker-compose-vault-agent-template.yml down
 docker-compose -f docker-compose-vault-agent-template.yml rm

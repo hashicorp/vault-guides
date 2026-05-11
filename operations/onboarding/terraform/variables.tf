@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable "entities" {
     description = "A set of vault clients to create"
     # Keep nginx as the first vault client for docker-compose demo using AppRole. Please append additional apps to the list

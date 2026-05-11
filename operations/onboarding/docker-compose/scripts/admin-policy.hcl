@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # This policy is based on the Admin policy from the Learn guide: https://learn.hashicorp.com/tutorials/vault/policies#write-a-policy
 # Lookup self 
 

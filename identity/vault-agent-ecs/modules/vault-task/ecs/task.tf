@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 locals {
   vault_data_volume_name = "vault"
   vault_data_mount = {

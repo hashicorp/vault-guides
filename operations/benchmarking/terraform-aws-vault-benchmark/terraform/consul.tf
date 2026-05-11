@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "aws_ami" "consul" {
   most_recent = true
 

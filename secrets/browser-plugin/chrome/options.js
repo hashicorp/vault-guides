@@ -1,3 +1,7 @@
+/**
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 const notify = new Notify(document.querySelector('#notify'));
 
 async function mainLoaded() {

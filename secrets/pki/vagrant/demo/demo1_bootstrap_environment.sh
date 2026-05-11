@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Read in the default environment variables
 . /demo/default_env.sh
 

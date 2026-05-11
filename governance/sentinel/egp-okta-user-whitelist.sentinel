@@ -3,6 +3,8 @@
 # replacing <path> with the value given to the -path argument when configuring the Auth Method.
 # For the Okta Auth Method, if no custom <path> is configured, the default is '/auth/okta/login/*'
 
+# Copyright IBM Corp. 2017, 2026
+
 
 # Example List of approved Okta Users
 names = ["example@hashicorp.com", "test@hashicorp.com", "other_user@hashicorp.com"]

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 output "chef-node-public-ip" {
   value = aws_instance.chef-node.public_ip
 }

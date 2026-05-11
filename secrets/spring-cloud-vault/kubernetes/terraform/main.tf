@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 provider "kubernetes" {
     host = "${var.k8s_endpoint}"
     client_certificate = "${base64decode(var.k8s_master_auth_client_certificate)}"

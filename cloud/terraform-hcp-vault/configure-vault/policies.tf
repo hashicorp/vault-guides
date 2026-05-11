@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # Create an admins policy in the admin namespace
 resource "vault_policy" "admin_policy" {
   namespace = vault_namespace.test.path

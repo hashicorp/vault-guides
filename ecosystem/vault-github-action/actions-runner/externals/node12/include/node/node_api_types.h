@@ -1,3 +1,7 @@
+/*
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 #ifndef SRC_NODE_API_TYPES_H_
 #define SRC_NODE_API_TYPES_H_
 

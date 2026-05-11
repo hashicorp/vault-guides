@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 output "product_db_vault_path" {
   value       = local.products_creds_path
   description = "Database credentials path stored in HCP Vault"

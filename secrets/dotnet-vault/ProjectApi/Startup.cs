@@ -1,3 +1,5 @@
+// Copyright IBM Corp. 2017, 2026
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;

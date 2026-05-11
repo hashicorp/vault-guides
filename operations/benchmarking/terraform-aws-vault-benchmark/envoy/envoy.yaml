@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 admin:
   access_log_path: /tmp/admin_access.log
   address:

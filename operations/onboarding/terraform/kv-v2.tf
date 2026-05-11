@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "vault_mount" "kvv2" {
   path        = var.kv_mount_path
   type        = var.kv_version

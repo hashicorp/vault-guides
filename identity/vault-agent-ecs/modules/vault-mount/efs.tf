@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 resource "aws_efs_file_system" "mount" {
   creation_token = var.name
   encrypted      = true

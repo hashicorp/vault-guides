@@ -1,4 +1,6 @@
 # Function that validates the request is related to mounting kv secret egines
+# Copyright IBM Corp. 2017, 2026
+
 prevent_kv_v1_engines = func() {
 
   # Print some information about the request

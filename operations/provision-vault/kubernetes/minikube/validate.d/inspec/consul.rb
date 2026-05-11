@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 die('Failed to compute value for CONSUL_HTTP_ADDR!') unless \
   CONSUL_HTTP_ADDR = %x(minikube service --url consul-ui).chomp
 

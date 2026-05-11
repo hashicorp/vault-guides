@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 module "task_role" {
   source                        = "../modules/vault-task/iam"
   name                          = "${var.name}-product-api"

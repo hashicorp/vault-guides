@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 FROM ruby:2.6.2
 MAINTAINER HashiCorp Vault Education <team-vault-education@hashicorp.com>
 

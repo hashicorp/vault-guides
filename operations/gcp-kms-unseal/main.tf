@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 provider "google" {
   credentials = file(var.account_file_path)
   project     = var.gcloud-project

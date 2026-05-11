@@ -1,3 +1,7 @@
+/*
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 #ifndef SRC_JS_NATIVE_API_H_
 #define SRC_JS_NATIVE_API_H_
 

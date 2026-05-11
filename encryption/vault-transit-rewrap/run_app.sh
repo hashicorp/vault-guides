@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 VAULT_TOKEN=$(cat app-token.txt) VAULT_ADDR=$VAULT_ADDR VAULT_TRANSIT_KEY=my_app_key SHOULD_SEED_USERS=true dotnet run
 

@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 data "aws_ecs_cluster" "cluster" {
   cluster_name = var.name
 }

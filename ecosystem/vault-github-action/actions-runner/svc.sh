@@ -1,4 +1,6 @@
 #!/bin/bash
+# Copyright IBM Corp. 2017, 2026
+
 
 SVC_NAME="actions.runner.rowansmithhc-vault-action-exampleapp.rowan-C02FW09HMD6R"
 SVC_NAME=${SVC_NAME// /_}

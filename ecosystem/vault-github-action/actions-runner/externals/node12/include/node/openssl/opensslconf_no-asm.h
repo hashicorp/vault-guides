@@ -1,3 +1,7 @@
+/*
+ * Copyright IBM Corp. 2017, 2026
+ */
+
 #if defined(OPENSSL_LINUX) && defined(__i386__)
 # include "./archs/linux-elf/no-asm/include/openssl/opensslconf.h"
 #elif defined(OPENSSL_LINUX) && defined(__ILP32__)

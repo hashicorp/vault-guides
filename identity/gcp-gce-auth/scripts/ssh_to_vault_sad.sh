@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 export instance_id=$(terraform output vault_sad_instance_id)
 export project_id=$(terraform output project_id)
 

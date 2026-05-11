@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 # AWS region and AZs in which to deploy
 variable "aws_region" {
   default = "us-east-1"

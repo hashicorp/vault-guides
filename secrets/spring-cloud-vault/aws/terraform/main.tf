@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 variable ec2_ami_id {}
 variable iam_ami_id {}
 variable ami_owner {}

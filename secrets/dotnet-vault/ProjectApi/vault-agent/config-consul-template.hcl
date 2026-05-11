@@ -1,3 +1,5 @@
+# Copyright IBM Corp. 2017, 2026
+
 vault {
   address = "http://127.0.0.1:8200"
 
